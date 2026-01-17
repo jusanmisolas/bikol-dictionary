@@ -57,30 +57,43 @@ main{max-width:1200px;margin:40px auto 0;}
   position:relative;
   overflow:hidden;
 }
-.search-wrapper select{
+
+/* Custom dropdown */
+.custom-select {
+  position: relative;
+  width: 150px;
   background: var(--primary);
   color: #fff;
-  border: none;
-  padding: 14px 16px;
-  border-radius: 14px 0 0 14px; /* left side rounded */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  position: relative;
-  font-size: 16px;
+  border-radius: 14px 0 0 14px;
   cursor: pointer;
+  user-select: none;
+  font-size:16px;
 }
-/* Custom dropdown arrow */
-.search-wrapper select::after {
-  content: "\25BC"; /* down arrow */
+.custom-select .selected {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.custom-select .options {
+  display: none;
   position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: #fff;
-  font-size: 12px;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: var(--primary);
+  border-radius: 0 0 14px 14px;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
+.custom-select .options div {
+  padding: 12px 16px;
+}
+.custom-select .options div:hover {
+  background: var(--hover);
+  color: var(--primary);
+}
+
 .search-wrapper input{
   flex:1;
   border:none;
@@ -140,10 +153,13 @@ footer{
 
 <main>
 <div class="search-wrapper">
-  <select id="lang">
-    <option value="english">English</option>
-    <option value="bikol">Bikol</option>
-  </select>
+  <div class="custom-select">
+    <div class="selected">English <i class="fa-solid fa-chevron-down"></i></div>
+    <div class="options">
+      <div data-value="english">English</div>
+      <div data-value="bikol">Bikol</div>
+    </div>
+  </div>
   <input id="search" placeholder="Search Bikol Dictionary" autocomplete="off">
   <button><i class="fa-solid fa-magnifying-glass"></i></button>
   <div class="suggestions" id="suggestions"></div>
@@ -156,6 +172,7 @@ footer{
 
 <script>
 let dictionaryEN=[], dictionaryBI=[];
+let lang = { value: 'english' };
 
 Papa.parse("english_to_bikol.csv",{download:true,header:true,skipEmptyLines:true,complete:r=>dictionaryEN=r.data});
 Papa.parse("bikol_to_english.csv",{download:true,header:true,skipEmptyLines:true,complete:r=>dictionaryBI=r.data});
@@ -163,7 +180,32 @@ Papa.parse("bikol_to_english.csv",{download:true,header:true,skipEmptyLines:true
 const search=document.getElementById("search");
 const suggestions=document.getElementById("suggestions");
 const entries=document.getElementById("entries");
-const lang=document.getElementById("lang");
+
+const customSelect = document.querySelector('.custom-select');
+const selected = customSelect.querySelector('.selected');
+const options = customSelect.querySelector('.options');
+const optionItems = options.querySelectorAll('div');
+
+customSelect.addEventListener('click', () => {
+  options.style.display = options.style.display === 'block' ? 'none' : 'block';
+});
+
+optionItems.forEach(item => {
+  item.addEventListener('click', e => {
+    selected.innerHTML = e.target.textContent + ' <i class="fa-solid fa-chevron-down"></i>';
+    options.style.display = 'none';
+    lang.value = e.target.dataset.value;
+    search.value = '';
+    entries.innerHTML = '';
+    suggestions.innerHTML = '';
+  });
+});
+
+document.addEventListener('click', e => {
+  if (!customSelect.contains(e.target)) {
+    options.style.display = 'none';
+  }
+});
 
 search.addEventListener("input",()=>{
   const q=search.value.toLowerCase().trim();
@@ -186,7 +228,6 @@ search.addEventListener("input",()=>{
 function render(d){
   suggestions.style.display="none";
 
-  // English → Bikol
   if(lang.value==="english"){
     let senses="";
     for(let i=1;i<=10;i++){
@@ -222,7 +263,6 @@ function render(d){
     return;
   }
 
-  // Bikol → English
   entries.innerHTML=`
     <div class="entry">
       <h2>${d.bikol}</h2>
