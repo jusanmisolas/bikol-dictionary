@@ -4,11 +4,9 @@
 <meta charset="UTF-8">
 <title>Bikol Dictionary</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
 <style>
 :root{
   --primary:#0D1B2A;
@@ -46,7 +44,10 @@ header h1{
   font-size:18px;
   margin:0;
 }
-main{max-width:1200px;margin:40px auto 0;}
+main{
+  max-width:1200px;
+  margin:40px auto 0;
+}
 .search-wrapper{
   max-width:780px;
   margin:0 auto 56px;
@@ -57,11 +58,10 @@ main{max-width:1200px;margin:40px auto 0;}
   position:relative;
 }
 .search-wrapper select{
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  padding: 14px 16px;
-  border-radius: 14px 0 0 14px; /* left side rounded */
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:14px 16px;
 }
 .search-wrapper input{
   flex:1;
@@ -94,9 +94,18 @@ main{max-width:1200px;margin:40px auto 0;}
   padding:40px 0;
   border-bottom:1px solid var(--rule);
 }
-.entry h2{margin:0;color:var(--primary);}
-.pos{font-style:italic;color:var(--secondary);margin-bottom:14px;}
-.definition{font-size:17px;}
+.entry h2{
+  margin:0;
+  color:var(--primary);
+}
+.pos{
+  font-style:italic;
+  color:var(--secondary);
+  margin-bottom:14px;
+}
+.definition{
+  font-size:17px;
+}
 .example{
   margin-top:12px;
   padding:14px 16px;
@@ -113,32 +122,25 @@ footer{
 }
 </style>
 </head>
-
 <body>
-
 <header>
   <h1>Bikol Dictionary</h1>
 </header>
-
 <main>
-<div class="search-wrapper">
-  <select id="lang">
-    <option value="english">English</option>
-    <option value="bikol">Bikol</option>
-  </select>
-  <input id="search" placeholder="Search Bikol Dictionary" autocomplete="off">
-  <button><i class="fa-solid fa-magnifying-glass"></i></button>
-  <div class="suggestions" id="suggestions"></div>
-</div>
-
-<div id="entries"></div>
+  <div class="search-wrapper">
+    <select id="lang">
+      <option value="english">English</option>
+      <option value="bikol">Bikol</option>
+    </select>
+    <input id="search" placeholder="Search Bikol Dictionary" autocomplete="off">
+    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+    <div class="suggestions" id="suggestions"></div>
+  </div>
+  <div id="entries"></div>
 </main>
-
 <footer>© 2021–2026 Jusan Misolas</footer>
-
 <script>
 let dictionaryEN=[], dictionaryBI=[];
-
 Papa.parse("english_to_bikol.csv",{download:true,header:true,skipEmptyLines:true,complete:r=>dictionaryEN=r.data});
 Papa.parse("bikol_to_english.csv",{download:true,header:true,skipEmptyLines:true,complete:r=>dictionaryBI=r.data});
 
@@ -176,47 +178,36 @@ function render(d){
       const b=d[`sense${i}_bikol`]||"";
       const ex=d[`sense${i}_example`]||"";
       if(!m) continue;
-
       let exampleHTML="";
       if(ex){
         const parts=ex.split("||");
-        exampleHTML=`
-          <div class="example">
-            ${parts[0]}
-            ${parts[1]?`<br><em>${parts[1]}</em>`:""}
-          </div>`;
+        exampleHTML=`<div class="example">${parts[0]} ${parts[1]?`<br><em>${parts[1]}</em>`:""}</div>`;
       }
-
-      senses+=`
-        <div style="margin-top:22px;">
-          <div class="definition"><strong>${i}.</strong> ${m}</div>
-          ${b?`<div><strong>Bikol equivalents:</strong> ${b}</div>`:""}
-          ${exampleHTML}
-        </div>`;
-    }
-
-    entries.innerHTML=`
-      <div class="entry">
-        <h2>${d.english}</h2>
-        <div class="pos">${d.pos}</div>
-        ${senses}
+      senses+=`<div style="margin-top:22px;">
+        <div class="definition"><strong>${i}.</strong> ${m}</div>
+        ${b?`<div><strong>Bikol equivalents:</strong> ${b}</div>`:""}
+        ${exampleHTML}
       </div>`;
+    }
+    entries.innerHTML=`<div class="entry">
+      <h2>${d.english}</h2>
+      <div class="pos">${d.pos}</div>
+      ${senses}
+    </div>`;
     return;
   }
 
   // Bikol → English
-  entries.innerHTML=`
-    <div class="entry">
-      <h2>${d.bikol}</h2>
-      <div class="pos">${d.pos}</div>
-      <div class="definition">${d.definition}</div>
-      <div class="example">
-        ${d.exampleBikol}<br>
-        <em>${d.exampleEnglish}</em>
-      </div>
-    </div>`;
+  entries.innerHTML=`<div class="entry">
+    <h2>${d.bikol}</h2>
+    <div class="pos">${d.pos}</div>
+    <div class="definition">${d.definition}</div>
+    <div class="example">
+      ${d.exampleBikol}<br>
+      <em>${d.exampleEnglish}</em>
+    </div>
+  </div>`;
 }
 </script>
-
 </body>
 </html>
