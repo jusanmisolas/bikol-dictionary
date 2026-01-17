@@ -41,7 +41,6 @@ header{
   z-index:1000;
 }
 header h1{
-  font-family:"IBM Plex Sans",sans-serif;
   font-size:18px;
   margin:0;
 }
@@ -50,58 +49,49 @@ main{
   margin:40px auto 0;
 }
 .search-wrapper{
-  display: flex;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.15);
-  position: relative;
-  overflow: visible;
-  width: 100%;
-  max-width: 780px;
-  margin: 0 auto 56px;
+  display:flex;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  position:relative;
+  width:100%;
+  max-width:780px;
+  margin:0 auto 56px;
 }
 .search-wrapper select{
-  flex: 0 0 auto;
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  padding: 14px 12px;
-  min-width: 70px;
-  border-radius: 14px 0 0 14px;
-  font-size: 16px;
-  cursor: pointer;
-  appearance: none;
-  text-align: center;
-  width: auto;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:14px 12px;
+  min-width:70px;
+  border-radius:14px 0 0 14px;
+  font-size:16px;
+  cursor:pointer;
 }
 .search-wrapper input{
-  flex: 1 1 auto;
-  min-width: 0;
-  border: none;
-  padding: 16px 18px;
-  font-size: 16px;
-  border-radius: 0 14px 14px 0;
+  flex:1;
+  border:none;
+  padding:16px 18px;
+  font-size:16px;
+  border-radius:0 14px 14px 0;
 }
-.search-wrapper input:focus {
-  outline: none;
-  box-shadow: none;
-}
+.search-wrapper input:focus{outline:none;}
 .search-wrapper button{
-  border: none;
-  background: none;
-  padding: 0 16px;
-  cursor: pointer;
+  border:none;
+  background:none;
+  padding:0 16px;
+  cursor:pointer;
 }
 .suggestions{
-  position: absolute;
-  top: calc(100% + 12px);
-  left: 0;
-  width: 100%;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 16px 40px rgba(0,0,0,.2);
-  display: none;
-  z-index: 500;
+  position:absolute;
+  top:calc(100% + 12px);
+  left:0;
+  width:100%;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 16px 40px rgba(0,0,0,.2);
+  display:none;
+  z-index:500;
 }
 .suggestions div{
   padding:16px 18px;
@@ -113,18 +103,9 @@ main{
   padding:40px 0;
   border-bottom:1px solid var(--rule);
 }
-.entry h2{
-  margin:0;
-  color:var(--primary);
-}
-.pos{
-  font-style:italic;
-  color:var(--secondary);
-  margin-bottom:14px;
-}
-.definition{
-  font-size:17px;
-}
+.entry h2{margin:0;color:var(--primary);}
+.pos{font-style:italic;color:var(--secondary);margin-bottom:14px;}
+.definition{font-size:17px;}
 .example{
   margin-top:12px;
   padding:14px 16px;
@@ -139,22 +120,14 @@ footer{
   color:var(--secondary);
   border-top:1px solid var(--rule);
 }
-
-/* Remove blue autofill background */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
-    -webkit-text-fill-color: var(--ink) !important;
-    transition: background-color 5000s ease-in-out 0s;
+input:-webkit-autofill{
+  -webkit-box-shadow:0 0 0 1000px #fff inset!important;
+  -webkit-text-fill-color:var(--ink)!important;
 }
 </style>
 </head>
 <body>
-<header>
-  <h1>Bikol Dictionary</h1>
-</header>
+<header><h1>Bikol Dictionary</h1></header>
 <main>
   <div class="search-wrapper">
     <select id="lang">
@@ -169,149 +142,53 @@ input:-webkit-autofill:active {
 </main>
 <footer>© 2021–2026 Jusan Misolas</footer>
 <script>
-// Dictionaries
 let dictionaryEN = [], dictionaryBI = [];
-
-// Cache-busting CSV load
-Papa.parse(`english_to_bikol.csv?${Date.now()}`, {
-    download:true,
-    header:true,
-    skipEmptyLines:true,
-    complete: r => dictionaryEN = r.data
+Papa.parse(`english_to_bikol.csv?${Date.now()}`,{
+  download:true,
+  header:true,
+  skipEmptyLines:true,
+  complete:r=>dictionaryEN=r.data
 });
-
-// Placeholder for Bikol→English CSV
-dictionaryBI = [];
-
-const search = document.getElementById("search");
-const suggestions = document.getElementById("suggestions");
-const entries = document.getElementById("entries");
-const lang = document.getElementById("lang");
-const searchBtn = document.querySelector(".search-wrapper button");
-
-let hasResult = false;
-
-// Show suggestions only when typing a NEW search
-search.addEventListener("input", () => {
-  const q = search.value.toLowerCase().trim();
-
-  // If input is cleared, clear results and suggestions
-  if (!q) {
-    suggestions.style.display = "none";
-    suggestions.innerHTML = "";
-    entries.innerHTML = "";
-    hasResult = false;
+const search=document.getElementById("search");
+const suggestions=document.getElementById("suggestions");
+const entries=document.getElementById("entries");
+const lang=document.getElementById("lang");
+const searchBtn=document.querySelector(".search-wrapper button");
+search.addEventListener("input",()=>{
+  const q=search.value.toLowerCase().trim();
+  suggestions.innerHTML="";
+  if(!q||entries.innerHTML.trim()!==""){
+    suggestions.style.display="none";
     return;
   }
-
-  // If user starts typing again after a result, allow suggestions
-  if (hasResult) {
-    entries.innerHTML = "";
-    hasResult = false;
-  }
-
-  suggestions.innerHTML = "";
-
-  const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
-  const field = lang.value;
-
-  const matches = dict.filter(d => d[field]?.toLowerCase().startsWith(q));
-  if (matches.length) {
-    matches.forEach(d => {
-      const div = document.createElement("div");
-      div.textContent = d[field];
-      div.onclick = () => render(d);
+  const dict=lang.value==="english"?dictionaryEN:dictionaryBI;
+  const field=lang.value;
+  const matches=dict.filter(d=>d[field]?.toLowerCase().startsWith(q));
+  if(matches.length){
+    matches.forEach(d=>{
+      const div=document.createElement("div");
+      div.textContent=d[field];
+      div.onclick=()=>render(d);
       suggestions.appendChild(div);
     });
-    suggestions.style.display = "block";
-  } else {
-    suggestions.style.display = "none";
-  }
+    suggestions.style.display="block";
+  }else suggestions.style.display="none";
 });
-    suggestions.style.display = "block";
-  } else {
-    suggestions.style.display = "none";
-  }
-});
-
-// Perform search on Enter or click (exact match only)
-searchBtn.addEventListener("click", performSearch);
-search.addEventListener("keydown", e => {
-  if (e.key === "Enter") performSearch();
-});
-
-function performSearch() {
-  const q = search.value.toLowerCase().trim();
-  if (!q) return;
-
-  const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
-  const field = lang.value;
-
-  const match = dict.find(d => d[field]?.toLowerCase() === q);
-
-  if (match) {
-    render(match);
-  } else {
-    const langText = lang.value === "english" ? "English-Bikol" : "Bikol-English";
-    entries.innerHTML = `<div class="entry">
-      <div class="definition" style="text-align:center; font-weight:bold; font-size:16px;">
-        No exact match found for "${search.value}" in ${langText} Dictionary
-      </div>
-    </div>`;
-    hasResult = true;
-  }
-
-  suggestions.style.display = "none";
+searchBtn.addEventListener("click",performSearch);
+search.addEventListener("keydown",e=>{if(e.key==="Enter")performSearch();});
+function performSearch(){
+  const q=search.value.toLowerCase().trim();
+  if(!q)return;
+  const dict=lang.value==="english"?dictionaryEN:dictionaryBI;
+  const field=lang.value;
+  const match=dict.find(d=>d[field]?.toLowerCase()===q);
+  if(match)render(match);
+  else entries.innerHTML=`<div class="entry"><div class="definition" style="text-align:center;font-weight:bold;">No exact match found</div></div>`;
+  suggestions.style.display="none";
 }
-
-  // Hide suggestions after searching
-  suggestions.style.display = "none";
-}
-
-function render(d) {
-  hasResult = true;
-  suggestions.style.display = "none";
-  suggestions.style.display = "none";
-
-  if (lang.value === "english") {
-    let senses = "";
-    for (let i = 1; i <= 10; i++) {
-      const m = d[`sense${i}_meaning`] || "";
-      const b = d[`sense${i}_bikol`] || "";
-      const ex = d[`sense${i}_example`] || "";
-      if (!m) continue;
-
-      let exampleHTML = "";
-      if (ex) {
-        const parts = ex.split("||");
-        exampleHTML = `<div class="example">${parts[0]}${parts[1] ? `<br><em>${parts[1]}</em>` : ""}</div>`;
-      }
-
-      senses += `<div style="margin-top:22px;">
-        <div class="definition"><strong>${i}.</strong> ${m}</div>
-        ${b ? `<div>${b}</div>` : ""}
-        ${exampleHTML}
-      </div>`;
-    }
-
-    entries.innerHTML = `<div class="entry">
-      <h2>${d.english}</h2>
-      <div class="pos">${d.pos}</div>
-      ${senses}
-    </div>`;
-    return;
-  }
-
-  // Bikol→English rendering
-  entries.innerHTML = `<div class="entry">
-    <h2>${d.bikol}</h2>
-    <div class="pos">${d.pos}</div>
-    <div class="definition">${d.definition || ""}</div>
-    <div class="example">
-      ${d.exampleBikol || ""}<br>
-      <em>${d.exampleEnglish || ""}</em>
-    </div>
-  </div>`;
+function render(d){
+  suggestions.style.display="none";
+  entries.innerHTML=`<div class="entry"><h2>${d.english||d.bikol}</h2><div class="pos">${d.pos||""}</div></div>`;
 }
 </script>
 </body>
