@@ -133,7 +133,7 @@ main{
 /* left-align results like Oxford layout */
 #entries{
   max-width:680px;
-  margin:12px 0 0 4vw; /* move results slightly left */
+  margin:12px 0 0 8vw; /* align entries/results at 8vw from the left */ /* align entries/results at 9vw from the left */
   align-self:flex-start;
   padding:0;
 }
@@ -297,6 +297,161 @@ main{
   color:var(--secondary);
 }
 
+/* Word of the Day card (Oxford-like) */
+.wod-card{
+  max-width:360px;
+  margin:0 auto 28px;
+  background:rgba(91,111,142,.16);
+  border-radius:18px;
+  padding:18px 18px 16px;
+  text-align:center;
+  box-shadow:0 14px 34px rgba(0,0,0,.12);
+  border:1px solid rgba(255,255,255,.65);
+}
+.wod-top{
+  display:flex;
+  align-items:center;
+  justify-content:center; /* center date */
+  color:rgba(13,27,42,.72);
+  font-size:14px;
+  font-weight:500;
+  position:relative;
+}
+.wod-rss{
+  position:absolute;
+  right:0;
+  border:none;
+  background:transparent;
+  color:rgba(255,255,255,.9);
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:10px;
+}
+.wod-rss{
+  border:none;
+  background:transparent;
+  color:rgba(255,255,255,.9);
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:10px;
+}
+.wod-title{
+  margin:20px 0 4px;
+  font-size:42px; /* larger Word of the Day */
+  font-weight:700;
+  color:var(--accent);
+  line-height:1.05;
+}
+.wod-pos{
+  display:block;
+  font-style:italic;
+  color:rgba(13,27,42,.72);
+  margin-bottom:14px;
+  font-size:13px; /* smaller POS */
+}
+.wod-actions{
+  display:flex;
+  align-items:center;
+  justify-content:center; /* center single audio icon */
+  margin:10px 0 14px;
+}
+.wod-actions button{
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  padding:8px;
+  border-radius:999px;
+  position:relative;
+}
+.wod-actions button:hover{ background:rgba(255,255,255,.55); }
+
+/* Listen tooltip */
+.wod-actions button::after{
+  content:attr(data-tooltip);
+  position:absolute;
+  bottom:-34px;
+  left:50%;
+  transform:translateX(-50%) translateY(-4px);
+  background:#111827;
+  color:#fff;
+  font-size:12px;
+  padding:6px 8px;
+  border-radius:6px;
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .15s ease, transform .15s ease;
+}
+.wod-actions button:hover::after{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* Disabled state */
+.wod-actions button:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+.wod-actions button:disabled:hover{ background:transparent; }
+.wod-actions button:disabled::after{ opacity:0; }
+.wod-actions .wod-a2{ color:#BE123C; font-size:22px; }
+.wod-sub{
+  color:rgba(13,27,42,.72);
+  font-size:13px;
+  margin:6px 0 10px;
+}
+.wod-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  border-radius:999px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  letter-spacing:.3px;
+  font-size:13px;
+  min-width:220px;
+}
+.wod-level{
+  display:inline-block;
+  margin-top:10px;
+  padding:4px 8px;
+  border-radius:8px;
+  background:rgba(17,24,39,.18);
+  color:rgba(13,27,42,.9);
+  font-weight:700;
+  font-size:12px;
+}
+.wod-foot{
+  margin-top:10px;
+  font-size:11px;
+  color:rgba(13,27,42,.65);
+}
+
+.wod-link{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:700;
+}
+.wod-link:hover{ text-decoration:underline; }
+
+@media (max-width: 420px){
+  .wod-card{ max-width:100%; }
+  .wod-pill{ min-width:0; width:100%; }
+}
+
+.wod-meaning{
+  display:none; /* keep Oxford-like card clean; word opens entry on click */
+}
+
+.wod-link{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:600;
+}
+.wod-link:hover{ text-decoration:underline; }
+
 footer{
   margin-top:auto;
   padding:24px 5vw;
@@ -306,11 +461,6 @@ footer{
   border-top:1px solid var(--rule);
 }
 
-#entries{
-  max-width:680px; /* Oxford-style narrower content column */
-  margin:12px auto 0;
-  padding:0;
-}
 
 /* Remove blue autofill background */
 input:-webkit-autofill,
@@ -362,6 +512,31 @@ input:-webkit-autofill:active {
     <div class="suggestions" id="suggestions"></div>
   </div>
 
+  <div class="wod-card" id="wordOfDay" role="region" aria-label="Word of the day">
+    <div class="wod-top">
+      <div id="wod-date">—</div>
+      <button class="wod-rss" type="button" aria-label="RSS">
+        <i class="fa-solid fa-rss"></i>
+      </button>
+    </div>
+
+    <div class="wod-title"><span id="wod-word">—</span></div>
+    <span class="wod-pos" id="wod-pos"></span>
+
+    <div class="wod-actions">
+      <button type="button" id="wodListenBtn" class="wod-listen" aria-label="Listen" data-tooltip="Listen">
+        <i class="fa-solid fa-volume-high wod-a2"></i>
+      </button>
+    </div>
+
+    
+    <div class="wod-pill" id="wod-list">Bikol Word of the Day</div>
+    <div class="wod-level" id="wod-level" style="display:none;">A2</div>
+
+    
+    <span class="wod-meaning" id="wod-meaning"></span>
+  </div>
+
   <div id="entries"></div>
 </main>
 
@@ -393,6 +568,18 @@ const entries = document.getElementById("entries");
 const lang = document.getElementById("lang");
 const searchBtn = document.getElementById("searchBtn");
 
+const wordOfDay = document.getElementById("wordOfDay");
+const wodDate = document.getElementById("wod-date");
+const wodWord = document.getElementById("wod-word");
+const wodPos = document.getElementById("wod-pos");
+const wodList = document.getElementById("wod-list");
+const wodLevel = document.getElementById("wod-level");
+const wodMeaning = document.getElementById("wod-meaning");
+const wodListenBtn = document.getElementById("wodListenBtn");
+
+let currentWod = null;
+let wodAudio = null; // HTMLAudioElement when an audio URL is provided
+
 function escapeHtml(str) {
   return String(str)
     .replaceAll("&", "&amp;")
@@ -405,6 +592,141 @@ function escapeHtml(str) {
 function closeSuggestions(){
   suggestions.classList.remove("open");
   suggestions.innerHTML = "";
+}
+
+function hideWordOfDay(){
+  if (wordOfDay) wordOfDay.style.display = "none";
+}
+
+function showWordOfDay(){
+  if (wordOfDay) wordOfDay.style.display = "";
+}
+
+function isTruthy(v){
+  const s = String(v ?? "").trim().toLowerCase();
+  return s === "1" || s === "true" || s === "yes" || s === "y" || s === "wod";
+}
+
+function isHomeView(){
+  return (search.value || "").trim() === "" && (entries.innerHTML || "").trim() === "";
+}
+
+function pickWordOfDay(rows){
+  const curated = rows.filter(r =>
+    isTruthy(r.wod) || isTruthy(r.word_of_day) || isTruthy(r.wordOfDay) || isTruthy(r.wotd) || isTruthy(r.featured)
+  );
+  const pool = curated.length ? curated : rows;
+  if (!pool.length) return null;
+
+  // Date-based, but "random-looking" deterministic pick
+  const dayIndex = Math.floor(Date.now() / 86400000);
+  const idx = (dayIndex * 9301 + 49297) % pool.length;
+  return pool[idx] || null;
+}
+
+function formatWodDate(d){
+  // e.g., 18 January 2026
+  try {
+    const dt = new Date(d);
+    const day = dt.getDate();
+    const month = dt.toLocaleString(undefined, { month: "long" });
+    const year = dt.getFullYear();
+    return day + " " + month + " " + year;
+  } catch {
+    return "";
+  }
+}
+
+function setWordOfDay(){
+  if (!wordOfDay || !wodWord || !wodPos) return;
+  if (!dictionaryBI.length) return;
+
+  // Word of the day comes from the Bikol -> English database
+  const picked = pickWordOfDay(dictionaryBI);
+  if (!picked) return;
+
+  currentWod = picked;
+
+  const word = picked.bikol || "";
+  const pos = picked.pos || "";
+  const gloss = picked.gloss || "";
+  const meaning = picked.meaning || "";
+
+  // date
+  if (wodDate) wodDate.textContent = formatWodDate(Date.now());
+
+  // clickable word
+  wodWord.innerHTML = '<a href="#" class="wod-link" id="wodLink">' + escapeHtml(word) + '</a>';
+  wodPos.textContent = pos ? pos : "";
+
+  // capsule label
+  if (wodList) wodList.textContent = "Bikol Word of the Day";
+
+  // optional level
+  const lvl = (picked.level || picked.cefr || "");
+  if (wodLevel) {
+    if (String(lvl).trim()) {
+      wodLevel.style.display = "inline-block";
+      wodLevel.textContent = String(lvl).trim();
+    } else {
+      wodLevel.style.display = "none";
+    }
+  }
+
+  // meaning text (used for display)
+  if (wodMeaning) {
+    let line = "";
+    if (gloss) line += gloss;
+    if (meaning) line += (line ? " — " : "") + meaning;
+    wodMeaning.textContent = line || "";
+  }
+
+  // Listen button: enabled ONLY when an audio URL exists (no speechSynthesis)
+  const audioUrl = (picked.audio_url || picked.audioUrl || picked.audio || "").toString().trim();
+  if (wodListenBtn) {
+    if (audioUrl) {
+      wodAudio = new Audio(audioUrl);
+      wodListenBtn.disabled = false;
+      wodListenBtn.setAttribute("aria-label", "Listen");
+    } else {
+      wodAudio = null;
+      wodListenBtn.disabled = true;
+      wodListenBtn.setAttribute("aria-label", "Audio unavailable");
+    }
+  }
+
+  const wodLink = document.getElementById("wodLink");
+  wodLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    hideWordOfDay();
+    lang.value = "bikol";
+    closeSuggestions();
+    renderBikol(picked);
+  });
+}
+
+// Listen button behavior (plays provided audio URL only)
+if (wodListenBtn){
+  wodListenBtn.addEventListener("click", () => {
+    if (wodListenBtn.disabled) return;
+    if (!wodAudio) return;
+
+    try {
+      wodAudio.currentTime = 0;
+      wodAudio.play();
+    } catch {}
+  });
+}
+
+
+function syncWordOfDayVisibility(){
+  if (!wordOfDay) return;
+  if (isHomeView()) {
+    showWordOfDay();
+    setWordOfDay();
+  } else {
+    hideWordOfDay();
+  }
 }
 
 function buildExampleHTML(ex){
@@ -479,6 +801,7 @@ function render(d){
 }
 
 function noMatch(term){
+  hideWordOfDay();
   const modeText = (lang.value === "english") ? "English - Bikol" : "Bikol - English";
   const safeTerm = escapeHtml(term || "");
   entries.innerHTML =
@@ -490,6 +813,7 @@ function noMatch(term){
 }
 
 function performSearch(){
+  hideWordOfDay();
   const original = (search.value || "").trim();
   const q = original.toLowerCase();
   if (!q) return;
@@ -511,7 +835,14 @@ function updateSuggestions(){
   const q = search.value.toLowerCase().trim();
   entries.innerHTML = "";
   closeSuggestions();
-  if (!q) return;
+
+  // Word of the day only shows on Home (no search + no results)
+  if (!q) {
+    syncWordOfDayVisibility();
+    return;
+  }
+
+  hideWordOfDay();
 
   const dict = dictForMode();
   const field = fieldForMode();
@@ -532,6 +863,7 @@ function updateSuggestions(){
     item.className = "sugg-item";
     item.textContent = row[field];
     item.addEventListener("click", () => {
+      hideWordOfDay();
       /* clear whatever the user typed, then render */
       search.value = "";
       render(row);
@@ -550,6 +882,15 @@ function buildReverse(rows){
     const pos = r.pos || "";
     const english = r.english || "";
 
+    // carry optional admin flags to reverse rows
+    const flags = {
+      wod: r.wod,
+      word_of_day: r.word_of_day,
+      wordOfDay: r.wordOfDay,
+      wotd: r.wotd,
+      featured: r.featured
+    };
+
     for (let i = 1; i <= 10; i++) {
       const bikol = r["sense" + i + "_bikol"] || "";
       const meaning = r["sense" + i + "_meaning"] || "";
@@ -561,7 +902,8 @@ function buildReverse(rows){
         pos: pos,
         gloss: english ? (english + (pos ? " (" + pos + ")" : "")) : "",
         meaning: meaning,
-        example: example
+        example: example,
+        ...flags
       });
     }
   });
@@ -582,6 +924,7 @@ function buildReverse(rows){
 function setDataFromRows(rows){
   dictionaryEN = (rows || []).filter(row => row.english);
   dictionaryBI = buildReverse(dictionaryEN);
+  syncWordOfDayVisibility();
 }
 
 function showNotice(html){
@@ -625,6 +968,7 @@ homeLink.addEventListener("click", (e) => {
   search.value = "";
   entries.innerHTML = "";
   closeSuggestions();
+  syncWordOfDayVisibility();
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
@@ -639,6 +983,7 @@ lang.addEventListener("change", () => {
   closeSuggestions();
   entries.innerHTML = "";
   search.value = "";
+  syncWordOfDayVisibility();
   search.focus();
 });
 
@@ -667,6 +1012,8 @@ document.addEventListener("keydown", (e) => {
 });
 // Load CSV
 loadCsvFromFile();
+// Initial visibility
+syncWordOfDayVisibility();
 
 // Tests (console)
 function assert(condition, message){
@@ -679,6 +1026,8 @@ function assert(condition, message){
     assert(document.getElementById("search"), "Search input should exist");
     assert(document.getElementById("suggestions"), "Suggestions container should exist");
     assert(typeof buildReverse === "function", "buildReverse should exist");
+    assert(document.getElementById("wordOfDay"), "Word of Day block should exist");
+    assert(typeof setWordOfDay === "function", "setWordOfDay should exist");
     console.log("Smoke tests passed");
   } catch (e) {
     console.error("Smoke tests failed:", e);
