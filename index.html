@@ -131,6 +131,16 @@ footer{
   color:var(--secondary);
   border-top:1px solid var(--rule);
 }
+
+/* Remove blue autofill background in Chrome/Edge/Safari */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
+    -webkit-text-fill-color: var(--ink) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
 </style>
 </head>
 <body>
