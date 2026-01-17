@@ -167,7 +167,6 @@ search.addEventListener("input",()=>{
 function render(d){
   suggestions.style.display="none";
 
-  // English → Bikol
   if(lang.value==="english"){
     let senses="";
     for(let i=1;i<=10;i++){
@@ -203,7 +202,6 @@ function render(d){
     return;
   }
 
-  // Bikol → English
   entries.innerHTML=`
     <div class="entry">
       <h2>${d.bikol}</h2>
@@ -219,3 +217,4 @@ function render(d){
 
 </body>
 </html>
+
