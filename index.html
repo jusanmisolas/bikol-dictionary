@@ -56,23 +56,30 @@ main{
   border-radius:14px;
   box-shadow:0 10px 30px rgba(0,0,0,.15);
   position:relative;
+  overflow:hidden; /* ensures rounded corners hide overflowing content */
 }
 .search-wrapper select{
-  background:var(--primary);
-  color:#fff;
-  border:none;
-  padding:14px 16px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 14px 16px;
+  border-radius: 14px 0 0 14px; /* left corners rounded */
+  font-size: 16px;
+  cursor: pointer;
+  appearance: none; /* removes default dropdown arrow styling */
 }
 .search-wrapper input{
-  flex:1;
-  border:none;
-  padding:16px 18px;
-  font-size:16px;
+  flex: 1;
+  border: none;
+  padding: 16px 18px;
+  font-size: 16px;
+  border-radius: 0 14px 14px 0; /* right corners rounded */
 }
 .search-wrapper button{
   border:none;
   background:none;
   padding:0 16px;
+  cursor:pointer;
 }
 .suggestions{
   position:absolute;
