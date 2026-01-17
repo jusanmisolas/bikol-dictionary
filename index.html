@@ -40,7 +40,7 @@ header{
   top:0;
 }
 header h1{
-  font-family:"IBM Plex Sans",sans-serif; /* changed to sans-serif */
+  font-family:"IBM Plex Sans",sans-serif;
   font-size:18px;
   margin:0;
 }
@@ -213,7 +213,7 @@ function render(d) {
       }
       senses += `<div style="margin-top:22px;">
         <div class="definition"><strong>${i}.</strong> ${m}</div>
-        ${b ? `<div><strong>Bikol equivalents:</strong> ${b}</div>` : ""}
+        ${b ? `<div>${b}</div>` : ""}
         ${exampleHTML}
       </div>`;
     }
