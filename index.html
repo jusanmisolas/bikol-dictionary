@@ -62,13 +62,14 @@ main{
   background: var(--primary); /* blue dropdown box */
   color: #fff;
   border: none;
-  padding: 14px 0; /* vertical padding only */
-  width: 120px; /* fixed width for centered text */
+  padding: 14px 12px; /* vertical + small horizontal padding */
+  min-width: 70px; /* enough for “Bikol” or “English” */
   border-radius: 14px 0 0 14px; /* left side rounded */
   font-size: 16px;
   cursor: pointer;
   appearance: none; /* remove default arrow */
   text-align: center; /* center the text */
+  width: auto; /* shrink to content */
 }
 .search-wrapper input{
   flex: 1;
