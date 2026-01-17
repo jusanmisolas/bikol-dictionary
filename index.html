@@ -38,7 +38,7 @@ header{
   align-items:center;
   position:sticky;
   top:0;
-  z-index:1000; /* Ensure header is above everything */
+  z-index:1000;
 }
 header h1{
   font-family:"IBM Plex Sans",sans-serif;
@@ -61,7 +61,7 @@ main{
   margin: 0 auto 56px;
 }
 .search-wrapper select{
-  flex: 0 0 auto;       /* Prevent resizing */
+  flex: 0 0 auto;
   background: var(--primary);
   color: #fff;
   border: none;
@@ -75,14 +75,13 @@ main{
   width: auto;
 }
 .search-wrapper input{
-  flex: 1 1 auto;       /* Take remaining space but don't shrink */
-  min-width: 0;         /* Prevent shrinking */
+  flex: 1 1 auto;
+  min-width: 0;
   border: none;
   padding: 16px 18px;
   font-size: 16px;
   border-radius: 0 14px 14px 0;
 }
-/* Remove blue focus highlight */
 .search-wrapper input:focus {
   outline: none;
   box-shadow: none;
@@ -102,7 +101,7 @@ main{
   border-radius: 14px;
   box-shadow: 0 16px 40px rgba(0,0,0,.2);
   display: none;
-  z-index: 500; /* Lower than header */
+  z-index: 500;
 }
 .suggestions div{
   padding:16px 18px;
@@ -170,10 +169,10 @@ input:-webkit-autofill:active {
 </main>
 <footer>© 2021–2026 Jusan Misolas</footer>
 <script>
-// Clear previous dictionary in memory
+// Clear previous dictionary
 let dictionaryEN = [], dictionaryBI = [];
 
-// Cache-busting with Date.now()
+// Cache-busting for CSV
 Papa.parse(`english_to_bikol.csv?${Date.now()}`, {
     download:true,
     header:true,
@@ -181,8 +180,8 @@ Papa.parse(`english_to_bikol.csv?${Date.now()}`, {
     complete: r => dictionaryEN = r.data
 });
 
-// For Bikol→English, load your CSV similarly if needed
-dictionaryBI = []; // placeholder for demo
+// Placeholder for Bikol→English CSV
+dictionaryBI = [];
 
 const search = document.getElementById("search");
 const suggestions = document.getElementById("suggestions");
@@ -222,7 +221,17 @@ function performSearch() {
   const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
   const field = lang.value;
   const match = dict.find(d => d[field]?.toLowerCase().startsWith(q));
-  if (match) render(match);
+
+  if (match) {
+    render(match);
+  } else {
+    const langText = lang.value === "english" ? "English-Bikol" : "Bikol-English";
+    entries.innerHTML = `<div class="entry">
+      <div class="definition" style="text-align:center; font-weight:bold; font-size:16px;">
+        No exact match found for "${search.value}" in ${langText} Dictionary
+      </div>
+    </div>`;
+  }
 }
 
 function render(d) {
@@ -257,7 +266,7 @@ function render(d) {
     return;
   }
 
-  // Bikol→English rendering (demo empty)
+  // Bikol→English rendering
   entries.innerHTML = `<div class="entry">
     <h2>${d.bikol}</h2>
     <div class="pos">${d.pos}</div>
