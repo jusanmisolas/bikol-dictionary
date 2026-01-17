@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>Bikol Dictionary</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
 <style>
 :root{
   --primary:#0D1B2A;
@@ -14,7 +15,9 @@
   --ink:#1F2937;
   --paper:#F8F9FA;
   --panel:#FFFFFF;
-  --accent:#001F3D; /* updated to dark navy */
+  --accent:#001F3D;
+  --accent-soft:#5B6F8E;
+  --gold-dark:#E3C45A;
   --hover:#F1F3F5;
   --rule:#E6E8EB;
 }
@@ -24,13 +27,14 @@ body{
   font-family:"IBM Plex Sans",sans-serif;
   background:var(--paper);
   color:var(--ink);
-  line-height:1.7;
+  line-height:1.6;
   min-height:100vh;
   display:flex;
   flex-direction:column;
 }
+
 header{
-  background:var(--accent); /* dark navy */
+  background:var(--accent);
   color:#fff;
   padding:8px 5vw;
   display:flex;
@@ -40,97 +44,201 @@ header{
   top:0;
   z-index:1000;
 }
-header h1{
-  font-family:"IBM Plex Sans",sans-serif;
-  font-size:18px;
-  margin:0;
+.header-left{display:flex;align-items:center;gap:12px;}
+header h1{font-size:18px;margin:0;}
+
+.header-right{display:flex;align-items:center;gap:10px;}
+.header-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.6);
+  background:transparent;
+  color:#fff;
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
 }
+.header-btn:hover{background:rgba(255,255,255,.12);} 
+.header-btn i{font-size:13px;}
+
+.burger-btn{
+  border:none;
+  background:transparent;
+  color:#fff;
+  padding:8px;
+  border-radius:10px;
+  cursor:pointer;
+  line-height:1;
+}
+.burger-btn:hover{background:rgba(255,255,255,.12);} 
+.burger-btn:focus{outline:2px solid rgba(255,255,255,.6);outline-offset:2px;}
+
+.menu{
+  position:fixed;
+  top:52px;
+  left:5vw;
+  background:#fff;
+  color:var(--ink);
+  border-radius:14px;
+  box-shadow:0 16px 40px rgba(0,0,0,.25);
+  border:1px solid var(--rule);
+  min-width:220px;
+  overflow:hidden;
+  display:none;
+  z-index:1200;
+}
+.menu.open{display:block;}
+.menu a{
+  display:block;
+  padding:14px 16px;
+  text-decoration:none;
+  color:var(--ink);
+  border-bottom:1px solid var(--rule);
+  font-weight:500;
+}
+.menu a:last-child{border-bottom:none;}
+.menu a:hover{background:var(--hover);}
+
 main{
   max-width:1200px;
   margin:40px auto 0;
+  width:100%;
+  padding:0 5vw;
 }
+
 .search-wrapper{
-  display: flex;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.15);
-  position: relative;
-  overflow: visible;
-  width: 100%;
-  max-width: 780px;
-  margin: 0 auto 56px;
+  display:flex;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  position:relative;
+  overflow:visible;
+  width:100%;
+  max-width:860px; /* Oxford-like length on desktop */
+  margin:16px auto 32px; /* center on full screen */
 }
+@media (min-width: 1024px){
+  .search-wrapper{max-width:860px;}
+}
+
 .search-wrapper select{
-  flex: 0 0 auto;
-  background: var(--accent); /* dark navy */
-  color: #fff;
-  border: none;
-  padding: 14px 12px;
-  min-width: 70px;
-  border-radius: 14px 0 0 14px;
-  font-size: 16px;
-  cursor: pointer;
-  appearance: none;
-  text-align: center;
-  width: auto;
-}
-.search-wrapper input{
-  flex: 1 1 auto;
-  min-width: 0;
-  border: none;
-  padding: 16px 18px;
-  font-size: 16px;
-  border-radius: 0 14px 14px 0;
-}
-.search-wrapper input:focus {
-  outline: none;
-  box-shadow: none;
-}
-.search-wrapper button{
-  border: none;
-  background: none;
-  padding: 0 16px;
-  cursor: pointer;
-}
-.suggestions{
-  position: absolute;
-  top: calc(100% + 12px);
-  left: 0;
-  width: 100%;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 16px 40px rgba(0,0,0,.2);
-  display: none;
-  z-index: 500;
-}
-.suggestions div{
-  padding:16px 18px;
-  border-bottom:1px solid var(--rule);
+  font-weight:600;
+  flex:0 0 auto;
+  background:var(--gold-dark);
+  color:#000;
+  border:none;
+  padding:14px 36px;
+  min-width:90px;
+  border-radius:14px 0 0 14px;
+  font-size:16px;
   cursor:pointer;
+  appearance:none;
+  text-align:center;
+  width:auto;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%231F2937' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
 }
+.search-wrapper select option{ text-align:center; color:#000; }
+
+.search-wrapper input{
+  flex:1 1 auto;
+  min-width:0;
+  border:none;
+  padding:16px 18px;
+  font-size:16px;
+  font-weight:500;
+  color:var(--ink);
+}
+.search-wrapper input::placeholder{ color:#9CA3AF; font-weight:600; }
+.search-wrapper input:focus{outline:none;box-shadow:none;}
+
+.search-wrapper button{
+  border:none;
+  background:none;
+  padding:0 16px;
+  cursor:pointer;
+  color:var(--secondary);
+}
+.search-wrapper button:hover{color:var(--ink);}
+
+/* Suggestions dropdown */
+.suggestions{
+  position:absolute;
+  top:100%;
+  left:0;
+  width:100%;
+  background:#fff;
+  border-radius:0 0 14px 14px;
+  box-shadow:0 16px 40px rgba(0,0,0,.18);
+  border:1px solid var(--rule);
+  border-top:none;
+  display:none;
+  z-index:500;
+  overflow:hidden;
+}
+.suggestions.open{
+  display:grid;
+  grid-template-columns:90px 1fr;
+}
+.suggestions .sugg-side{
+  background:rgba(91,111,142,.12);
+  color:var(--secondary);
+  font-weight:600;
+  font-size:12px;
+  padding:14px 10px;
+  border-right:1px solid var(--rule);
+  text-align:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.suggestions .sugg-list{ padding:6px 0; }
+.suggestions .sugg-item{
+  padding:12px 14px;
+  padding-left:18px;
+  cursor:pointer;
+  font-size:15px;
+}
+.suggestions .sugg-item:hover{background:var(--hover);}
+
 .entry{
-  margin:0 5vw;
-  padding:40px 0;
+  margin:0;
+  padding:20px 0;
   border-bottom:1px solid var(--rule);
 }
+.headword{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
 .entry h2{
   margin:0;
-  color:var(--primary);
+  color:var(--accent);
+  font-size:28px;
+  font-weight:600;
+  line-height:1.15;
 }
-.pos{
-  font-style:italic;
-  color:var(--secondary);
-  margin-bottom:14px;
-}
-.definition{
-  font-size:17px;
-}
+.pos{font-style:italic;color:var(--secondary);font-size:14px;}
+.definition{font-size:15px;line-height:1.55;}
 .example{
-  margin-top:12px;
-  padding:14px 16px;
+  margin:8px 0;
+  padding:10px 12px;
   background:var(--hover);
-  border-left:4px solid var(--accent); /* dark navy vertical line */
+  border-left:4px solid var(--accent-soft);
+  font-size:14px;
+  line-height:1.45;
 }
+
+.notice{
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:14px;
+  padding:14px 16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  font-size:14px;
+  color:var(--secondary);
+}
+
 footer{
   margin-top:auto;
   padding:24px 5vw;
@@ -140,143 +248,362 @@ footer{
   border-top:1px solid var(--rule);
 }
 
-/* Remove blue autofill background in Chrome/Edge/Safari */
+/* Remove blue autofill background */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
-    -webkit-text-fill-color: var(--ink) !important;
-    transition: background-color 5000s ease-in-out 0s;
+  -webkit-box-shadow:0 0 0px 1000px #fff inset !important;
+  -webkit-text-fill-color:var(--ink) !important;
+  transition:background-color 5000s ease-in-out 0s;
 }
 </style>
 </head>
+
 <body>
 <header>
-  <h1>Bikol Dictionary</h1>
+  <div class="header-left">
+    <button class="burger-btn" id="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <h1>Bikol Dictionary</h1>
+  </div>
+
+  <div class="header-right">
+    <button class="header-btn" type="button" aria-label="Help">
+      <i class="fa-regular fa-circle-question"></i>
+      Help
+    </button>
+    <button class="header-btn" type="button" aria-label="Sign in">
+      <i class="fa-regular fa-user"></i>
+      Sign in
+    </button>
+  </div>
 </header>
+
+<nav class="menu" id="menu" aria-label="Site menu">
+  <a href="#about">About</a>
+  <a href="#grammar">Grammar</a>
+  <a href="#resource">Resource</a>
+  <a href="#contact">Contact</a>
+  <a href="#donate">Donate</a>
+</nav>
+
 <main>
   <div class="search-wrapper">
     <select id="lang">
-      <option value="english">English</option>
-      <option value="bikol">Bikol</option>
+      <option value="english">English → Bikol</option>
+      <option value="bikol">Bikol → English</option>
     </select>
-    <input id="search" placeholder="Search Bikol Dictionary" autocomplete="off">
-    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+    <input id="search" placeholder="Search Bikol Dictionary" autocomplete="off" />
+    <button id="searchBtn" type="button" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
     <div class="suggestions" id="suggestions"></div>
   </div>
+
   <div id="entries"></div>
 </main>
-<footer>© 2021–2026 Jusan Misolas</footer>
+
+<footer>© 2026 Jusan Misolas. All rights reserved.</footer>
+
+<!--
+Fallback sample (ONLY used if english_to_bikol.csv cannot be fetched in a sandboxed preview).
+Keep your real database in: english_to_bikol.csv
+-->
+<script type="text/plain" id="csv-fallback">english,pos,sense1_meaning,sense1_bikol,sense1_example,sense2_meaning,sense2_bikol,sense2_example,sense3_meaning,sense3_bikol,sense3_example,sense4_meaning,sense4_bikol,sense4_example,sense5_meaning,sense5_bikol,sense5_example,sense6_meaning,sense6_bikol,sense6_example,sense7_meaning,sense7_bikol,sense7_example,sense8_meaning,sense8_bikol,sense8_example,sense9_meaning,sense9_bikol,sense9_example,sense10_meaning,sense10_bikol,sense10_example
+run,verb,to move swiftly on foot,dalagan,May nahiling akong nagdadalagan na ikos.||I saw a cat running.,to manage or operate something,padalagan,Matibay syang magpadalagan nin negosyo.||She is good at running business.,,,,,,,,,,,,,,,,,,,,,,,,
+house,noun,a building for people to live in,harong,Ini an samuyang harong.||This is our house.,,,,,,,,,,,,,,,,,,,,,,,,,,,
+eat,verb,to put food into the mouth and swallow,kakan,Nagkakan kami subagong aga.||We ate this morning.,,,,,,,,,,,,,,,,,,,,,,,,,,,
+big,adjective,of large size,dakula,Dakula an harong.||The house is big.,,,,,,,,,,,,,,,,,,,,,,,,,,,
+</script>
+
 <script>
-// Clear previous dictionary
-let dictionaryEN = [], dictionaryBI = [];
+// CSV is separate: put english_to_bikol.csv beside this HTML.
+// In some previews/sandboxes, file fetch is blocked. If that happens, we fall back to a tiny sample.
 
-// Cache-busting for CSV
-Papa.parse(`english_to_bikol.csv?${Date.now()}`, {
-    download:true,
-    header:true,
-    skipEmptyLines:true,
-    complete: r => dictionaryEN = r.data
-});
+let dictionaryEN = [];
+let dictionaryBI = [];
 
-// Placeholder for Bikol→English CSV
-dictionaryBI = [];
-
+const burger = document.getElementById("burger");
+const menu = document.getElementById("menu");
 const search = document.getElementById("search");
 const suggestions = document.getElementById("suggestions");
 const entries = document.getElementById("entries");
 const lang = document.getElementById("lang");
-const searchBtn = document.querySelector(".search-wrapper button");
+const searchBtn = document.getElementById("searchBtn");
 
-search.addEventListener("input", () => {
-  const q = search.value.toLowerCase().trim();
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function closeSuggestions(){
+  suggestions.classList.remove("open");
   suggestions.innerHTML = "";
-  entries.innerHTML = "";
-  if (!q) { suggestions.style.display = "none"; return; }
+}
 
-  const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
-  const field = lang.value;
-  const matches = dict.filter(d => d[field]?.toLowerCase().startsWith(q));
-  if (!matches.length) { suggestions.style.display = "none"; return; }
+function buildExampleHTML(ex){
+  if (!ex) return "";
+  const parts = String(ex).split("||");
+  const bik = parts[0] ? escapeHtml(parts[0]) : "";
+  const eng = parts[1] ? escapeHtml(parts[1]) : "";
+  let html = '<div class="example">' + bik;
+  if (eng) html += '<br><em>' + eng + '</em>';
+  html += '</div>';
+  return html;
+}
 
-  suggestions.style.display = "block";
-  matches.forEach(d => {
-    const div = document.createElement("div");
-    div.textContent = d[field];
-    div.onclick = () => render(d);
-    suggestions.appendChild(div);
-  });
-});
+function dictForMode(){
+  return (lang.value === "english") ? dictionaryEN : dictionaryBI;
+}
 
-searchBtn.addEventListener("click", () => performSearch());
-search.addEventListener("keydown", e => {
-  if (e.key === "Enter") performSearch();
-});
+function fieldForMode(){
+  return (lang.value === "english") ? "english" : "bikol";
+}
 
-function performSearch() {
+function renderEnglish(d){
+  closeSuggestions();
+
+  let sensesHtml = "";
+  for (let i = 1; i <= 10; i++) {
+    const m = d["sense" + i + "_meaning"] || "";
+    const b = d["sense" + i + "_bikol"] || "";
+    const ex = d["sense" + i + "_example"] || "";
+    if (!m) continue;
+
+    sensesHtml += '<div style="margin-top:18px;">';
+    sensesHtml += '<div class="definition"><strong>' + i + '.</strong> ' + escapeHtml(m) + '</div>';
+    if (b) sensesHtml += '<div class="definition">' + escapeHtml(b) + '</div>';
+    sensesHtml += buildExampleHTML(ex);
+    sensesHtml += '</div>';
+  }
+
+  if (!sensesHtml) sensesHtml = '<div class="definition">No senses available.</div>';
+
+  entries.innerHTML =
+    '<div class="entry">' +
+      '<div class="headword">' +
+        '<h2>' + escapeHtml(d.english || "") + '</h2>' +
+        '<span class="pos">' + escapeHtml(d.pos || "") + '</span>' +
+      '</div>' +
+      sensesHtml +
+    '</div>';
+}
+
+function renderBikol(d){
+  closeSuggestions();
+
+  let body = '';
+  if (d.gloss) body += '<div class="definition">' + escapeHtml(d.gloss) + '</div>';
+  if (d.meaning) body += '<div class="definition" style="margin-top:10px;">' + escapeHtml(d.meaning) + '</div>';
+  if (d.example) body += buildExampleHTML(d.example);
+
+  entries.innerHTML =
+    '<div class="entry">' +
+      '<div class="headword">' +
+        '<h2>' + escapeHtml(d.bikol || "") + '</h2>' +
+        '<span class="pos">' + escapeHtml(d.pos || "") + '</span>' +
+      '</div>' +
+      body +
+    '</div>';
+}
+
+function render(d){
+  if (lang.value === "english") return renderEnglish(d);
+  return renderBikol(d);
+}
+
+function noMatch(){
+  const modeText = (lang.value === "english") ? "English → Bikol" : "Bikol → English";
+  entries.innerHTML =
+    '<div class="entry">' +
+      '<div class="definition" style="text-align:center; font-weight:bold; font-size:16px;">' +
+        'No exact match found for "' + escapeHtml(search.value) + '" in ' + modeText + ' Dictionary' +
+      '</div>' +
+    '</div>';
+}
+
+function performSearch(){
   const q = search.value.toLowerCase().trim();
   if (!q) return;
 
-  const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
-  const field = lang.value;
-  const match = dict.find(d => d[field]?.toLowerCase().startsWith(q));
-
-  if (match) {
-    render(match);
-  } else {
-    const langText = lang.value === "english" ? "English-Bikol" : "Bikol-English";
-    entries.innerHTML = `<div class="entry">
-      <div class="definition" style="text-align:center; font-weight:bold; font-size:16px;">
-        No exact match found for "${search.value}" in ${langText} Dictionary
-      </div>
-    </div>`;
-  }
+  const dict = dictForMode();
+  const field = fieldForMode();
+  const match = dict.find(row => (row[field] || "").toLowerCase().startsWith(q));
+  if (match) return render(match);
+  noMatch();
 }
 
-function render(d) {
-  suggestions.style.display = "none";
+function updateSuggestions(){
+  const q = search.value.toLowerCase().trim();
+  entries.innerHTML = "";
+  closeSuggestions();
+  if (!q) return;
 
-  if (lang.value === "english") {
-    let senses = "";
+  const dict = dictForMode();
+  const field = fieldForMode();
+  const matches = dict.filter(row => (row[field] || "").toLowerCase().startsWith(q));
+  if (!matches.length) return;
+
+  suggestions.classList.add("open");
+
+  const side = document.createElement("div");
+  side.className = "sugg-side";
+  side.textContent = (lang.value === "english") ? "English → Bikol" : "Bikol → English";
+
+  const list = document.createElement("div");
+  list.className = "sugg-list";
+
+  matches.slice(0, 12).forEach(row => {
+    const item = document.createElement("div");
+    item.className = "sugg-item";
+    item.textContent = row[field];
+    item.addEventListener("click", () => {
+      search.value = row[field] || "";
+      render(row);
+    });
+    list.appendChild(item);
+  });
+
+  suggestions.appendChild(side);
+  suggestions.appendChild(list);
+}
+
+function buildReverse(rows){
+  const out = [];
+
+  rows.forEach(r => {
+    const pos = r.pos || "";
+    const english = r.english || "";
+
     for (let i = 1; i <= 10; i++) {
-      const m = d[`sense${i}_meaning`] || "";
-      const b = d[`sense${i}_bikol`] || "";
-      const ex = d[`sense${i}_example`] || "";
-      if (!m) continue;
+      const bikol = r["sense" + i + "_bikol"] || "";
+      const meaning = r["sense" + i + "_meaning"] || "";
+      const example = r["sense" + i + "_example"] || "";
+      if (!bikol) continue;
 
-      let exampleHTML = "";
-      if (ex) {
-        const parts = ex.split("||");
-        exampleHTML = `<div class="example">${parts[0]}${parts[1] ? `<br><em>${parts[1]}</em>` : ""}</div>`;
-      }
-
-      senses += `<div style="margin-top:22px;">
-        <div class="definition"><strong>${i}.</strong> ${m}</div>
-        ${b ? `<div>${b}</div>` : ""}
-        ${exampleHTML}
-      </div>`;
+      out.push({
+        bikol: bikol,
+        pos: pos,
+        gloss: english ? (english + (pos ? " (" + pos + ")" : "")) : "",
+        meaning: meaning,
+        example: example
+      });
     }
+  });
 
-    entries.innerHTML = `<div class="entry">
-      <h2>${d.english}</h2>
-      <div class="pos">${d.pos}</div>
-      ${senses}
-    </div>`;
-    return;
-  }
+  const seen = new Set();
+  const deduped = [];
 
-  // Bikol→English rendering
-  entries.innerHTML = `<div class="entry">
-    <h2>${d.bikol}</h2>
-    <div class="pos">${d.pos}</div>
-    <div class="definition">${d.definition || ""}</div>
-    <div class="example">
-      ${d.exampleBikol || ""}<br>
-      <em>${d.exampleEnglish || ""}</em>
-    </div>
-  </div>`;
+  out.forEach(item => {
+    const key = (item.bikol || "").toLowerCase() + "|" + (item.meaning || "").toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    deduped.push(item);
+  });
+
+  return deduped;
 }
+
+function setDataFromRows(rows){
+  dictionaryEN = (rows || []).filter(row => row.english);
+  dictionaryBI = buildReverse(dictionaryEN);
+}
+
+function showNotice(html){
+  entries.innerHTML = '<div class="notice">' + html + '</div>';
+}
+
+function loadCsvFromText(csvText){
+  Papa.parse(csvText, {
+    header:true,
+    skipEmptyLines:true,
+    complete:(r) => {
+      setDataFromRows(r.data || []);
+    }
+  });
+}
+
+function loadCsvFromFile(){
+  Papa.parse("english_to_bikol.csv?" + Date.now(), {
+    download:true,
+    header:true,
+    skipEmptyLines:true,
+    complete:(r) => {
+      setDataFromRows(r.data || []);
+    },
+    error:() => {
+      const fallback = document.getElementById("csv-fallback");
+      loadCsvFromText(fallback.textContent || "");
+
+      showNotice(
+        '<strong>CSV not loaded.</strong> This preview cannot fetch <code>english_to_bikol.csv</code>.<br>' +
+        'On GitHub Pages it will load fine. For now a small built-in sample is used.'
+      );
+    }
+  });
+}
+
+// Events
+search.addEventListener("input", updateSuggestions);
+search.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") performSearch();
+});
+searchBtn.addEventListener("click", performSearch);
+
+lang.addEventListener("change", () => {
+  closeSuggestions();
+  entries.innerHTML = "";
+  search.value = "";
+  search.focus();
+});
+
+burger.addEventListener("click", () => {
+  const isOpen = menu.classList.toggle("open");
+  burger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".search-wrapper")) closeSuggestions();
+
+  if (menu.classList.contains("open") && !e.target.closest("#menu") && !e.target.closest("#burger")) {
+    menu.classList.remove("open");
+    burger.setAttribute("aria-expanded", "false");
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeSuggestions();
+    if (menu.classList.contains("open")) {
+      menu.classList.remove("open");
+      burger.setAttribute("aria-expanded", "false");
+    }
+  }
+});
+
+// Load CSV
+loadCsvFromFile();
+
+// Tests (console)
+function assert(condition, message){
+  if (!condition) throw new Error(message);
+}
+
+(function runTests(){
+  try {
+    assert(document.getElementById("lang"), "Lang select should exist");
+    assert(document.getElementById("search"), "Search input should exist");
+    assert(document.getElementById("suggestions"), "Suggestions container should exist");
+    assert(typeof buildReverse === "function", "buildReverse should exist");
+    console.log("Smoke tests passed");
+  } catch (e) {
+    console.error("Smoke tests failed:", e);
+  }
+})();
 </script>
 </body>
 </html>
