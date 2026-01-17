@@ -101,7 +101,7 @@ main{
 /* ================= SEARCH ================= */
 
 .search-wrapper{
-  max-width:780px;              /* default width */
+  max-width:780px;
   margin:0 auto 56px;
   display:flex;
   align-items:center;
@@ -166,7 +166,7 @@ main{
 
 @media (min-width:1200px){
   .search-wrapper{
-    max-width:900px;            /* wider on desktop */
+    max-width:900px;
   }
 }
 
@@ -258,13 +258,23 @@ footer{
 </footer>
 
 <script>
-let dictionary=[];
+let dictionaryEN = [];
+let dictionaryBI = [];
 
-Papa.parse("dictionary.csv",{
+// English → Bikol
+Papa.parse("english_to_bikol.csv",{
   download:true,
   header:true,
   skipEmptyLines:true,
-  complete:r=>dictionary=r.data
+  complete:r=>dictionaryEN=r.data
+});
+
+// Bikol → English
+Papa.parse("bikol_to_english.csv",{
+  download:true,
+  header:true,
+  skipEmptyLines:true,
+  complete:r=>dictionaryBI=r.data
 });
 
 const search=document.getElementById("search");
@@ -292,8 +302,10 @@ search.addEventListener("input",()=>{
   entries.innerHTML="";
   if(!q){suggestions.style.display="none";return;}
 
-  const field=lang.value;
-  const matches=dictionary.filter(d=>d[field]?.toLowerCase().startsWith(q));
+  const activeDict = lang.value==="english" ? dictionaryEN : dictionaryBI;
+  const field = lang.value;
+
+  const matches = activeDict.filter(d=>d[field]?.toLowerCase().startsWith(q));
   if(!matches.length){suggestions.style.display="none";return;}
 
   suggestions.style.display="block";
