@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <style>
 :root{
-  --primary:#0D1B2A;
+  --primary:#1E40AF; /* blue for header & dropdown */
   --secondary:#4B5563;
   --ink:#1F2937;
   --paper:#F8F9FA;
@@ -30,7 +30,7 @@ body{
   flex-direction:column;
 }
 header{
-  background:var(--primary);
+  background: var(--primary);
   color:#fff;
   padding:8px 5vw;
   display:flex;
@@ -62,7 +62,7 @@ main{
 }
 .search-wrapper select{
   flex: 0 0 auto;
-  background: var(--primary);
+  background: var(--primary); /* blue dropdown */
   color: #fff;
   border: none;
   padding: 14px 12px;
@@ -262,41 +262,4 @@ function render(d) {
     for (let i = 1; i <= 10; i++) {
       const m = d[`sense${i}_meaning`] || "";
       const b = d[`sense${i}_bikol`] || "";
-      const ex = d[`sense${i}_example`] || "";
-      if (!m) continue;
-
-      let exampleHTML = "";
-      if (ex) {
-        const parts = ex.split("||");
-        exampleHTML = `<div class="example">${parts[0]}${parts[1] ? `<br><em>${parts[1]}</em>` : ""}</div>`;
-      }
-
-      senses += `<div style="margin-top:22px;">
-        <div class="definition"><strong>${i}.</strong> ${m}</div>
-        ${b ? `<div>${b}</div>` : ""}
-        ${exampleHTML}
-      </div>`;
-    }
-
-    entries.innerHTML = `<div class="entry">
-      <h2>${d.english}</h2>
-      <div class="pos">${d.pos}</div>
-      ${senses}
-    </div>`;
-    return;
-  }
-
-  // Bikol→English rendering
-  entries.innerHTML = `<div class="entry">
-    <h2>${d.bikol}</h2>
-    <div class="pos">${d.pos}</div>
-    <div class="definition">${d.definition || ""}</div>
-    <div class="example">
-      ${d.exampleBikol || ""}<br>
-      <em>${d.exampleEnglish || ""}</em>
-    </div>
-  </div>`;
-}
-</script>
-</body>
-</html>
+      cons
