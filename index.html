@@ -56,7 +56,7 @@ main{
   border-radius:14px;
   box-shadow:0 10px 30px rgba(0,0,0,.15);
   position:relative;
-  overflow:hidden; /* ensure pill shape */
+  overflow: visible; /* allow suggestions to appear outside */
 }
 .search-wrapper select{
   background: var(--primary); /* blue dropdown box */
@@ -84,14 +84,15 @@ main{
   cursor: pointer;
 }
 .suggestions{
-  position:absolute;
-  top:calc(100% + 12px);
-  left:0;
-  width:100%;
-  background:#fff;
-  border-radius:14px;
-  box-shadow:0 16px 40px rgba(0,0,0,.2);
-  display:none;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.2);
+  display: none;
+  z-index: 999; /* ensure it’s above other elements */
 }
 .suggestions div{
   padding:16px 18px;
