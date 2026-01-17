@@ -147,7 +147,7 @@ main{
   overflow:visible;
   width:100%;
   max-width:860px; /* Oxford-like length on desktop */
-  margin:16px auto 32px; /* center on full screen */
+  margin:16px auto 44px; /* extra space below search box */
 }
 @media (min-width: 1024px){
   .search-wrapper{max-width:860px;}
@@ -264,9 +264,18 @@ main{
 .suggestions .sugg-item:hover{background:var(--hover);}
 
 .entry{
+  position:relative;
   margin:0;
   padding:16px 0; /* slightly tighter vertical spacing */
-  border-bottom:1px solid var(--rule);
+}
+.entry::after{
+  content:"";
+  position:absolute;
+  left:0; /* keep left edge aligned with text */
+  right:-6vw; /* extend separator only to the right */
+  bottom:0;
+  height:1px;
+  background:var(--rule);
 }
 .headword{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
 .entry h2{
