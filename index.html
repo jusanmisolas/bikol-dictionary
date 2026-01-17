@@ -7,25 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js">const burger=document.getElementById("burger");
-const menu=document.getElementById("menu");
-
-function toggleMenu(){
-  const open=menu.classList.toggle("open");
-  burger.setAttribute("aria-expanded",open);
-}
-
-burger.addEventListener("click",toggleMenu);
-burger.addEventListener("keydown",e=>{
-  if(e.key==="Enter"||e.key===" ") toggleMenu();
-});
-
-window.addEventListener("click",e=>{
-  if(!burger.contains(e.target) && !menu.contains(e.target)){
-    menu.style.display="none";
-  }
-});
-</script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
 :root{
@@ -38,7 +20,9 @@ window.addEventListener("click",e=>{
   --hover:#F1F3F5;
   --rule:#E6E8EB;
 }
+
 *{box-sizing:border-box;}
+
 body{
   margin:0;
   font-family:"IBM Plex Sans",sans-serif;
@@ -49,77 +33,125 @@ body{
   display:flex;
   flex-direction:column;
 }
+
+/* HEADER */
+
 header{
   background:var(--primary);
   color:#fff;
   padding:8px 5vw;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  position:relative;
-  z-index:10;
 }
+
 header h1{
   font-family:"Playfair Display",serif;
   font-size:18px;
   margin:0;
 }
-main{max-width:1200px;margin:40px auto 0;}
+
+/* MAIN */
+
+main{
+  max-width:1200px;
+  margin:40px auto 0;
+}
+
+/* SEARCH */
+
 .search-wrapper{
-  max-width:780px;
+  max-width:780px;             /* reverted from fixed width */
   margin:0 auto 56px;
   display:flex;
-  background:#fff;
-  border-radius:14px;
+  align-items:center;
+  background:var(--panel);
+  border-radius:16px;
   box-shadow:0 10px 30px rgba(0,0,0,.15);
   position:relative;
 }
+
 .search-wrapper select{
   background:var(--primary);
   color:#fff;
   border:none;
-  padding:14px 16px;
+  padding:14px 18px;
+  font-size:15px;
+  border-radius:16px 0 0 16px;  /* rounded like input */
+  height:100%;
 }
+
 .search-wrapper input{
   flex:1;
   border:none;
   padding:16px 18px;
   font-size:16px;
+  outline:none;
+  height:100%;
 }
+
 .search-wrapper button{
   border:none;
   background:none;
-  padding:0 16px;
+  padding:0 18px;
+  font-size:17px;
+  color:var(--secondary);
+  cursor:pointer;
+  height:100%;
 }
+
+/* Suggestions */
+
 .suggestions{
   position:absolute;
   top:calc(100% + 12px);
   left:0;
   width:100%;
-  background:#fff;
+  background:var(--panel);
   border-radius:14px;
   box-shadow:0 16px 40px rgba(0,0,0,.2);
   display:none;
+  overflow:hidden;
+  z-index:50;
 }
+
 .suggestions div{
   padding:16px 18px;
   border-bottom:1px solid var(--rule);
   cursor:pointer;
 }
+
+.suggestions div:hover{background:var(--hover);}
+
+/* ENTRIES */
+
 .entry{
   margin:0 5vw;
   padding:40px 0;
   border-bottom:1px solid var(--rule);
 }
-.entry h2{margin:0;color:var(--primary);}
-.pos{font-style:italic;color:var(--secondary);margin-bottom:14px;}
+
+.entry h2{
+  margin:0;
+  color:var(--primary);
+}
+
+.pos{
+  font-style:italic;
+  color:var(--secondary);
+  margin-bottom:14px;
+}
+
 .definition{font-size:17px;}
+
 .example{
   margin-top:12px;
   padding:14px 16px;
   background:var(--hover);
   border-left:4px solid var(--accent);
 }
+
+/* FOOTER */
+
 footer{
   margin-top:auto;
   padding:24px 5vw;
@@ -128,64 +160,6 @@ footer{
   color:var(--secondary);
   border-top:1px solid var(--rule);
 }
-
-.burger{
-  width:26px;
-  cursor:pointer;
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-  z-index:20;
-}
-.burger span{
-  height:3px;
-  background:#fff;
-  border-radius:2px;
-}
-.menu{
-  position:absolute;
-  top:100%;
-  right:5vw;
-  background:#fff;
-  border-radius:12px;
-  box-shadow:0 12px 30px rgba(0,0,0,.25);
-  display:none;
-  flex-direction:column;
-  min-width:180px;
-  overflow:hidden;
-  transform:translateY(-10px);
-  opacity:0;
-  transition:opacity .2s ease, transform .2s ease;
-}
-.menu.open{
-  display:flex;
-  opacity:1;
-  transform:translateY(0);
-}
-
-
-  .menu{
-    position:static;
-    display:flex !important;
-    flex-direction:row;
-    background:none;
-    box-shadow:none;
-    transform:none;
-    opacity:1;
-  }
-  .menu a{
-    color:#fff;
-    border:none;
-  }
-  .menu a:hover{background:rgba(255,255,255,.1);}
-}
-.menu a{
-  padding:14px 18px;
-  text-decoration:none;
-  color:var(--ink);
-  border-bottom:1px solid var(--rule);
-}
-.menu a:hover{background:var(--hover);}
 </style>
 </head>
 
@@ -193,32 +167,22 @@ footer{
 
 <header>
   <h1>Bikol Dictionary</h1>
-  <div class="burger" id="burger" role="button" aria-label="Menu" aria-expanded="false" tabindex="0">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-  <nav class="menu" id="menu">
-    <a href="#about">About</a>
-    <a href="#grammar">Grammar</a>
-    <a href="#resources">Resources</a>
-    <a href="#contact">Contact</a>
-    <a href="#donate">Donate</a>
-  </nav>
 </header>
 
 <main>
+
 <div class="search-wrapper">
   <select id="lang">
     <option value="english">English</option>
     <option value="bikol">Bikol</option>
   </select>
   <input id="search" placeholder="Search Bikol Dictionary" autocomplete="off">
-  <button><i class="fa-solid fa-magnifying-glass"></i></button>
+  <button aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
   <div class="suggestions" id="suggestions"></div>
 </div>
 
 <div id="entries"></div>
+
 </main>
 
 <footer>© 2021–2026 Jusan Misolas</footer>
@@ -226,8 +190,19 @@ footer{
 <script>
 let dictionaryEN=[], dictionaryBI=[];
 
-Papa.parse("english_to_bikol.csv",{download:true,header:true,skipEmptyLines:true,complete:r=>dictionaryEN=r.data});
-Papa.parse("bikol_to_english.csv",{download:true,header:true,skipEmptyLines:true,complete:r=>dictionaryBI=r.data});
+Papa.parse("english_to_bikol.csv",{
+  download:true,
+  header:true,
+  skipEmptyLines:true,
+  complete:r=>dictionaryEN=r.data
+});
+
+Papa.parse("bikol_to_english.csv",{
+  download:true,
+  header:true,
+  skipEmptyLines:true,
+  complete:r=>dictionaryBI=r.data
+});
 
 const search=document.getElementById("search");
 const suggestions=document.getElementById("suggestions");
@@ -235,14 +210,16 @@ const entries=document.getElementById("entries");
 const lang=document.getElementById("lang");
 
 search.addEventListener("input",()=>{
-  const q=search.value.toLowerCase().trim();
+  const q=search.value.trim().toLowerCase();
   suggestions.innerHTML="";
   entries.innerHTML="";
   if(!q){suggestions.style.display="none";return;}
+
   const dict=lang.value==="english"?dictionaryEN:dictionaryBI;
   const field=lang.value;
   const matches=dict.filter(d=>d[field]?.toLowerCase().startsWith(q));
   if(!matches.length){suggestions.style.display="none";return;}
+
   suggestions.style.display="block";
   matches.forEach(d=>{
     const div=document.createElement("div");
@@ -265,18 +242,18 @@ function render(d){
 
       let exampleHTML="";
       if(ex){
-        const parts=ex.split("||");
+        const p=ex.split("||");
         exampleHTML=`
           <div class="example">
-            ${parts[0]}
-            ${parts[1]?`<br><em>${parts[1]}</em>`:""}
+            ${p[0]}
+            ${p[1]?`<br><em>${p[1]}</em>`:""}
           </div>`;
       }
 
       senses+=`
         <div style="margin-top:22px;">
           <div class="definition"><strong>${i}.</strong> ${m}</div>
-          ${b?`<div><strong>Bikol equivalents:</strong> ${b}</div>`:""}
+          ${b?`<div>${b}</div>`:""}
           ${exampleHTML}
         </div>`;
     }
