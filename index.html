@@ -189,37 +189,41 @@ const entries = document.getElementById("entries");
 const lang = document.getElementById("lang");
 const searchBtn = document.querySelector(".search-wrapper button");
 
-// Show suggestions while typing
+// Show suggestions while typing new search
 search.addEventListener("input", () => {
   const q = search.value.toLowerCase().trim();
   suggestions.innerHTML = "";
-  entries.innerHTML = "";
 
-  if (!q) { 
-    suggestions.style.display = "none"; 
-    return; 
+  if (!q) {
+    suggestions.style.display = "none";
+    return;
+  }
+
+  // Hide suggestions if results are already displayed
+  if (entries.innerHTML.trim() !== "") {
+    suggestions.style.display = "none";
+    return;
   }
 
   const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
   const field = lang.value;
 
-  // Partial matches for suggestions only
+  // Partial matches for suggestions
   const matches = dict.filter(d => d[field]?.toLowerCase().startsWith(q));
-
   if (matches.length) {
-    suggestions.style.display = "block";
     matches.forEach(d => {
       const div = document.createElement("div");
       div.textContent = d[field];
       div.onclick = () => render(d);
       suggestions.appendChild(div);
     });
+    suggestions.style.display = "block";
   } else {
     suggestions.style.display = "none";
   }
 });
 
-// Perform search on Enter or click
+// Perform search on Enter or click (exact match only)
 searchBtn.addEventListener("click", performSearch);
 search.addEventListener("keydown", e => {
   if (e.key === "Enter") performSearch();
@@ -245,6 +249,9 @@ function performSearch() {
       </div>
     </div>`;
   }
+
+  // Hide suggestions after searching
+  suggestions.style.display = "none";
 }
 
 function render(d) {
