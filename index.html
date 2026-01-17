@@ -127,7 +127,15 @@ main{
   padding:0 5vw;
   display:flex;
   flex-direction:column;
-  align-items:center; /* center search box horizontally */
+  align-items:center; /* center search box */
+}
+
+/* left-align results like Oxford layout */
+#entries{
+  max-width:680px;
+  margin:12px 0 0 1vw; /* pull results further left */
+  align-self:flex-start;
+  padding:0;
 }
 
 .search-wrapper{
@@ -146,7 +154,7 @@ main{
 }
 
 .search-wrapper select{
-  font-weight:500;
+  font-weight:600;
   flex:0 0 auto;
   background:var(--gold-dark);
   color:#000;
@@ -256,7 +264,7 @@ main{
 
 .entry{
   margin:0;
-  padding:20px 0;
+  padding:16px 0; /* slightly tighter vertical spacing */
   border-bottom:1px solid var(--rule);
 }
 .headword{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
@@ -298,9 +306,9 @@ footer{
 }
 
 #entries{
-  max-width:860px; /* match search bar width */
-  margin:12px auto 0; /* space below search bar */
-  padding:0 16px; /* more left & right breathing room */
+  max-width:680px; /* Oxford-style narrower content column */
+  margin:12px auto 0;
+  padding:0;
 }
 
 /* Remove blue autofill background */
@@ -469,25 +477,33 @@ function render(d){
   return renderBikol(d);
 }
 
-function noMatch(){
-  const modeText = (lang.value === "english") ? "English" : "Bikol";
+function noMatch(term){
+  const modeText = (lang.value === "english") ? "English - Bikol" : "Bikol - English";
+  const safeTerm = escapeHtml(term || "");
   entries.innerHTML =
     '<div class="entry">' +
       '<div class="definition" style="text-align:center; font-weight:bold; font-size:16px;">' +
-        'No exact match found for "' + escapeHtml(search.value) + '" in ' + modeText + ' Dictionary' +
+        'No exact match found for "' + safeTerm + '" in ' + modeText + ' Dictionary' +
       '</div>' +
     '</div>';
 }
 
 function performSearch(){
-  const q = search.value.toLowerCase().trim();
+  const original = (search.value || "").trim();
+  const q = original.toLowerCase();
   if (!q) return;
 
   const dict = dictForMode();
   const field = fieldForMode();
-  const match = dict.find(row => (row[field] || "").toLowerCase().startsWith(q));
-  if (match) return render(match);
-  noMatch();
+
+  // exact match only (no prefix matching)
+  const match = dict.find(row => (row[field] || "").toLowerCase() === q);
+
+  if (match) {
+    render(match);
+  } else {
+    noMatch(original);
+  }
 }
 
 function updateSuggestions(){
@@ -505,7 +521,7 @@ function updateSuggestions(){
 
   const side = document.createElement("div");
   side.className = "sugg-side";
-  side.textContent = (lang.value === "english") ? "English" : "Bikol";
+  side.textContent = (lang.value === "english") ? "English to Bikol" : "Bikol to English";
 
   const list = document.createElement("div");
   list.className = "sugg-list";
@@ -515,7 +531,8 @@ function updateSuggestions(){
     item.className = "sugg-item";
     item.textContent = row[field];
     item.addEventListener("click", () => {
-      search.value = row[field] || "";
+      /* clear whatever the user typed, then render */
+      search.value = "";
       render(row);
     });
     list.appendChild(item);
