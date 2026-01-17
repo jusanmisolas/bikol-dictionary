@@ -144,52 +144,72 @@ let dictionaryEN=[], dictionaryBI=[];
 Papa.parse("english_to_bikol.csv",{download:true,header:true,skipEmptyLines:true,complete:r=>dictionaryEN=r.data});
 Papa.parse("bikol_to_english.csv",{download:true,header:true,skipEmptyLines:true,complete:r=>dictionaryBI=r.data});
 
-const search=document.getElementById("search");
-const suggestions=document.getElementById("suggestions");
-const entries=document.getElementById("entries");
-const lang=document.getElementById("lang");
+const search = document.getElementById("search");
+const suggestions = document.getElementById("suggestions");
+const entries = document.getElementById("entries");
+const lang = document.getElementById("lang");
+const searchBtn = document.querySelector(".search-wrapper button");
 
-search.addEventListener("input",()=>{
-  const q=search.value.toLowerCase().trim();
-  suggestions.innerHTML="";
-  entries.innerHTML="";
-  if(!q){suggestions.style.display="none";return;}
-  const dict=lang.value==="english"?dictionaryEN:dictionaryBI;
-  const field=lang.value;
-  const matches=dict.filter(d=>d[field]?.toLowerCase().startsWith(q));
-  if(!matches.length){suggestions.style.display="none";return;}
-  suggestions.style.display="block";
-  matches.forEach(d=>{
-    const div=document.createElement("div");
-    div.textContent=d[field];
-    div.onclick=()=>render(d);
+// Show suggestions while typing
+search.addEventListener("input", () => {
+  const q = search.value.toLowerCase().trim();
+  suggestions.innerHTML = "";
+  entries.innerHTML = "";
+  if (!q) { suggestions.style.display = "none"; return; }
+  
+  const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
+  const field = lang.value;
+  const matches = dict.filter(d => d[field]?.toLowerCase().startsWith(q));
+  if (!matches.length) { suggestions.style.display = "none"; return; }
+  
+  suggestions.style.display = "block";
+  matches.forEach(d => {
+    const div = document.createElement("div");
+    div.textContent = d[field];
+    div.onclick = () => render(d);
     suggestions.appendChild(div);
   });
 });
 
-function render(d){
-  suggestions.style.display="none";
+// Trigger search on button click or Enter key
+searchBtn.addEventListener("click", () => performSearch());
+search.addEventListener("keydown", e => {
+  if (e.key === "Enter") performSearch();
+});
 
-  // English → Bikol
-  if(lang.value==="english"){
-    let senses="";
-    for(let i=1;i<=10;i++){
-      const m=d[`sense${i}_meaning`]||"";
-      const b=d[`sense${i}_bikol`]||"";
-      const ex=d[`sense${i}_example`]||"";
-      if(!m) continue;
-      let exampleHTML="";
-      if(ex){
-        const parts=ex.split("||");
-        exampleHTML=`<div class="example">${parts[0]} ${parts[1]?`<br><em>${parts[1]}</em>`:""}</div>`;
+// Perform search using first matching result
+function performSearch() {
+  const q = search.value.toLowerCase().trim();
+  if (!q) return;
+
+  const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
+  const field = lang.value;
+  const match = dict.find(d => d[field]?.toLowerCase().startsWith(q));
+  if (match) render(match);
+}
+
+function render(d) {
+  suggestions.style.display = "none";
+
+  if (lang.value === "english") {
+    let senses = "";
+    for (let i = 1; i <= 10; i++) {
+      const m = d[`sense${i}_meaning`] || "";
+      const b = d[`sense${i}_bikol`] || "";
+      const ex = d[`sense${i}_example`] || "";
+      if (!m) continue;
+      let exampleHTML = "";
+      if (ex) {
+        const parts = ex.split("||");
+        exampleHTML = `<div class="example">${parts[0]} ${parts[1] ? `<br><em>${parts[1]}</em>` : ""}</div>`;
       }
-      senses+=`<div style="margin-top:22px;">
+      senses += `<div style="margin-top:22px;">
         <div class="definition"><strong>${i}.</strong> ${m}</div>
-        ${b?`<div><strong>Bikol equivalents:</strong> ${b}</div>`:""}
+        ${b ? `<div><strong>Bikol equivalents:</strong> ${b}</div>` : ""}
         ${exampleHTML}
       </div>`;
     }
-    entries.innerHTML=`<div class="entry">
+    entries.innerHTML = `<div class="entry">
       <h2>${d.english}</h2>
       <div class="pos">${d.pos}</div>
       ${senses}
@@ -198,7 +218,7 @@ function render(d){
   }
 
   // Bikol → English
-  entries.innerHTML=`<div class="entry">
+  entries.innerHTML = `<div class="entry">
     <h2>${d.bikol}</h2>
     <div class="pos">${d.pos}</div>
     <div class="definition">${d.definition}</div>
