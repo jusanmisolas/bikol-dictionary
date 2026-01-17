@@ -10,8 +10,14 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js">const burger=document.getElementById("burger");
 const menu=document.getElementById("menu");
 
-burger.addEventListener("click",()=>{
-  menu.style.display=menu.style.display==="flex"?"none":"flex";
+function toggleMenu(){
+  const open=menu.classList.toggle("open");
+  burger.setAttribute("aria-expanded",open);
+}
+
+burger.addEventListener("click",toggleMenu);
+burger.addEventListener("keydown",e=>{
+  if(e.key==="Enter"||e.key===" ") toggleMenu();
 });
 
 window.addEventListener("click",e=>{
@@ -144,6 +150,32 @@ footer{
   flex-direction:column;
   min-width:180px;
   overflow:hidden;
+  transform:translateY(-10px);
+  opacity:0;
+  transition:opacity .2s ease, transform .2s ease;
+}
+.menu.open{
+  display:flex;
+  opacity:1;
+  transform:translateY(0);
+}
+
+@media (min-width: 900px){
+  .burger{display:none;}
+  .menu{
+    position:static;
+    display:flex !important;
+    flex-direction:row;
+    background:none;
+    box-shadow:none;
+    transform:none;
+    opacity:1;
+  }
+  .menu a{
+    color:#fff;
+    border:none;
+  }
+  .menu a:hover{background:rgba(255,255,255,.1);}
 }
 .menu a{
   padding:14px 18px;
@@ -159,7 +191,7 @@ footer{
 
 <header>
   <h1>Bikol Dictionary</h1>
-  <div class="burger" id="burger">
+  <div class="burger" id="burger" role="button" aria-label="Menu" aria-expanded="false" tabindex="0">
     <span></span>
     <span></span>
     <span></span>
