@@ -4,16 +4,9 @@
 <meta charset="UTF-8">
 <title>Bikol Dictionary</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-
-<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<!-- CSV Parser -->
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
 <style>
 :root{
   --primary:#0D1B2A;
@@ -21,257 +14,269 @@
   --ink:#1F2937;
   --paper:#F8F9FA;
   --panel:#FFFFFF;
-  --accent:#2563EB;
-  --border:#E5E7EB;
+  --accent:#001F3D; /* updated to dark navy */
+  --hover:#F1F3F5;
+  --rule:#E6E8EB;
 }
-
-*{box-sizing:border-box}
-
+*{box-sizing:border-box;}
 body{
   margin:0;
-  font-family:'IBM Plex Sans',sans-serif;
+  font-family:"IBM Plex Sans",sans-serif;
   background:var(--paper);
   color:var(--ink);
+  line-height:1.7;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
 }
-
-/* HEADER */
 header{
+  background:var(--accent); /* dark navy */
+  color:#fff;
+  padding:8px 5vw;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
   position:sticky;
   top:0;
-  z-index:100;
-  background:var(--panel);
-  border-bottom:1px solid var(--border);
+  z-index:1000;
 }
-
-.header-inner{
-  max-width:1100px;
-  margin:auto;
-  padding:16px 20px;
-  display:flex;
-  align-items:center;
-  gap:16px;
+header h1{
+  font-family:"IBM Plex Sans",sans-serif;
+  font-size:18px;
+  margin:0;
 }
-
-.site-title{
-  font-family:'Playfair Display',serif;
-  font-size:1.6rem;
-  font-weight:600;
-  color:var(--primary);
-  white-space:nowrap;
-}
-
-/* SEARCH */
-.search-wrapper{
-  flex:1;
-  position:relative;
-}
-
-.search-box{
-  display:flex;
-  align-items:center;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:#fff;
-  overflow:hidden;
-}
-
-.lang-select{
-  border:none;
-  padding:12px 14px;
-  font-size:.95rem;
-  outline:none;
-  cursor:pointer;
-  background:#fff;
-  border-right:2px solid var(--accent);
-  border-radius:14px 0 0 14px;
-}
-
-.search-input{
-  flex:1;
-  border:none;
-  padding:12px 14px;
-  font-size:1rem;
-  outline:none;
-}
-
-.search-icon{
-  padding:0 16px;
-  color:var(--secondary);
-}
-
-/* SUGGESTIONS */
-.suggestions{
-  position:absolute;
-  top:100%;
-  left:0;
-  right:0;
-  background:#fff;
-  border:1px solid var(--border);
-  border-top:none;
-  max-height:260px;
-  overflow-y:auto;
-  display:none;
-  z-index:99;
-}
-
-.suggestion{
-  padding:10px 14px;
-  cursor:pointer;
-  border-bottom:1px solid var(--border);
-}
-
-.suggestion:hover{
-  background:#F1F5F9;
-}
-
-/* MAIN */
 main{
-  max-width:1100px;
-  margin:auto;
-  padding:28px 20px;
+  max-width:1200px;
+  margin:40px auto 0;
 }
-
-.result{
-  margin-bottom:26px;
+.search-wrapper{
+  display: flex;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+  position: relative;
+  overflow: visible;
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto 56px;
 }
-
-.word{
-  font-size:1.4rem;
-  font-weight:600;
+.search-wrapper select{
+  flex: 0 0 auto;
+  background: var(--accent); /* dark navy */
+  color: #fff;
+  border: none;
+  padding: 14px 12px;
+  min-width: 70px;
+  border-radius: 14px 0 0 14px;
+  font-size: 16px;
+  cursor: pointer;
+  appearance: none;
+  text-align: center;
+  width: auto;
+}
+.search-wrapper input{
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  padding: 16px 18px;
+  font-size: 16px;
+  border-radius: 0 14px 14px 0;
+}
+.search-wrapper input:focus {
+  outline: none;
+  box-shadow: none;
+}
+.search-wrapper button{
+  border: none;
+  background: none;
+  padding: 0 16px;
+  cursor: pointer;
+}
+.suggestions{
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.2);
+  display: none;
+  z-index: 500;
+}
+.suggestions div{
+  padding:16px 18px;
+  border-bottom:1px solid var(--rule);
+  cursor:pointer;
+}
+.entry{
+  margin:0 5vw;
+  padding:40px 0;
+  border-bottom:1px solid var(--rule);
+}
+.entry h2{
+  margin:0;
   color:var(--primary);
 }
-
 .pos{
   font-style:italic;
   color:var(--secondary);
-  margin:4px 0 8px;
+  margin-bottom:14px;
 }
-
 .definition{
-  font-size:1rem;
-  line-height:1.6;
+  font-size:17px;
 }
-
 .example{
-  margin-top:6px;
-  color:#374151;
+  margin-top:12px;
+  padding:14px 16px;
+  background:var(--hover);
+  border-left:4px solid var(--accent); /* dark navy vertical line */
+}
+footer{
+  margin-top:auto;
+  padding:24px 5vw;
+  text-align:center;
+  font-size:12px;
+  color:var(--secondary);
+  border-top:1px solid var(--rule);
 }
 
-.no-result{
-  text-align:center;
-  font-family:'Playfair Display',serif;
-  font-size:1.4rem;
-  font-weight:600;
-  margin-top:60px;
-  color:var(--secondary);
+/* Remove blue autofill background in Chrome/Edge/Safari */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
+    -webkit-text-fill-color: var(--ink) !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 </style>
 </head>
-
 <body>
-
 <header>
-  <div class="header-inner">
-    <div class="site-title">Bikol Dictionary</div>
-
-    <div class="search-wrapper">
-      <div class="search-box">
-        <select class="lang-select" id="lang">
-          <option value="en">English</option>
-          <option value="bikol">Bikol</option>
-        </select>
-
-        <input type="text" id="search" class="search-input" placeholder="Search word…">
-
-        <div class="search-icon">
-          <i class="fas fa-search"></i>
-        </div>
-      </div>
-
-      <div class="suggestions" id="suggestions"></div>
-    </div>
-  </div>
+  <h1>Bikol Dictionary</h1>
 </header>
-
-<main id="results"></main>
-
+<main>
+  <div class="search-wrapper">
+    <select id="lang">
+      <option value="english">English</option>
+      <option value="bikol">Bikol</option>
+    </select>
+    <input id="search" placeholder="Search Bikol Dictionary" autocomplete="off">
+    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+    <div class="suggestions" id="suggestions"></div>
+  </div>
+  <div id="entries"></div>
+</main>
+<footer>© 2021–2026 Jusan Misolas</footer>
 <script>
-let dictionary = [];
-const searchInput = document.getElementById('search');
-const suggestionsBox = document.getElementById('suggestions');
-const resultsBox = document.getElementById('results');
-const langSelect = document.getElementById('lang');
+// Clear previous dictionary
+let dictionaryEN = [], dictionaryBI = [];
 
-/* LOAD CSV */
-Papa.parse("dictionary.csv",{
-  download:true,
-  header:true,
-  complete:function(res){
-    dictionary = res.data.filter(r=>r.word);
-  }
+// Cache-busting for CSV
+Papa.parse(`english_to_bikol.csv?${Date.now()}`, {
+    download:true,
+    header:true,
+    skipEmptyLines:true,
+    complete: r => dictionaryEN = r.data
 });
 
-/* SEARCH INPUT */
-searchInput.addEventListener('input',()=>{
-  const q = searchInput.value.trim().toLowerCase();
-  suggestionsBox.innerHTML='';
-  if(!q){suggestionsBox.style.display='none';return;}
+// Placeholder for Bikol→English CSV
+dictionaryBI = [];
 
-  const lang = langSelect.value;
-  const matches = dictionary.filter(item =>
-    (lang==='en' ? item.word : item.translation)
-    .toLowerCase()
-    .startsWith(q)
-  ).slice(0,8);
+const search = document.getElementById("search");
+const suggestions = document.getElementById("suggestions");
+const entries = document.getElementById("entries");
+const lang = document.getElementById("lang");
+const searchBtn = document.querySelector(".search-wrapper button");
 
-  matches.forEach(item=>{
-    const div=document.createElement('div');
-    div.className='suggestion';
-    div.textContent = lang==='en'?item.word:item.translation;
-    div.onclick=()=>runSearch(div.textContent);
-    suggestionsBox.appendChild(div);
+search.addEventListener("input", () => {
+  const q = search.value.toLowerCase().trim();
+  suggestions.innerHTML = "";
+  entries.innerHTML = "";
+  if (!q) { suggestions.style.display = "none"; return; }
+
+  const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
+  const field = lang.value;
+  const matches = dict.filter(d => d[field]?.toLowerCase().startsWith(q));
+  if (!matches.length) { suggestions.style.display = "none"; return; }
+
+  suggestions.style.display = "block";
+  matches.forEach(d => {
+    const div = document.createElement("div");
+    div.textContent = d[field];
+    div.onclick = () => render(d);
+    suggestions.appendChild(div);
   });
-
-  suggestionsBox.style.display = matches.length?'block':'none';
 });
 
-/* RUN SEARCH */
-function runSearch(text){
-  searchInput.value=text;
-  suggestionsBox.style.display='none';
-  resultsBox.innerHTML='';
+searchBtn.addEventListener("click", () => performSearch());
+search.addEventListener("keydown", e => {
+  if (e.key === "Enter") performSearch();
+});
 
-  const lang=langSelect.value;
-  const found=dictionary.filter(item =>
-    (lang==='en'?item.word:item.translation)
-    .toLowerCase()===text.toLowerCase()
-  );
+function performSearch() {
+  const q = search.value.toLowerCase().trim();
+  if (!q) return;
 
-  if(!found.length){
-    resultsBox.innerHTML='<div class="no-result">No exact match found</div>';
+  const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
+  const field = lang.value;
+  const match = dict.find(d => d[field]?.toLowerCase().startsWith(q));
+
+  if (match) {
+    render(match);
+  } else {
+    const langText = lang.value === "english" ? "English-Bikol" : "Bikol-English";
+    entries.innerHTML = `<div class="entry">
+      <div class="definition" style="text-align:center; font-weight:bold; font-size:16px;">
+        No exact match found for "${search.value}" in ${langText} Dictionary
+      </div>
+    </div>`;
+  }
+}
+
+function render(d) {
+  suggestions.style.display = "none";
+
+  if (lang.value === "english") {
+    let senses = "";
+    for (let i = 1; i <= 10; i++) {
+      const m = d[`sense${i}_meaning`] || "";
+      const b = d[`sense${i}_bikol`] || "";
+      const ex = d[`sense${i}_example`] || "";
+      if (!m) continue;
+
+      let exampleHTML = "";
+      if (ex) {
+        const parts = ex.split("||");
+        exampleHTML = `<div class="example">${parts[0]}${parts[1] ? `<br><em>${parts[1]}</em>` : ""}</div>`;
+      }
+
+      senses += `<div style="margin-top:22px;">
+        <div class="definition"><strong>${i}.</strong> ${m}</div>
+        ${b ? `<div>${b}</div>` : ""}
+        ${exampleHTML}
+      </div>`;
+    }
+
+    entries.innerHTML = `<div class="entry">
+      <h2>${d.english}</h2>
+      <div class="pos">${d.pos}</div>
+      ${senses}
+    </div>`;
     return;
   }
 
-  found.forEach(item=>{
-    const div=document.createElement('div');
-    div.className='result';
-    div.innerHTML=`
-      <div class="word">${item.word}</div>
-      <div class="pos">${item.pos||''}</div>
-      <div class="definition">${item.definition}</div>
-      ${item.example?`<div class="example">Example: ${item.example}</div>`:''}
-    `;
-    resultsBox.appendChild(div);
-  });
+  // Bikol→English rendering
+  entries.innerHTML = `<div class="entry">
+    <h2>${d.bikol}</h2>
+    <div class="pos">${d.pos}</div>
+    <div class="definition">${d.definition || ""}</div>
+    <div class="example">
+      ${d.exampleBikol || ""}<br>
+      <em>${d.exampleEnglish || ""}</em>
+    </div>
+  </div>`;
 }
-
-/* ENTER KEY */
-searchInput.addEventListener('keydown',e=>{
-  if(e.key==='Enter'){
-    runSearch(searchInput.value);
-  }
-});
 </script>
-
 </body>
 </html>
