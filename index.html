@@ -55,6 +55,7 @@ main{max-width:1200px;margin:40px auto 0;}
   border-radius:14px;
   box-shadow:0 10px 30px rgba(0,0,0,.15);
   position:relative;
+  overflow:hidden;
 }
 .search-wrapper select{
   background: var(--primary);
@@ -62,6 +63,23 @@ main{max-width:1200px;margin:40px auto 0;}
   border: none;
   padding: 14px 16px;
   border-radius: 14px 0 0 14px; /* left side rounded */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  position: relative;
+  font-size: 16px;
+  cursor: pointer;
+}
+/* Custom dropdown arrow */
+.search-wrapper select::after {
+  content: "\25BC"; /* down arrow */
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #fff;
+  font-size: 12px;
 }
 .search-wrapper input{
   flex:1;
@@ -220,4 +238,3 @@ function render(d){
 
 </body>
 </html>
-
