@@ -1,6 +1,5 @@
-english,pos,sense1_meaning,sense1_bikol,sense1_example,sense2_meaning,sense2_bikol,sense2_example,sense3_meaning,sense3_bikol,sense3_example
-run,verb,to move swiftly on foot,dagan,"He can run very fast.",to manage or operate something,patakbô,"She runs a small business.",to flow (liquid),agós,"Tears ran down her face."
-house,noun,a building for people to live in,balay,"This house is old.",a family or household,pamilya,"The whole house attended the event.",,, 
-eat,verb,to put food into the mouth and swallow,kaon,"They eat rice every day.",to consume a meal,kumaon,"We will eat later.",,, 
-big,adjective,of large size or extent,dakô,"They live in a big city.",important or serious,importante,"This is a big decision.",,, 
-water,noun,a clear liquid for drinking and washing,tubig,"Drink water every day.",a body of water,dagat,"They crossed the water.",,, 
+english,pos,sense1_meaning,sense1_bikol,sense1_example,sense2_meaning,sense2_bikol,sense2_example
+run,verb,to move swiftly on foot,dagan,"He can run very fast.",to manage or operate something,patakbô,"She runs a small business."
+house,noun,a building for people to live in,balay,"This house is old.",,
+eat,verb,to put food into the mouth and swallow,kaon,"They eat rice every day.",,
+big,adjective,of large size,dakô,"They live in a big city.",,
