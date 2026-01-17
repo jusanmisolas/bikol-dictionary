@@ -38,6 +38,7 @@ header{
   align-items:center;
   position:sticky;
   top:0;
+  z-index:1000; /* Ensure header is above everything */
 }
 header h1{
   font-family:"IBM Plex Sans",sans-serif;
@@ -101,7 +102,7 @@ main{
   border-radius: 14px;
   box-shadow: 0 16px 40px rgba(0,0,0,.2);
   display: none;
-  z-index: 999;
+  z-index: 500; /* Lower than header */
 }
 .suggestions div{
   padding:16px 18px;
@@ -270,4 +271,3 @@ function render(d) {
 </script>
 </body>
 </html>
-
