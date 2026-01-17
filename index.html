@@ -7,7 +7,19 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js">const burger=document.getElementById("burger");
+const menu=document.getElementById("menu");
+
+burger.addEventListener("click",()=>{
+  menu.style.display=menu.style.display==="flex"?"none":"flex";
+});
+
+window.addEventListener("click",e=>{
+  if(!burger.contains(e.target) && !menu.contains(e.target)){
+    menu.style.display="none";
+  }
+});
+</script>
 
 <style>
 :root{
@@ -108,6 +120,38 @@ footer{
   color:var(--secondary);
   border-top:1px solid var(--rule);
 }
+
+.burger{
+  width:26px;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.burger span{
+  height:3px;
+  background:#fff;
+  border-radius:2px;
+}
+.menu{
+  position:absolute;
+  top:100%;
+  right:5vw;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);
+  display:none;
+  flex-direction:column;
+  min-width:180px;
+  overflow:hidden;
+}
+.menu a{
+  padding:14px 18px;
+  text-decoration:none;
+  color:var(--ink);
+  border-bottom:1px solid var(--rule);
+}
+.menu a:hover{background:var(--hover);}
 </style>
 </head>
 
@@ -115,6 +159,18 @@ footer{
 
 <header>
   <h1>Bikol Dictionary</h1>
+  <div class="burger" id="burger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <nav class="menu" id="menu">
+    <a href="#about">About</a>
+    <a href="#grammar">Grammar</a>
+    <a href="#resources">Resources</a>
+    <a href="#contact">Contact</a>
+    <a href="#donate">Donate</a>
+  </nav>
 </header>
 
 <main>
