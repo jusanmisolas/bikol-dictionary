@@ -49,16 +49,18 @@ main{
   margin:40px auto 0;
 }
 .search-wrapper{
-  max-width:780px;
-  margin:0 auto 56px;
-  display:flex;
-  background:#fff;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.15);
-  position:relative;
+  display: flex;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+  position: relative;
   overflow: visible;
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto 56px;
 }
 .search-wrapper select{
+  flex: 0 0 auto;       /* Prevent resizing */
   background: var(--primary);
   color: #fff;
   border: none;
@@ -72,7 +74,8 @@ main{
   width: auto;
 }
 .search-wrapper input{
-  flex: 1;
+  flex: 1 1 auto;       /* Take remaining space but don't shrink */
+  min-width: 0;         /* Prevent shrinking */
   border: none;
   padding: 16px 18px;
   font-size: 16px;
@@ -267,3 +270,4 @@ function render(d) {
 </script>
 </body>
 </html>
+
