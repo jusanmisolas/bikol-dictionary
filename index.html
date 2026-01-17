@@ -140,7 +140,7 @@ footer{
   border-top:1px solid var(--rule);
 }
 
-/* Remove blue autofill background in Chrome/Edge/Safari */
+/* Remove blue autofill background */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -169,10 +169,10 @@ input:-webkit-autofill:active {
 </main>
 <footer>© 2021–2026 Jusan Misolas</footer>
 <script>
-// Clear previous dictionary
+// Dictionaries
 let dictionaryEN = [], dictionaryBI = [];
 
-// Cache-busting for CSV
+// Cache-busting CSV load
 Papa.parse(`english_to_bikol.csv?${Date.now()}`, {
     download:true,
     header:true,
@@ -189,27 +189,38 @@ const entries = document.getElementById("entries");
 const lang = document.getElementById("lang");
 const searchBtn = document.querySelector(".search-wrapper button");
 
+// Show suggestions while typing
 search.addEventListener("input", () => {
   const q = search.value.toLowerCase().trim();
   suggestions.innerHTML = "";
   entries.innerHTML = "";
-  if (!q) { suggestions.style.display = "none"; return; }
+
+  if (!q) { 
+    suggestions.style.display = "none"; 
+    return; 
+  }
 
   const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
   const field = lang.value;
-  const matches = dict.filter(d => d[field]?.toLowerCase().startsWith(q));
-  if (!matches.length) { suggestions.style.display = "none"; return; }
 
-  suggestions.style.display = "block";
-  matches.forEach(d => {
-    const div = document.createElement("div");
-    div.textContent = d[field];
-    div.onclick = () => render(d);
-    suggestions.appendChild(div);
-  });
+  // Partial matches for suggestions only
+  const matches = dict.filter(d => d[field]?.toLowerCase().startsWith(q));
+
+  if (matches.length) {
+    suggestions.style.display = "block";
+    matches.forEach(d => {
+      const div = document.createElement("div");
+      div.textContent = d[field];
+      div.onclick = () => render(d);
+      suggestions.appendChild(div);
+    });
+  } else {
+    suggestions.style.display = "none";
+  }
 });
 
-searchBtn.addEventListener("click", () => performSearch());
+// Perform search on Enter or click
+searchBtn.addEventListener("click", performSearch);
 search.addEventListener("keydown", e => {
   if (e.key === "Enter") performSearch();
 });
@@ -220,7 +231,9 @@ function performSearch() {
 
   const dict = lang.value === "english" ? dictionaryEN : dictionaryBI;
   const field = lang.value;
-  const match = dict.find(d => d[field]?.toLowerCase().startsWith(q));
+
+  // Exact match only
+  const match = dict.find(d => d[field]?.toLowerCase() === q);
 
   if (match) {
     render(match);
