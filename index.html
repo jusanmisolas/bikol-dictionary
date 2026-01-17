@@ -46,21 +46,6 @@ header h1{
   font-size:18px;
   margin:0;
 }
-.menu-toggle{cursor:pointer;}
-#menu{
-  display:none;
-  position:absolute;
-  top:52px;
-  right:5vw;
-  background:var(--primary);
-  border-radius:8px;
-}
-#menu a{
-  display:block;
-  padding:12px 16px;
-  color:#fff;
-  text-decoration:none;
-}
 main{max-width:1200px;margin:40px auto 0;}
 .search-wrapper{
   max-width:780px;
@@ -109,7 +94,7 @@ main{max-width:1200px;margin:40px auto 0;}
   border-bottom:1px solid var(--rule);
 }
 .entry h2{margin:0;color:var(--primary);}
-.pos{font-style:italic;color:var(--secondary);}
+.pos{font-style:italic;color:var(--secondary);margin-bottom:14px;}
 .definition{font-size:17px;}
 .example{
   margin-top:12px;
@@ -132,11 +117,6 @@ footer{
 
 <header>
   <h1>Bikol Dictionary</h1>
-  <div class="menu-toggle" id="menu-btn"><i class="fa-solid fa-bars"></i></div>
-  <div id="menu">
-    <a href="#">Grammar</a>
-    <a href="#">Word Lists</a>
-  </div>
 </header>
 
 <main>
@@ -158,8 +138,8 @@ footer{
 <script>
 let dictionaryEN=[], dictionaryBI=[];
 
-Papa.parse("english_to_bikol.csv",{download:true,header:true,complete:r=>dictionaryEN=r.data});
-Papa.parse("bikol_to_english.csv",{download:true,header:true,complete:r=>dictionaryBI=r.data});
+Papa.parse("english_to_bikol.csv",{download:true,header:true,skipEmptyLines:true,complete:r=>dictionaryEN=r.data});
+Papa.parse("bikol_to_english.csv",{download:true,header:true,skipEmptyLines:true,complete:r=>dictionaryBI=r.data});
 
 const search=document.getElementById("search");
 const suggestions=document.getElementById("suggestions");
@@ -187,30 +167,52 @@ search.addEventListener("input",()=>{
 function render(d){
   suggestions.style.display="none";
 
+  // English → Bikol
   if(lang.value==="english"){
     let senses="";
     for(let i=1;i<=10;i++){
       const m=d[`sense${i}_meaning`]||"";
       const b=d[`sense${i}_bikol`]||"";
-      const e=d[`sense${i}_example`]||"";
+      const ex=d[`sense${i}_example`]||"";
       if(!m) continue;
+
+      let exampleHTML="";
+      if(ex){
+        const parts=ex.split("||");
+        exampleHTML=`
+          <div class="example">
+            ${parts[0]}
+            ${parts[1]?`<br><em>${parts[1]}</em>`:""}
+          </div>`;
+      }
+
       senses+=`
         <div style="margin-top:22px;">
-          <div class="definition"><strong>Sense ${i}.</strong> ${m}</div>
+          <div class="definition"><strong>${i}.</strong> ${m}</div>
           ${b?`<div><strong>Bikol equivalents:</strong> ${b}</div>`:""}
-          ${e?`<div class="example">${e}</div>`:""}
+          ${exampleHTML}
         </div>`;
     }
-    entries.innerHTML=`<div class="entry"><h2>${d.english}</h2><div class="pos">${d.pos}</div>${senses}</div>`;
+
+    entries.innerHTML=`
+      <div class="entry">
+        <h2>${d.english}</h2>
+        <div class="pos">${d.pos}</div>
+        ${senses}
+      </div>`;
     return;
   }
 
+  // Bikol → English
   entries.innerHTML=`
     <div class="entry">
       <h2>${d.bikol}</h2>
       <div class="pos">${d.pos}</div>
       <div class="definition">${d.definition}</div>
-      <div class="example"><strong>Bikol:</strong> ${d.exampleBikol}<br><strong>English:</strong> ${d.exampleEnglish}</div>
+      <div class="example">
+        ${d.exampleBikol}<br>
+        <em>${d.exampleEnglish}</em>
+      </div>
     </div>`;
 }
 </script>
