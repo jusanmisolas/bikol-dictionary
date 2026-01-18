@@ -596,6 +596,8 @@ big,adjective,of large size,dakula,Dakula an harong.||The house is big.,,,,,,,,,
 
 let dictionaryEN = [];
 let dictionaryBI = [];
+let dataReady = false; // set true after CSV loads
+let pendingRoute = null; // holds parsed hash until data is ready
 
 const burger = document.getElementById("burger");
 const menu = document.getElementById("menu");
@@ -665,6 +667,11 @@ function findExactByMode(mode, term){
 }
 
 function applyRouteFromHash(){
+  // Wait until CSV is loaded before resolving deep links.
+  if (!dataReady) {
+    pendingRoute = parseHashRoute();
+    return;
+  }
   const r = parseHashRoute();
   if (!r) {
     // Home view
@@ -1136,7 +1143,10 @@ function buildReverse(rows){
 function setDataFromRows(rows){
   dictionaryEN = (rows || []).filter(row => row.english);
   dictionaryBI = buildReverse(dictionaryEN);
-  // If a deep-link exists, render it. Otherwise show home.
+  dataReady = true;
+
+  // Ensure deep-links render after data loads (even if we showed a placeholder earlier)
+  currentRouteKey = "";
   applyRouteFromHash();
   syncWordOfDayVisibility();
 }
