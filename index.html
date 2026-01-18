@@ -373,24 +373,7 @@ main{
   font-weight:500;
   position:relative;
 }
-.wod-rss{
-  position:absolute;
-  right:0;
-  border:none;
-  background:transparent;
-  color:rgba(255,255,255,.9);
-  cursor:pointer;
-  padding:6px 8px;
-  border-radius:10px;
-}
-.wod-rss{
-  border:none;
-  background:transparent;
-  color:rgba(255,255,255,.9);
-  cursor:pointer;
-  padding:6px 8px;
-  border-radius:10px;
-}
+
 .wod-title{
   margin:20px 0 4px;
   font-size:48px; /* larger Word of the Day */
@@ -560,8 +543,8 @@ input:-webkit-autofill:active {
 <main>
   <div class="search-wrapper">
     <select id="lang">
-      <option value="english">English</option>
-      <option value="bikol">Bikol</option>
+      <option value="english" data-short="English" data-long="English – Bikol">English</option>
+      <option value="bikol" data-short="Bikol" data-long="Bikol – English">Bikol</option>
     </select>
     <input id="search" placeholder="Search Bikol Dictionary" autocomplete="off" />
     <button id="searchBtn" type="button" aria-label="Search" data-tooltip="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -571,9 +554,7 @@ input:-webkit-autofill:active {
   <div class="wod-card" id="wordOfDay" role="region" aria-label="Word of the day">
     <div class="wod-top">
       <div id="wod-date">—</div>
-      <button class="wod-rss" type="button" aria-label="RSS">
-        <i class="fa-solid fa-rss"></i>
-      </button>
+      
     </div>
 
     <div class="wod-title"><span id="wod-word">—</span></div>
@@ -705,7 +686,7 @@ function setWordOfDay(){
 
   const word = picked.bikol || "";
   const pos = picked.pos || "";
-    const gloss = picked.sense1_gloss || "";
+  const gloss = picked.sense1_gloss || "";
   const meaning = picked.sense1_meaning || "";
 
   // date
@@ -738,7 +719,7 @@ function setWordOfDay(){
   }
 
   // Listen button: enabled ONLY when an audio URL exists (no speechSynthesis)
-    const audioUrl = (picked.audio_url || picked.audioUrl || picked.audio || "").toString().trim();
+  const audioUrl = (picked.audio_url || picked.audioUrl || picked.audio || "").toString().trim();
   if (wodListenBtn) {
     if (audioUrl) {
       wodAudio = new Audio(audioUrl);
@@ -1113,7 +1094,24 @@ search.addEventListener("keydown", (e) => {
 });
 searchBtn.addEventListener("click", performSearch);
 
+// Show long labels only while dropdown is open
+function setLangOptionsLong(){
+  Array.from(lang.options).forEach(opt => {
+    if (opt.dataset.long) opt.textContent = opt.dataset.long;
+  });
+}
+function setLangOptionsShort(){
+  Array.from(lang.options).forEach(opt => {
+    if (opt.dataset.short) opt.textContent = opt.dataset.short;
+  });
+}
+
+lang.addEventListener("mousedown", setLangOptionsLong);
+lang.addEventListener("focus", setLangOptionsLong);
+lang.addEventListener("blur", setLangOptionsShort);
+
 lang.addEventListener("change", () => {
+  setLangOptionsShort();
   closeSuggestions();
   entries.innerHTML = "";
   search.value = "";
