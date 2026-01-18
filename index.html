@@ -133,9 +133,20 @@ main{
 /* left-align results like Oxford layout */
 #entries{
   max-width:680px;
-  margin:12px 0 0 8vw; /* align entries/results at 8vw from the left */ /* align entries/results at 9vw from the left */
+  margin:12px 0 0 8vw;
   align-self:flex-start;
   padding:0;
+}
+
+/* center container for full-page messages */
+#entries.centered{
+  align-self:stretch;
+  margin:12px 0 0 8vw; /* match normal results vertical position */
+  max-width:none;
+  display:flex;
+  align-items:flex-start; /* slightly higher, like regular results */
+  justify-content:center;
+  min-height:0;
 }
 
 .search-wrapper{
@@ -271,11 +282,19 @@ main{
 .entry::after{
   content:"";
   position:absolute;
-  left:0; /* keep left edge aligned with text */
-  right:-6vw; /* extend separator only to the right */
+  left:0;
+  right:-6vw; /* default: extend separator to the right for normal entries */
   bottom:0;
   height:1px;
   background:var(--rule);
+}
+
+/* Centered no-match separator */
+.entry.no-match::after{
+  left:50%;
+  right:auto;
+  width:60%; /* centered line width */
+  transform:translateX(-50%);
 }
 .headword{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
 .entry h2{
@@ -287,6 +306,15 @@ main{
 }
 .pos{font-style:italic;color:var(--secondary);font-size:14px;}
 .definition{font-size:15px;line-height:1.55;}
+
+.no-match{
+  text-align:center;
+}
+.no-match .definition{
+  font-weight:600;
+  font-size:16px;
+  margin:0 auto;
+}
 .example{
   margin:8px 0;
   padding:10px 12px;
@@ -309,7 +337,7 @@ main{
 /* Word of the Day card (Oxford-like) */
 .wod-card{
   max-width:360px;
-  margin:0 auto 28px;
+  margin:40px auto 28px; /* match header-to-search spacing */
   background:rgba(91,111,142,.16);
   border-radius:18px;
   padding:18px 18px 16px;
@@ -443,7 +471,7 @@ main{
   text-decoration:none;
   font-weight:700;
 }
-.wod-link:hover{ text-decoration:underline; }
+.wod-link:hover{ text-decoration:none; }
 
 @media (max-width: 420px){
   .wod-card{ max-width:100%; }
@@ -459,7 +487,7 @@ main{
   text-decoration:none;
   font-weight:600;
 }
-.wod-link:hover{ text-decoration:underline; }
+.wod-link:hover{ text-decoration:none; }
 
 footer{
   margin-top:auto;
@@ -658,8 +686,8 @@ function setWordOfDay(){
 
   const word = picked.bikol || "";
   const pos = picked.pos || "";
-  const gloss = picked.gloss || "";
-  const meaning = picked.meaning || "";
+    const gloss = picked.sense1_gloss || "";
+  const meaning = picked.sense1_meaning || "";
 
   // date
   if (wodDate) wodDate.textContent = formatWodDate(Date.now());
@@ -691,7 +719,7 @@ function setWordOfDay(){
   }
 
   // Listen button: enabled ONLY when an audio URL exists (no speechSynthesis)
-  const audioUrl = (picked.audio_url || picked.audioUrl || picked.audio || "").toString().trim();
+    const audioUrl = (picked.audio_url || picked.audioUrl || picked.audio || "").toString().trim();
   if (wodListenBtn) {
     if (audioUrl) {
       wodAudio = new Audio(audioUrl);
@@ -758,6 +786,7 @@ function fieldForMode(){
 }
 
 function renderEnglish(d){
+  entries.classList.remove("centered");
   closeSuggestions();
 
   let sensesHtml = "";
@@ -787,12 +816,25 @@ function renderEnglish(d){
 }
 
 function renderBikol(d){
+  entries.classList.remove("centered");
   closeSuggestions();
 
-  let body = '';
-  if (d.gloss) body += '<div class="definition">' + escapeHtml(d.gloss) + '</div>';
-  if (d.meaning) body += '<div class="definition" style="margin-top:10px;">' + escapeHtml(d.meaning) + '</div>';
-  if (d.example) body += buildExampleHTML(d.example);
+  let sensesHtml = "";
+  for (let i = 1; i <= 10; i++) {
+    const g = d["sense" + i + "_gloss"] || "";      // English headword (gloss)
+    const m = d["sense" + i + "_meaning"] || "";    // Meaning/definition
+    const ex = d["sense" + i + "_example"] || "";
+
+    if (!g && !m && !ex) continue;
+
+    sensesHtml += '<div style="margin-top:18px;">';
+    sensesHtml += '<div class="definition"><strong>' + i + '.</strong> ' + escapeHtml(g) + '</div>';
+    if (m) sensesHtml += '<div class="definition">' + escapeHtml(m) + '</div>';
+    sensesHtml += buildExampleHTML(ex);
+    sensesHtml += '</div>';
+  }
+
+  if (!sensesHtml) sensesHtml = '<div class="definition">No senses available.</div>';
 
   entries.innerHTML =
     '<div class="entry">' +
@@ -800,11 +842,12 @@ function renderBikol(d){
         '<h2>' + escapeHtml(d.bikol || "") + '</h2>' +
         '<span class="pos">' + escapeHtml(d.pos || "") + '</span>' +
       '</div>' +
-      body +
+      sensesHtml +
     '</div>';
 }
 
 function render(d){
+  entries.classList.remove("centered");
   if (lang.value === "english") return renderEnglish(d);
   return renderBikol(d);
 }
@@ -813,9 +856,13 @@ function noMatch(term){
   hideWordOfDay();
   const modeText = (lang.value === "english") ? "English - Bikol" : "Bikol - English";
   const safeTerm = escapeHtml(term || "");
+
+  // center the message in the page
+  entries.classList.add("centered");
+
   entries.innerHTML =
-    '<div class="entry">' +
-      '<div class="definition" style="text-align:center; font-weight:bold; font-size:16px;">' +
+    '<div class="entry no-match">' +
+      '<div class="definition">' +
         'No exact match found for "' + safeTerm + '" in ' + modeText + ' Dictionary' +
       '</div>' +
     '</div>';
@@ -885,7 +932,10 @@ function updateSuggestions(){
 }
 
 function buildReverse(rows){
-  const out = [];
+  // Build Bikol -> English entries with up to 10 senses per Bikol headword.
+  // Each sense comes from the English -> Bikol row's senseN fields.
+
+  const map = new Map(); // key: bikolLower -> aggregated entry
 
   rows.forEach(r => {
     const pos = r.pos || "";
@@ -897,37 +947,70 @@ function buildReverse(rows){
       word_of_day: r.word_of_day,
       wordOfDay: r.wordOfDay,
       wotd: r.wotd,
-      featured: r.featured
+      featured: r.featured,
+      level: r.level,
+      cefr: r.cefr,
+      audio_url: r.audio_url,
+      audioUrl: r.audioUrl,
+      audio: r.audio
     };
 
     for (let i = 1; i <= 10; i++) {
-      const bikol = r["sense" + i + "_bikol"] || "";
-      const meaning = r["sense" + i + "_meaning"] || "";
-      const example = r["sense" + i + "_example"] || "";
+      const bikol = (r["sense" + i + "_bikol"] || "").trim();
+      const meaning = (r["sense" + i + "_meaning"] || "").trim();
+      const example = (r["sense" + i + "_example"] || "").trim();
       if (!bikol) continue;
 
-      out.push({
-        bikol: bikol,
-        pos: pos,
-        gloss: english ? (english + (pos ? " (" + pos + ")" : "")) : "",
-        meaning: meaning,
-        example: example,
-        ...flags
-      });
+      const key = bikol.toLowerCase();
+      if (!map.has(key)) {
+        map.set(key, {
+          bikol,
+          pos,
+          ...flags,
+          _senses: []
+        });
+      }
+
+      const entry = map.get(key);
+
+      // If pos differs across rows, keep the first non-empty, otherwise keep existing.
+      if (!entry.pos && pos) entry.pos = pos;
+
+      // Add sense (avoid exact duplicates)
+      const senseKey = (english + "|" + meaning).toLowerCase();
+      const exists = entry._senses.some(s => (s._k === senseKey));
+      if (!exists) {
+        entry._senses.push({
+          _k: senseKey,
+          gloss: english,
+          meaning,
+          example
+        });
+      }
     }
   });
 
-  const seen = new Set();
-  const deduped = [];
+  // Convert senses list into sense1..sense10 fields
+  const out = [];
+  map.forEach(entry => {
+    const senses = entry._senses.slice(0, 10);
+    const row = { ...entry };
+    delete row._senses;
 
-  out.forEach(item => {
-    const key = (item.bikol || "").toLowerCase() + "|" + (item.meaning || "").toLowerCase();
-    if (seen.has(key)) return;
-    seen.add(key);
-    deduped.push(item);
+    for (let i = 1; i <= 10; i++) {
+      const s = senses[i - 1];
+      row["sense" + i + "_gloss"] = s ? (s.gloss || "") : "";
+      row["sense" + i + "_meaning"] = s ? (s.meaning || "") : "";
+      row["sense" + i + "_example"] = s ? (s.example || "") : "";
+    }
+
+    out.push(row);
   });
 
-  return deduped;
+  // Sort alphabetically for stable suggestions
+  out.sort((a, b) => (a.bikol || "").localeCompare((b.bikol || ""), undefined, { sensitivity: "base" }));
+
+  return out;
 }
 
 function setDataFromRows(rows){
