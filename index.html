@@ -589,7 +589,7 @@ input:-webkit-autofill:active {
       <option value="english" data-short="English" data-long="English – Bikol">English</option>
       <option value="bikol" data-short="Bikol" data-long="Bikol – English">Bikol</option>
     </select>
-    <input id="search" placeholder="Search Bikol Dictionary" autocomplete="off" />
+    <input id="search" placeholder="Search English - Bikol Dictionary" autocomplete="off" />
     <button id="searchBtn" type="button" aria-label="Search" data-tooltip="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
     <div class="suggestions" id="suggestions"></div>
   </div>
@@ -1287,7 +1287,13 @@ function setDataFromRows(rows){
   // Ensure deep-links render after data loads (even if we showed a placeholder earlier)
   currentRouteKey = "";
   applyRouteFromHash();
-  syncWordOfDayVisibility();
+// initial placeholder
+if (lang.value === "english") {
+  search.placeholder = "Search English - Bikol Dictionary";
+} else {
+  search.placeholder = "Search Bikol - English Dictionary";
+}
+syncWordOfDayVisibility();
 }
 
 function showNotice(html){
@@ -1361,6 +1367,12 @@ lang.addEventListener("focus", setLangOptionsLong);
 lang.addEventListener("blur", setLangOptionsShort);
 
 lang.addEventListener("change", () => {
+  // update placeholder based on language
+  if (lang.value === "english") {
+    search.placeholder = "Search English - Bikol Dictionary";
+  } else {
+    search.placeholder = "Search Bikol - English Dictionary";
+  }
   setLangOptionsShort();
   closeSuggestions();
   entries.innerHTML = "";
