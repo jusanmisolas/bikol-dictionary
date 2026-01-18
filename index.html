@@ -306,6 +306,7 @@ main{
 }
 .pos{font-style:italic;color:var(--secondary);font-size:14px;}
 .definition{font-size:15px;line-height:1.55;}
+.equivalent{color:var(--accent-soft);font-weight:500;}
 
 .no-match{
   text-align:center;
@@ -802,13 +803,13 @@ function renderEnglish(d){
   if (senses.length === 1) {
     const s = senses[0];
     sensesHtml += '<div class="definition">' + escapeHtml(s.m) + '</div>';
-    if (s.b) sensesHtml += '<div class="definition">' + escapeHtml(s.b) + '</div>';
+    if (s.b) sensesHtml += '<div class="definition equivalent">' + escapeHtml(s.b) + '</div>';
     sensesHtml += buildExampleHTML(s.ex);
   } else if (senses.length > 1) {
     senses.forEach((s, idx) => {
       sensesHtml += '<div style="margin-top:18px;">';
       sensesHtml += '<div class="definition"><strong>' + (idx + 1) + '.</strong> ' + escapeHtml(s.m) + '</div>';
-      if (s.b) sensesHtml += '<div class="definition">' + escapeHtml(s.b) + '</div>';
+      if (s.b) sensesHtml += '<div class="definition equivalent">' + escapeHtml(s.b) + '</div>';
       sensesHtml += buildExampleHTML(s.ex);
       sensesHtml += '</div>';
     });
@@ -1151,3 +1152,4 @@ function assert(condition, message){
 </script>
 </body>
 </html>
+
