@@ -789,21 +789,32 @@ function renderEnglish(d){
   entries.classList.remove("centered");
   closeSuggestions();
 
-  let sensesHtml = "";
+  const senses = [];
   for (let i = 1; i <= 10; i++) {
     const m = d["sense" + i + "_meaning"] || "";
     const b = d["sense" + i + "_bikol"] || "";
     const ex = d["sense" + i + "_example"] || "";
     if (!m) continue;
-
-    sensesHtml += '<div style="margin-top:18px;">';
-    sensesHtml += '<div class="definition"><strong>' + i + '.</strong> ' + escapeHtml(m) + '</div>';
-    if (b) sensesHtml += '<div class="definition">' + escapeHtml(b) + '</div>';
-    sensesHtml += buildExampleHTML(ex);
-    sensesHtml += '</div>';
+    senses.push({ m, b, ex });
   }
 
-  if (!sensesHtml) sensesHtml = '<div class="definition">No senses available.</div>';
+  let sensesHtml = "";
+  if (senses.length === 1) {
+    const s = senses[0];
+    sensesHtml += '<div class="definition">' + escapeHtml(s.m) + '</div>';
+    if (s.b) sensesHtml += '<div class="definition">' + escapeHtml(s.b) + '</div>';
+    sensesHtml += buildExampleHTML(s.ex);
+  } else if (senses.length > 1) {
+    senses.forEach((s, idx) => {
+      sensesHtml += '<div style="margin-top:18px;">';
+      sensesHtml += '<div class="definition"><strong>' + (idx + 1) + '.</strong> ' + escapeHtml(s.m) + '</div>';
+      if (s.b) sensesHtml += '<div class="definition">' + escapeHtml(s.b) + '</div>';
+      sensesHtml += buildExampleHTML(s.ex);
+      sensesHtml += '</div>';
+    });
+  } else {
+    sensesHtml = '<div class="definition">No senses available.</div>';
+  }
 
   entries.innerHTML =
     '<div class="entry">' +
@@ -815,26 +826,37 @@ function renderEnglish(d){
     '</div>';
 }
 
+
 function renderBikol(d){
   entries.classList.remove("centered");
   closeSuggestions();
 
-  let sensesHtml = "";
+  const senses = [];
   for (let i = 1; i <= 10; i++) {
-    const g = d["sense" + i + "_gloss"] || "";      // English headword (gloss)
-    const m = d["sense" + i + "_meaning"] || "";    // Meaning/definition
+    const g = d["sense" + i + "_gloss"] || "";
+    const m = d["sense" + i + "_meaning"] || "";
     const ex = d["sense" + i + "_example"] || "";
-
     if (!g && !m && !ex) continue;
-
-    sensesHtml += '<div style="margin-top:18px;">';
-    sensesHtml += '<div class="definition"><strong>' + i + '.</strong> ' + escapeHtml(g) + '</div>';
-    if (m) sensesHtml += '<div class="definition">' + escapeHtml(m) + '</div>';
-    sensesHtml += buildExampleHTML(ex);
-    sensesHtml += '</div>';
+    senses.push({ g, m, ex });
   }
 
-  if (!sensesHtml) sensesHtml = '<div class="definition">No senses available.</div>';
+  let sensesHtml = "";
+  if (senses.length === 1) {
+    const s = senses[0];
+    if (s.g) sensesHtml += '<div class="definition">' + escapeHtml(s.g) + '</div>';
+    if (s.m) sensesHtml += '<div class="definition">' + escapeHtml(s.m) + '</div>';
+    sensesHtml += buildExampleHTML(s.ex);
+  } else if (senses.length > 1) {
+    senses.forEach((s, idx) => {
+      sensesHtml += '<div style="margin-top:18px;">';
+      sensesHtml += '<div class="definition"><strong>' + (idx + 1) + '.</strong> ' + escapeHtml(s.g) + '</div>';
+      if (s.m) sensesHtml += '<div class="definition">' + escapeHtml(s.m) + '</div>';
+      sensesHtml += buildExampleHTML(s.ex);
+      sensesHtml += '</div>';
+    });
+  } else {
+    sensesHtml = '<div class="definition">No senses available.</div>';
+  }
 
   entries.innerHTML =
     '<div class="entry">' +
@@ -845,6 +867,7 @@ function renderBikol(d){
       sensesHtml +
     '</div>';
 }
+
 
 function render(d){
   entries.classList.remove("centered");
