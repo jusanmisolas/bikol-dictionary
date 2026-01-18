@@ -333,6 +333,25 @@ main{
 }
 .pron button:hover{background:var(--hover);}
 .pron button:disabled{opacity:.35;cursor:not-allowed;}
+.dialect,
+.derivs{
+  margin:0 0 8px;
+  color:var(--secondary);
+  font-size:13.5px;
+  line-height:1.45;
+}
+.dialect .label,
+.derivs .label{
+  font-weight:600;
+  color:var(--secondary);
+}
+.dialect .value,
+.derivs .value{
+  font-weight:500;
+  font-style:italic;
+  color:var(--secondary);
+}
+.derivs{margin-bottom:10px;}
 .entry h2{
   margin:0;
   color:var(--accent);
@@ -760,16 +779,20 @@ function isHomeView(){
 }
 
 function pickWordOfDay(rows){
+  // TEMP: force Word of the Day to "kakan" for this chat
+  const forced = rows.find(r => (r.bikol || "").toLowerCase() === "kakan");
+  if (forced) return forced;
+
+  // MANUAL Word of the Day only (fallback)
   const curated = rows.filter(r =>
     isTruthy(r.wod) || isTruthy(r.word_of_day) || isTruthy(r.wordOfDay) || isTruthy(r.wotd) || isTruthy(r.featured)
   );
-  const pool = curated.length ? curated : rows;
-  if (!pool.length) return null;
 
-  // Date-based, but "random-looking" deterministic pick
+  if (!curated.length) return null;
+
   const dayIndex = Math.floor(Date.now() / 86400000);
-  const idx = (dayIndex * 9301 + 49297) % pool.length;
-  return pool[idx] || null;
+  const idx = dayIndex % curated.length;
+  return curated[idx];
 }
 
 function formatWodDate(d){
@@ -932,6 +955,28 @@ function linkifyEnglishGloss(text){
   }).join(", ");
 }
 
+function getDialect(d){
+  return (d.dialect || "").toString().trim();
+}
+
+function dialectHTML(d){
+  const v = getDialect(d);
+  if (!v) return "";
+  return '<div class="dialect"><span class="value">' + escapeHtml(v) + '</span></div>';
+}
+
+
+function getDerivs(d){
+  return (d.derivatives || d.inflections || d.derivatives_inflections || "").toString().trim();
+}
+
+function derivsHTML(d){
+  const v = getDerivs(d);
+  if (!v) return "";
+  return '<div class="derivs"><span class="value">' + escapeHtml(v) + '</span></div>';
+}
+
+
 function dictForMode(){
   return (lang.value === "english") ? dictionaryEN : dictionaryBI;
 }
@@ -1046,9 +1091,7 @@ function renderBikol(d){
         '<span class="pos">' + escapeHtml(d.pos || "") + '</span>' +
       '</div>' +
       (function(){
-        let ipa = d.ipa || d.pron || d.pronunciation || "";
-        // normalize to a single pronunciation (strip surrounding slashes if present)
-        ipa = String(ipa).trim().replace(/^\/+|\/+$/g, "");
+        const ipa = d.ipa || d.pron || d.pronunciation || "";
         const audioUrl = d.audio_url || d.audioUrl || d.audio || "";
         if (!ipa && !audioUrl) return "";
         let html = '<div class="pron">';
@@ -1060,7 +1103,8 @@ function renderBikol(d){
         }
         html += '</div>';
         return html;
-      })() +
+      })() +      dialectHTML(d) +
+      derivsHTML(d) +
       sensesHtml +
     '</div>';
 }
@@ -1171,8 +1215,10 @@ function buildReverse(rows){
       level: r.level,
       cefr: r.cefr,
       audio_url: r.audio_url,
-      audioUrl: r.audioUrl,
-      audio: r.audio
+      audioUrl: r.audioUrl,      audio: r.audio,
+      // usage place / region metadata
+      dialect: r.dialect,
+      derivatives: r.derivatives || r.inflections || r.derivatives_inflections
     };
 
     for (let i = 1; i <= 10; i++) {
