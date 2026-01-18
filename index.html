@@ -314,7 +314,25 @@ main{
   width:60%; /* centered line width */
   transform:translateX(-50%);
 }
-.headword{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
+.headword{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;}
+.pron{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:2px 0 10px;
+  color:var(--secondary);
+  font-size:14px;
+}
+.pron .ipa{font-style:italic;}
+.pron button{
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  padding:4px 6px;
+  border-radius:999px;
+}
+.pron button:hover{background:var(--hover);}
+.pron button:disabled{opacity:.35;cursor:not-allowed;}
 .entry h2{
   margin:0;
   color:var(--accent);
@@ -969,6 +987,16 @@ function renderEnglish(d){
       '</div>' +
       sensesHtml +
     '</div>';
+
+  // attach audio handlers (Bikol headword pronunciation)
+  entries.querySelectorAll('.pron-play').forEach(btn => {
+    const src = btn.getAttribute('data-audio');
+    if (!src) return;
+    const audio = new Audio(src);
+    btn.addEventListener('click', () => {
+      try { audio.currentTime = 0; audio.play(); } catch(e){}
+    });
+  });
 }
 
 
@@ -1017,6 +1045,22 @@ function renderBikol(d){
         '<h2>' + escapeHtml(d.bikol || "") + '</h2>' +
         '<span class="pos">' + escapeHtml(d.pos || "") + '</span>' +
       '</div>' +
+      (function(){
+        let ipa = d.ipa || d.pron || d.pronunciation || "";
+        // normalize to a single pronunciation (strip surrounding slashes if present)
+        ipa = String(ipa).trim().replace(/^\/+|\/+$/g, "");
+        const audioUrl = d.audio_url || d.audioUrl || d.audio || "";
+        if (!ipa && !audioUrl) return "";
+        let html = '<div class="pron">';
+        if (audioUrl) {
+          html += '<button type="button" class="pron-play" aria-label="Listen" data-audio="' + escapeHtml(audioUrl) + '"><i class="fa-solid fa-volume-high"></i></button>';
+        }
+        if (ipa) {
+          html += '<span class="ipa">/' + escapeHtml(ipa) + '/</span>';
+        }
+        html += '</div>';
+        return html;
+      })() +
       sensesHtml +
     '</div>';
 }
