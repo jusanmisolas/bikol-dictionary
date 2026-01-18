@@ -164,11 +164,17 @@ main{
   .search-wrapper{max-width:860px;}
 }
 
+.lang-wrap{
+  position:relative;
+  display:flex;
+  align-items:stretch;
+}
+
 .search-wrapper select{
   font-weight:600;
   flex:0 0 auto;
   background:var(--gold-dark);
-  color:#000;
+  color:transparent; /* hide long option text in the button */
   border:none;
   padding:14px 36px;
   min-width:90px;
@@ -178,23 +184,38 @@ main{
   appearance:none;
   text-align:center;
   width:auto;
+  text-shadow:0 0 0 transparent; /* ensure hidden */
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%231F2937' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat:no-repeat;
   background-position:right 14px center;
 }
 
+.lang-label{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  font-size:15.5px;
+  font-weight:600;
+  color:#000;
+}
+
 @media (max-width: 520px){
   .search-wrapper select{
-    padding:14px 18px;          /* tighter */
-    min-width:44px;             /* caret only */
-    font-size:0;                /* hide text */
+    padding:14px 12px;          /* just enough for caret */
+    min-width:32px;             /* tighter caret-only width */
     background-position:center; /* center caret */
   }
+  .lang-label{ display:none; }  /* caret only on mobile */
   .search-wrapper select option{
     font-size:15px;             /* options still readable */
+    color:#000;
   }
   .search-wrapper input{
     font-size:15px;             /* balance with smaller control */
+    padding-left:14px;          /* reclaim space from dropdown */
   }
   .search-wrapper input::placeholder{
     font-size:14.5px;           /* adjusted placeholder */
@@ -559,10 +580,13 @@ input:-webkit-autofill:active {
 
 <main>
   <div class="search-wrapper">
-    <select id="lang">
-      <option value="english">English</option>
-      <option value="bikol">Bikol</option>
-    </select>
+    <div class="lang-wrap">
+      <select id="lang" aria-label="Language direction">
+        <option value="english">English - Bikol</option>
+        <option value="bikol">Bikol - English</option>
+      </select>
+      <span class="lang-label" id="langLabel" aria-hidden="true">English</span>
+    </div>
     <input id="search" placeholder="Search Bikol Dictionary" autocomplete="off" />
     <button id="searchBtn" type="button" aria-label="Search" data-tooltip="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
     <div class="suggestions" id="suggestions"></div>
@@ -1106,6 +1130,12 @@ homeLink.addEventListener("click", (e) => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
+// Initialize short label for the dropdown button
+(function initLangLabel(){
+  const lbl = document.getElementById("langLabel");
+  if (lbl) lbl.textContent = (lang.value === "english") ? "English" : "Bikol";
+})();
+
 // Events
 search.addEventListener("input", updateSuggestions);
 search.addEventListener("keydown", (e) => {
@@ -1114,6 +1144,8 @@ search.addEventListener("keydown", (e) => {
 searchBtn.addEventListener("click", performSearch);
 
 lang.addEventListener("change", () => {
+  const lbl = document.getElementById("langLabel");
+  if (lbl) lbl.textContent = (lang.value === "english") ? "English" : "Bikol";
   closeSuggestions();
   entries.innerHTML = "";
   search.value = "";
