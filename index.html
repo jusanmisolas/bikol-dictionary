@@ -478,6 +478,25 @@ main{
   .wod-pill{ min-width:0; width:100%; }
 }
 
+/* Mobile: keep entries within search bar width (no overflow) */
+@media (max-width: 600px){
+  #entries{
+    max-width:860px; /* do not exceed search bar */
+    width:100%;
+    margin:12px auto 0; /* align under centered search bar */
+    align-self:center;
+  }
+  #entries.centered{
+    max-width:860px;
+    width:100%;
+    margin:12px auto 0;
+  }
+  /* prevent divider line from extending past the column */
+  .entry::after{ right:0; }
+}
+  .wod-pill{ min-width:0; width:100%; }
+}
+
 .wod-meaning{
   display:none; /* keep Oxford-like card clean; word opens entry on click */
 }
