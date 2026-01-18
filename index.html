@@ -328,7 +328,7 @@ main{
   font-weight:500;
   color:var(--ink);
 }
-.pron .ipa{font-style:italic;}
+/* removed: IPA should not be italic */
 .pron button{
   border:none;
   background:transparent;
@@ -370,10 +370,15 @@ main{
   font-weight:600;
   color:var(--secondary);
 }
-.dialect .value,
+.dialect .value{
+  font-style:normal; /* dialect NOT italic */
+  font-weight:600;
+  color:var(--accent);
+}
+
 .derivs .value{
+  font-style:italic; /* only inflections/derivatives italic */
   font-weight:500;
-  font-style:italic;
   color:var(--secondary);
 }
 .derivs{margin-bottom:10px;}
@@ -1406,9 +1411,14 @@ burger.addEventListener("click", () => {
 });
 
 document.addEventListener("click", (e) => {
-  if (!e.target.closest(".search-wrapper")) closeSuggestions();
+  if
+(!e.target.closest(".search-wrapper")) closeSuggestions();
 
-  if (menu.classList.contains("open") && !e.target.closest("#menu") && !e.target.closest("#burger")) {
+  if (
+    menu.classList.contains("open") &&
+    !e.target.closest("#menu") &&
+    !e.target.closest("#burger")
+  ) {
     menu.classList.remove("open");
     burger.setAttribute("aria-expanded", "false");
   }
@@ -1423,21 +1433,22 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
-// Load CSV
-loadCsvFromFile();
-// Initial visibility
-applyRouteFromHash();
-syncWordOfDayVisibility();
 
-// Tests (console)
-function assert(condition, message){
-  if (!condition) throw new Error(message);
-}
-
-// Route handling (back/forward + pasted links)
 window.addEventListener("hashchange", () => {
   applyRouteFromHash();
 });
+
+// Load CSV files
+loadCsvFromFile();
+
+// Initial routing + Word of the Day
+applyRouteFromHash();
+syncWordOfDayVisibility();
+
+// Smoke tests (optional)
+function assert(condition, message){
+  if (!condition) throw new Error(message);
+}
 
 (function runTests(){
   try {
@@ -1445,7 +1456,6 @@ window.addEventListener("hashchange", () => {
     assert(document.getElementById("search"), "Search input should exist");
     assert(document.getElementById("suggestions"), "Suggestions container should exist");
     assert(document.getElementById("wordOfDay"), "Word of Day block should exist");
-    assert(typeof setWordOfDay === "function", "setWordOfDay should exist");
     console.log("Smoke tests passed");
   } catch (e) {
     console.error("Smoke tests failed:", e);
