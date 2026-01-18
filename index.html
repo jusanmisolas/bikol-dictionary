@@ -133,9 +133,9 @@ main{
 /* left-align results like Oxford layout */
 #entries{
   width:100%;
-  max-width:740px; /* reduce horizontal stretching for better readability */ /* match search bar width */
-  margin:12px 0 0 8vw;
-  align-self:flex-start;
+  max-width:740px; /* keep existing width */
+  margin:12px auto 0; /* center entries horizontally */
+  align-self:center;
   padding:0;
 }
 
@@ -283,7 +283,7 @@ main{
   content:"";
   position:absolute;
   left:0;
-  right:-6vw; /* default: extend separator to the right for normal entries */
+  right:-2vw; /* reduced extension to the right */
   bottom:0;
   height:1px;
   background:var(--rule);
