@@ -325,6 +325,12 @@ main{
 .pos{font-style:italic;color:var(--secondary);font-size:14px;}
 .definition{font-size:15px;line-height:1.55;}
 .equivalent{color:var(--accent-soft);font-weight:500;}
+.equivalent .equiv-link{color:inherit;text-decoration:none;font-weight:600;}
+.gloss-link{color:inherit;text-decoration:none;font-weight:600;}
+.gloss-link:hover{text-decoration:none;}
+.gloss-link:focus{outline:2px solid rgba(0,31,61,.35);outline-offset:2px;border-radius:6px;}
+.equivalent .equiv-link:hover{text-decoration:none;}
+.equivalent .equiv-link:focus{outline:2px solid rgba(0,31,61,.35);outline-offset:2px;border-radius:6px;}
 
 .no-match{
   text-align:center;
@@ -865,6 +871,49 @@ function buildExampleHTML(ex){
   return html;
 }
 
+// Turn Bikol equivalents into deep links (to the Bikol → English entry)
+function linkifyBikolEquivalents(text){
+  const raw = String(text || "").trim();
+  if (!raw) return "";
+
+  // Split on separators; also split on the word "or" (simple, space-based)
+  const chunks = raw.split(/[,;/|]+/);
+  const tokens = [];
+  chunks.forEach(c => {
+    const p = String(c || "");
+    // Handle " or " in a basic way without regex backslashes
+    const sub = p.split(" or ").flatMap(x => x.split(" OR "));
+    sub.forEach(t => {
+      const term = String(t || "").trim();
+      if (term) tokens.push(term);
+    });
+  });
+
+  return tokens.map(term => {
+    const href = "#/bikol/" + encodeURIComponent(term);
+    return '<a href="' + href + '" class="equiv-link" title="Open Bikol entry">' + escapeHtml(term) + '</a>';
+  }).join(", ");
+}
+
+// Turn English glosses into deep links (to the English → Bikol entry)
+function linkifyEnglishGloss(text){
+  const raw = String(text || "").trim();
+  if (!raw) return "";
+
+  // Often a single headword; but allow basic multi-term separators.
+  const chunks = raw.split(/[,;/|]+/);
+  const tokens = [];
+  chunks.forEach(c => {
+    const term = String(c || "").trim();
+    if (term) tokens.push(term);
+  });
+
+  return tokens.map(term => {
+    const href = "#/english/" + encodeURIComponent(term);
+    return '<a href="' + href + '" class="gloss-link" title="Open English entry">' + escapeHtml(term) + '</a>';
+  }).join(", ");
+}
+
 function dictForMode(){
   return (lang.value === "english") ? dictionaryEN : dictionaryBI;
 }
@@ -898,13 +947,13 @@ function renderEnglish(d){
   if (senses.length === 1) {
     const s = senses[0];
     sensesHtml += '<div class="definition">' + escapeHtml(s.m) + '</div>';
-    if (s.b) sensesHtml += '<div class="definition equivalent">' + escapeHtml(s.b) + '</div>';
+    if (s.b) sensesHtml += '<div class="definition equivalent">' + linkifyBikolEquivalents(s.b) + '</div>';
     sensesHtml += buildExampleHTML(s.ex);
   } else if (senses.length > 1) {
     senses.forEach((s, idx) => {
       sensesHtml += '<div style="margin-top:18px;">';
       sensesHtml += '<div class="definition"><strong>' + (idx + 1) + '.</strong> ' + escapeHtml(s.m) + '</div>';
-      if (s.b) sensesHtml += '<div class="definition equivalent">' + escapeHtml(s.b) + '</div>';
+      if (s.b) sensesHtml += '<div class="definition equivalent">' + linkifyBikolEquivalents(s.b) + '</div>';
       sensesHtml += buildExampleHTML(s.ex);
       sensesHtml += '</div>';
     });
@@ -947,13 +996,13 @@ function renderBikol(d){
   let sensesHtml = "";
   if (senses.length === 1) {
     const s = senses[0];
-    if (s.g) sensesHtml += '<div class="definition">' + escapeHtml(s.g) + '</div>';
+    if (s.g) sensesHtml += '<div class="definition">' + linkifyEnglishGloss(s.g) + '</div>';
     if (s.m) sensesHtml += '<div class="definition">' + escapeHtml(s.m) + '</div>';
     sensesHtml += buildExampleHTML(s.ex);
   } else if (senses.length > 1) {
     senses.forEach((s, idx) => {
       sensesHtml += '<div style="margin-top:18px;">';
-      sensesHtml += '<div class="definition"><strong>' + (idx + 1) + '.</strong> ' + escapeHtml(s.g) + '</div>';
+      sensesHtml += '<div class="definition"><strong>' + (idx + 1) + '.</strong> ' + linkifyEnglishGloss(s.g) + '</div>';
       if (s.m) sensesHtml += '<div class="definition">' + escapeHtml(s.m) + '</div>';
       sensesHtml += buildExampleHTML(s.ex);
       sensesHtml += '</div>';
