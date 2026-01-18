@@ -323,6 +323,11 @@ main{
   color:var(--secondary);
   font-size:14px;
 }
+.pron .ipa{
+  font-style:normal; /* NOT italic */
+  font-weight:500;
+  color:var(--ink);
+}
 .pron .ipa{font-style:italic;}
 .pron button{
   border:none;
@@ -336,9 +341,29 @@ main{
 .dialect,
 .derivs{
   margin:0 0 8px;
-  color:var(--secondary);
   font-size:13.5px;
   line-height:1.45;
+}
+
+/* Dialect: special highlighted style */
+.dialect{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  background:rgba(91,111,142,.18);
+  color:var(--accent);
+  font-weight:600;
+  margin-bottom:8px;
+}
+
+/* Derivatives / inflections: softer, italic */
+.derivs{
+  color:var(--secondary);
+}
+
+.derivs .value{
+  font-style:italic;
+  font-weight:500;
 }
 .dialect .label,
 .derivs .label{
@@ -631,6 +656,14 @@ run,verb,to move swiftly on foot,dalagan,May nahiling akong nagdadalagan na ikos
 house,noun,a building for people to live in,harong,Ini an samuyang harong.||This is our house.,,,,,,,,,,,,,,,,,,,,,,,,,,,
 eat,verb,to put food into the mouth and swallow,kakan,Nagkakan kami subagong aga.||We ate this morning.,,,,,,,,,,,,,,,,,,,,,,,,,,,
 big,adjective,of large size,dakula,Dakula an harong.||The house is big.,,,,,,,,,,,,,,,,,,,,,,,,,,,
+</script>
+
+<!-- Optional fallback for bikol_to_english.csv (used only when CSV fetch is blocked) -->
+<script type="text/plain" id="csv-fallback-bi">bikol,pos,ipa,audio_url,dialect,derivatives_inflections,wod,featured,sense1_gloss,sense1_meaning,sense1_example,sense2_gloss,sense2_meaning,sense2_example,sense3_gloss,sense3_meaning,sense3_example,sense4_gloss,sense4_meaning,sense4_example,sense5_gloss,sense5_meaning,sense5_example,sense6_gloss,sense6_meaning,sense6_example,sense7_gloss,sense7_meaning,sense7_example,sense8_gloss,sense8_meaning,sense8_example,sense9_gloss,sense9_meaning,sense9_example,sense10_gloss,sense10_meaning,sense10_example
+kakan,verb,kakán,,Naga Bikol,"kakan, nagkakan, magkakan",yes,,eat,to put food into the mouth and swallow,Nagkakan kami subagong aga.||We ate this morning.,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dalagan,verb,dalágan,,,"dalagan, nagdadalagan, magdalagan",,,run,to move swiftly on foot,May nahiling akong nagdadalagan na ikos.||I saw a cat running.,operate,to manage or operate something,Matibay siyang magpadalagan nin negosyo.||She runs a business.,,,,,,,,,,,,,,,,,,,,,,,,
+harong,noun,haróng,,,,,house,a building for people to live in,Ini an samuyang harong.||This is our house.,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dakula,adjective,dakulâ,,,,,big,of large size,Dakula an harong.||The house is big.,,,,,,,,,,,,,,,,,,,,,,,,,,,
 </script>
 
 <script>
@@ -1054,6 +1087,7 @@ function renderBikol(d){
       setHashRoute("bikol", d.bikol, true);
     }
   }
+
   entries.classList.remove("centered");
   closeSuggestions();
 
@@ -1084,29 +1118,50 @@ function renderBikol(d){
     sensesHtml = '<div class="definition">No senses available.</div>';
   }
 
+  // Pronunciation row (Bikol → English): ALWAYS show audio button
+  let ipa = (d.ipa || d.pron || d.pronunciation || "").toString().trim().replace(/^\/+|\/+$/g, "");
+  const audioUrl = (d.audio_url || d.audioUrl || d.audio || "").toString().trim();
+
+  let pronHtml = '<div class="pron">';
+  if (audioUrl) {
+    pronHtml += '<button type="button" class="pron-play" aria-label="Listen" data-audio="' + escapeHtml(audioUrl) + '"><i class="fa-solid fa-volume-high"></i></button>';
+  } else {
+    pronHtml += '<button type="button" class="pron-play" aria-label="Audio unavailable" disabled><i class="fa-solid fa-volume-high"></i></button>';
+  }
+  if (ipa) {
+    pronHtml += '<span class="ipa">/' + escapeHtml(ipa) + '/</span>';
+  }
+  pronHtml += '</div>';
+
+  // TEMP preview-only sample for "kakan" when fields are blank
+  let dialectBlock = dialectHTML(d);
+  let derivsBlock = derivsHTML(d);
+  if ((d.bikol || "").toLowerCase() === "kakan" && !dialectBlock && !derivsBlock) {
+    dialectBlock = '<div class="dialect"><span class="value">Naga Bikol</span></div>';
+    derivsBlock = '<div class="derivs"><span class="value">kakan, nagkakan, magkakan</span></div>';
+  }
+
   entries.innerHTML =
     '<div class="entry">' +
       '<div class="headword">' +
         '<h2>' + escapeHtml(d.bikol || "") + '</h2>' +
         '<span class="pos">' + escapeHtml(d.pos || "") + '</span>' +
       '</div>' +
-      (function(){
-        const ipa = d.ipa || d.pron || d.pronunciation || "";
-        const audioUrl = d.audio_url || d.audioUrl || d.audio || "";
-        if (!ipa && !audioUrl) return "";
-        let html = '<div class="pron">';
-        if (audioUrl) {
-          html += '<button type="button" class="pron-play" aria-label="Listen" data-audio="' + escapeHtml(audioUrl) + '"><i class="fa-solid fa-volume-high"></i></button>';
-        }
-        if (ipa) {
-          html += '<span class="ipa">/' + escapeHtml(ipa) + '/</span>';
-        }
-        html += '</div>';
-        return html;
-      })() +      dialectHTML(d) +
-      derivsHTML(d) +
+      pronHtml +
+      dialectBlock +
+      derivsBlock +
       sensesHtml +
     '</div>';
+
+  // attach audio handlers
+  entries.querySelectorAll('.pron-play').forEach(btn => {
+    const src = btn.getAttribute('data-audio');
+    if (!src) return;
+    const audio = new Audio(src);
+    btn.addEventListener('click', () => {
+      try { audio.currentTime = 0; audio.play(); } catch(e){}
+    });
+  });
 }
 
 
@@ -1195,105 +1250,29 @@ function updateSuggestions(){
   suggestions.appendChild(list);
 }
 
-function buildReverse(rows){
-  // Build Bikol -> English entries with up to 10 senses per Bikol headword.
-  // Each sense comes from the English -> Bikol row's senseN fields.
+// NOTE: buildReverse removed. Bikol → English is now MANUAL only.
+// Keep entries exclusively from bikol_to_english.csv.
 
-  const map = new Map(); // key: bikolLower -> aggregated entry
+function setDataFromFiles(enRows, biRows){
+  dictionaryEN = (enRows || []).filter(row => row.english);
 
-  rows.forEach(r => {
-    const pos = r.pos || "";
-    const english = r.english || "";
+  // Bikol → English is MANUAL ONLY
+  dictionaryBI = (Array.isArray(biRows) ? biRows : []).filter(r => (r.bikol || "").toString().trim());
 
-    // carry optional admin flags to reverse rows
-    const flags = {
-      wod: r.wod,
-      word_of_day: r.word_of_day,
-      wordOfDay: r.wordOfDay,
-      wotd: r.wotd,
-      featured: r.featured,
-      level: r.level,
-      cefr: r.cefr,
-      audio_url: r.audio_url,
-      audioUrl: r.audioUrl,      audio: r.audio,
-      // usage place / region metadata
-      dialect: r.dialect,
-      derivatives: r.derivatives || r.inflections || r.derivatives_inflections
-    };
-
-    for (let i = 1; i <= 10; i++) {
-      const bikol = (r["sense" + i + "_bikol"] || "").trim();
-      const meaning = (r["sense" + i + "_meaning"] || "").trim();
-      const example = (r["sense" + i + "_example"] || "").trim();
-      if (!bikol) continue;
-
-      const key = bikol.toLowerCase();
-      if (!map.has(key)) {
-        map.set(key, {
-          bikol,
-          pos,
-          ...flags,
-          _senses: []
-        });
-      }
-
-      const entry = map.get(key);
-
-      // If pos differs across rows, keep the first non-empty, otherwise keep existing.
-      if (!entry.pos && pos) entry.pos = pos;
-
-      // Add sense (avoid exact duplicates)
-      const senseKey = (english + "|" + meaning).toLowerCase();
-      const exists = entry._senses.some(s => (s._k === senseKey));
-      if (!exists) {
-        entry._senses.push({
-          _k: senseKey,
-          gloss: english,
-          meaning,
-          example
-        });
-      }
-    }
-  });
-
-  // Convert senses list into sense1..sense10 fields
-  const out = [];
-  map.forEach(entry => {
-    const senses = entry._senses.slice(0, 10);
-    const row = { ...entry };
-    delete row._senses;
-
-    for (let i = 1; i <= 10; i++) {
-      const s = senses[i - 1];
-      row["sense" + i + "_gloss"] = s ? (s.gloss || "") : "";
-      row["sense" + i + "_meaning"] = s ? (s.meaning || "") : "";
-      row["sense" + i + "_example"] = s ? (s.example || "") : "";
-    }
-
-    out.push(row);
-  });
-
-  // Sort alphabetically for stable suggestions
-  out.sort((a, b) => (a.bikol || "").localeCompare((b.bikol || ""), undefined, { sensitivity: "base" }));
-
-  return out;
-}
-
-function setDataFromRows(rows){
-  dictionaryEN = (rows || []).filter(row => row.english);
-  dictionaryBI = buildReverse(dictionaryEN);
   dataReady = true;
 
-  // Ensure deep-links render after data loads (even if we showed a placeholder earlier)
+  // Ensure deep-links render after data loads
   currentRouteKey = "";
   applyRouteFromHash();
-// initial placeholder
-if (lang.value === "english") {
-  search.placeholder = "Search English - Bikol Dictionary";
-} else {
-  search.placeholder = "Search Bikol - English Dictionary";
-}
-syncWordOfDayVisibility();
+
+  // initial placeholder
+  if (lang.value === "english") {
+    search.placeholder = "Search English - Bikol Dictionary";
+  } else {
+    search.placeholder = "Search Bikol - English Dictionary";
+  }
+
+  syncWordOfDayVisibility();
 }
 
 function showNotice(html){
@@ -1305,26 +1284,66 @@ function loadCsvFromText(csvText){
     header:true,
     skipEmptyLines:true,
     complete:(r) => {
-      setDataFromRows(r.data || []);
+      setDataFromFiles(r.data || [], null);
+    }
+  });
+}
+
+function loadCsvFromTextPair(enText, biText){
+  Papa.parse(enText, {
+    header:true,
+    skipEmptyLines:true,
+    complete:(enRes) => {
+      Papa.parse(biText, {
+        header:true,
+        skipEmptyLines:true,
+        complete:(biRes) => {
+          setDataFromFiles(enRes.data || [], biRes.data || []);
+        }
+      });
     }
   });
 }
 
 function loadCsvFromFile(){
-  Papa.parse("english_to_bikol.csv?" + Date.now(), {
+  const enUrl = "english_to_bikol.csv?" + Date.now();
+  const biUrl = "bikol_to_english.csv?" + Date.now();
+
+  Papa.parse(enUrl, {
     download:true,
     header:true,
     skipEmptyLines:true,
-    complete:(r) => {
-      setDataFromRows(r.data || []);
+    complete:(enRes) => {
+      // Try load separate Bikol→English; if it fails, we will derive from English→Bikol.
+      Papa.parse(biUrl, {
+        download:true,
+        header:true,
+        skipEmptyLines:true,
+        complete:(biRes) => {
+          setDataFromFiles(enRes.data || [], biRes.data || []);
+        },
+        error:() => {
+          // No Bikol CSV = empty Bikol dictionary
+          setDataFromFiles(enRes.data || [], []);
+        }
+      });
     },
     error:() => {
-      const fallback = document.getElementById("csv-fallback");
-      loadCsvFromText(fallback.textContent || "");
+      // Sandbox preview fallback (both)
+      const fallbackEN = document.getElementById("csv-fallback");
+      const fallbackBI = document.getElementById("csv-fallback-bi");
+      const enText = (fallbackEN && fallbackEN.textContent) ? fallbackEN.textContent : "";
+      const biText = (fallbackBI && fallbackBI.textContent) ? fallbackBI.textContent : "";
+
+      if (enText && biText) {
+        loadCsvFromTextPair(enText, biText);
+      } else {
+        loadCsvFromText(enText || "");
+      }
 
       showNotice(
-        '<strong>CSV not loaded.</strong> This preview cannot fetch <code>english_to_bikol.csv</code>.<br>' +
-        'On GitHub Pages it will load fine. For now a small built-in sample is used.'
+        '<strong>CSV not loaded.</strong> This preview cannot fetch CSV files.<br>' +
+        'On GitHub Pages, keep <code>english_to_bikol.csv</code> (required) and <code>bikol_to_english.csv</code> (optional) beside this HTML.'
       );
     }
   });
@@ -1425,7 +1444,6 @@ window.addEventListener("hashchange", () => {
     assert(document.getElementById("lang"), "Lang select should exist");
     assert(document.getElementById("search"), "Search input should exist");
     assert(document.getElementById("suggestions"), "Suggestions container should exist");
-    assert(typeof buildReverse === "function", "buildReverse should exist");
     assert(document.getElementById("wordOfDay"), "Word of Day block should exist");
     assert(typeof setWordOfDay === "function", "setWordOfDay should exist");
     console.log("Smoke tests passed");
