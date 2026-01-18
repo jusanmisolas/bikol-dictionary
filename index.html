@@ -617,6 +617,86 @@ const wodListenBtn = document.getElementById("wodListenBtn");
 let currentWod = null;
 let wodAudio = null; // HTMLAudioElement when an audio URL is provided
 
+// Hash routing: #/english/<term> or #/bikol/<term>
+let currentRouteKey = "";
+
+function buildRouteKey(mode, term){
+  return String(mode || "") + "|" + String(term || "").toLowerCase();
+}
+
+function parseHashRoute(){
+  const h = (window.location.hash || "").replace(/^#/, "");
+  if (!h) return null;
+  const parts = h.split("/").filter(Boolean); // remove empty
+  if (parts.length < 2) return null;
+  const mode = (parts[0] || "").toLowerCase();
+  const term = decodeURIComponent(parts.slice(1).join("/") || "").trim();
+  if (!term) return null;
+  if (mode !== "english" && mode !== "bikol") return null;
+  return { mode, term };
+}
+
+function setHashRoute(mode, term, replace){
+  const safeMode = (mode === "bikol") ? "bikol" : "english";
+  const safeTerm = String(term || "").trim();
+  if (!safeTerm) return;
+  const next = "#/" + safeMode + "/" + encodeURIComponent(safeTerm);
+  if (replace) {
+    history.replaceState(null, "", next);
+  } else {
+    window.location.hash = next;
+  }
+}
+
+function clearHashRoute(){
+  history.replaceState(null, "", " ");
+  // Some browsers keep a trailing space in the URL bar if we leave it as-is.
+  history.replaceState(null, "", window.location.pathname + window.location.search);
+}
+
+function findExactByMode(mode, term){
+  const q = String(term || "").trim().toLowerCase();
+  if (!q) return null;
+
+  const dict = (mode === "bikol") ? dictionaryBI : dictionaryEN;
+  const field = (mode === "bikol") ? "bikol" : "english";
+
+  return dict.find(row => (row[field] || "").toLowerCase() === q) || null;
+}
+
+function applyRouteFromHash(){
+  const r = parseHashRoute();
+  if (!r) {
+    // Home view
+    search.value = "";
+    entries.innerHTML = "";
+    closeSuggestions();
+    syncWordOfDayVisibility();
+    currentRouteKey = "";
+    return;
+  }
+
+  const key = buildRouteKey(r.mode, r.term);
+  if (key === currentRouteKey) return;
+
+  // Set dropdown (keep short captions)
+  lang.value = (r.mode === "bikol") ? "bikol" : "english";
+  setLangOptionsShort();
+
+  closeSuggestions();
+  search.value = "";
+  hideWordOfDay();
+
+  const match = findExactByMode(r.mode, r.term);
+  if (match) {
+    currentRouteKey = key;
+    render(match);
+  } else {
+    currentRouteKey = key;
+    noMatch(r.term);
+  }
+}
+
 function escapeHtml(str) {
   return String(str)
     .replaceAll("&", "&amp;")
@@ -735,10 +815,11 @@ function setWordOfDay(){
   const wodLink = document.getElementById("wodLink");
   wodLink.addEventListener("click", (e) => {
     e.preventDefault();
-    hideWordOfDay();
-    lang.value = "bikol";
-    closeSuggestions();
-    renderBikol(picked);
+    // Navigate to a shareable URL for this entry
+    const term = (picked.bikol || "").trim();
+    if (!term) return;
+    setHashRoute("bikol", term, false);
+    applyRouteFromHash();
   });
 }
 
@@ -786,6 +867,14 @@ function fieldForMode(){
 }
 
 function renderEnglish(d){
+  // update URL
+  if (d && d.english) {
+    const k = buildRouteKey("english", d.english);
+    if (k !== currentRouteKey) {
+      currentRouteKey = k;
+      setHashRoute("english", d.english, true);
+    }
+  }
   entries.classList.remove("centered");
   closeSuggestions();
 
@@ -828,6 +917,14 @@ function renderEnglish(d){
 
 
 function renderBikol(d){
+  // update URL
+  if (d && d.bikol) {
+    const k = buildRouteKey("bikol", d.bikol);
+    if (k !== currentRouteKey) {
+      currentRouteKey = k;
+      setHashRoute("bikol", d.bikol, true);
+    }
+  }
   entries.classList.remove("centered");
   closeSuggestions();
 
@@ -1039,6 +1136,8 @@ function buildReverse(rows){
 function setDataFromRows(rows){
   dictionaryEN = (rows || []).filter(row => row.english);
   dictionaryBI = buildReverse(dictionaryEN);
+  // If a deep-link exists, render it. Otherwise show home.
+  applyRouteFromHash();
   syncWordOfDayVisibility();
 }
 
@@ -1080,10 +1179,12 @@ function loadCsvFromFile(){
 const homeLink = document.getElementById("homeLink");
 homeLink.addEventListener("click", (e) => {
   e.preventDefault();
+  clearHashRoute();
   search.value = "";
   entries.innerHTML = "";
   closeSuggestions();
   syncWordOfDayVisibility();
+  currentRouteKey = "";
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
@@ -1145,12 +1246,18 @@ document.addEventListener("keydown", (e) => {
 // Load CSV
 loadCsvFromFile();
 // Initial visibility
+applyRouteFromHash();
 syncWordOfDayVisibility();
 
 // Tests (console)
 function assert(condition, message){
   if (!condition) throw new Error(message);
 }
+
+// Route handling (back/forward + pasted links)
+window.addEventListener("hashchange", () => {
+  applyRouteFromHash();
+});
 
 (function runTests(){
   try {
