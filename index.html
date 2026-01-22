@@ -37,7 +37,7 @@ header{
   background:var(--accent);
   color:#fff;
   min-height:64px; /* match search box height */
-  padding:0 5vw; /* remove vertical padding */
+  padding:0 1.5vw; /* remove vertical padding */
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -45,7 +45,15 @@ header{
   top:0;
   z-index:1000;
 }
-.header-left{display:flex;align-items:center;gap:12px;}
+.header-inner{
+  width:100%;
+  max-width:1240px;
+  margin:0 auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.header-left{display:flex;align-items:center;gap:8px;}
 header h1{font-size:18px;margin:0;}
 .site-title{
   color:#fff;
@@ -56,7 +64,7 @@ header h1{font-size:18px;margin:0;}
   text-decoration:none; /* keep title clean on hover */
 }
 
-.header-right{display:flex;align-items:center;gap:10px;}
+.header-right{display:flex;align-items:center;gap:8px;}
 
 
 .header-btn{
@@ -75,6 +83,18 @@ header h1{font-size:18px;margin:0;}
 .header-btn:hover{background:rgba(255,255,255,.12);} 
 .header-btn i{font-size:13px;}
 
+.submit-btn{
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.8);
+}
+.submit-btn:hover{background:rgba(255,255,255,.22);}
+
+.donate-btn{
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.8);
+}
+.donate-btn:hover{background:rgba(255,255,255,.22);}
+
 .burger-btn{
   border:none;
   background:transparent;
@@ -90,7 +110,7 @@ header h1{font-size:18px;margin:0;}
 .menu{
   position:fixed;
   top:52px;
-  left:5vw;
+  left:1.5vw;
   background:#fff;
   color:var(--ink);
   border-radius:14px;
@@ -122,19 +142,20 @@ header h1{font-size:18px;margin:0;}
 
 main{
   max-width:1200px;
-  margin:40px auto 0;
+  margin:18px auto 0;
   width:100%;
-  padding:0 5vw;
+  padding:0 1.5vw;
   display:flex;
   flex-direction:column;
   align-items:center; /* center search box */
+  padding-bottom:84px;
 }
 
 /* left-align results like Oxford layout */
 #entries{
   width:100%;
-  max-width:740px; /* keep existing width */
-  margin:12px auto 0; /* center entries horizontally */
+  max-width:1020px; /* align with search box */
+  margin:12px auto 0; /* center with search box */
   align-self:center;
   padding:0;
 }
@@ -142,7 +163,7 @@ main{
 /* center container for full-page messages */
 #entries.centered{
   width:100%;
-  max-width:740px; /* match reduced entries width */ /* keep centered messages within search bar width */
+  max-width:1020px; /* match search box width */ /* keep centered messages within search bar width */
   display:flex;
   align-items:flex-start; /* slightly higher, like regular results */
   justify-content:center;
@@ -157,11 +178,11 @@ main{
   position:relative;
   overflow:visible;
   width:100%;
-  max-width:860px; /* Oxford-like length on desktop */
-  margin:16px auto 44px; /* extra space below search box */
+  max-width:1020px; /* reduced length on desktop */
+  margin:8px auto 24px; /* extra space below search box */
 }
 @media (min-width: 1024px){
-  .search-wrapper{max-width:860px;}
+  .search-wrapper{max-width:1020px;}
 }
 
 .search-wrapper select{
@@ -194,11 +215,69 @@ main{
     font-size:15px;             /* options still readable */
   }
   .search-wrapper input{
-    font-size:15px;             /* balance with smaller control */
+    font-size:13.5px;           /* balance with smaller control */
   }
   .search-wrapper input::placeholder{
-    font-size:14.5px;           /* adjusted placeholder */
+    font-size:13px;             /* adjusted placeholder */
   }
+}
+
+@media (max-width: 1200px){
+  main{ align-items:stretch; }
+  .wod-row{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "wod"
+      "recent"
+      "trivia";
+    gap:18px;
+    justify-items:stretch;
+  }
+  .wod-card,
+  .trivia-card,
+  .recent-card{
+    width:100%;
+    max-width:100%;
+  }
+  #entries{
+    max-width:100%;
+    margin-left:0;
+    margin-right:0;
+    padding:0 4px;
+    align-self:stretch;
+  }
+  #entries.centered{
+    max-width:100%;
+  }
+  .recent-title{font-size:14px;}
+  .recent-word{font-size:14px;}
+  .recent-gloss{font-size:12px;}
+  .recent-pos{font-size:11px;}
+}
+
+@media (max-width: 600px){
+  header{ padding:0 16px; }
+  .header-inner{ max-width:100%; }
+  .menu{ left:16px; }
+  main{ padding-left:16px; padding-right:16px; }
+  .search-wrapper,
+  .popular-searches,
+  .wod-row{ max-width:100%; }
+  .wod-row{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "wod"
+      "recent"
+      "trivia";
+    gap:18px;
+  }
+  .wod-card,
+  .recent-card,
+  .trivia-card{
+    max-width:100%;
+    width:100%;
+  }
+  .wod-pill{ min-width:0; width:100%; }
 }
 .search-wrapper select option{ text-align:center; color:#000; }
 
@@ -206,12 +285,12 @@ main{
   flex:1 1 auto;
   min-width:0;
   border:none;
-  padding:16px 18px;
-  font-size:16px;
+  padding:20px 46px 20px 18px;
+  font-size:14.5px;
   font-weight:500;
   color:var(--ink);
 }
-.search-wrapper input::placeholder{ color:#9CA3AF; font-weight:500; font-size:15.5px; }
+.search-wrapper input::placeholder{ color:#9CA3AF; font-weight:500; font-size:14px; }
 .search-wrapper input:focus{outline:none;box-shadow:none;}
 
 .search-wrapper button{
@@ -288,7 +367,7 @@ main{
   padding:12px 14px;
   padding-left:18px; /* align with search input text */
   cursor:pointer;
-  font-size:15px;
+  font-size:13.5px;
 }
 .suggestions .sugg-item:hover{background:var(--hover);}
 
@@ -339,7 +418,8 @@ main{
 .pron button:hover{background:var(--hover);}
 .pron button:disabled{opacity:.35;cursor:not-allowed;}
 .dialect,
-.derivs{
+.derivs,
+.inflections{
   margin:0 0 8px;
   font-size:13.5px;
   line-height:1.45;
@@ -357,7 +437,8 @@ main{
 }
 
 /* Derivatives / inflections: softer, italic */
-.derivs{
+.derivs,
+.inflections{
   color:var(--secondary);
 }
 
@@ -366,7 +447,8 @@ main{
   font-weight:500;
 }
 .dialect .label,
-.derivs .label{
+.derivs .label,
+.inflections .label{
   font-weight:600;
   color:var(--secondary);
 }
@@ -376,12 +458,14 @@ main{
   color:var(--accent);
 }
 
-.derivs .value{
+.derivs .value,
+.inflections .value{
   font-style:italic; /* only inflections/derivatives italic */
   font-weight:500;
   color:var(--secondary);
 }
-.derivs{margin-bottom:10px;}
+.derivs,
+.inflections{margin-bottom:10px;}
 .entry h2{
   margin:0;
   color:var(--accent);
@@ -407,6 +491,35 @@ main{
   font-size:16px;
   margin:0 auto;
 }
+.no-match .suggestions-title{
+  margin-top:10px;
+  font-size:13px;
+  color:var(--secondary);
+}
+.no-match .suggestions-list{
+  margin:8px 0 0;
+  padding:0;
+  list-style:none;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+}
+.no-match .suggestions-list a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 12px;
+  border-radius:999px;
+  background:var(--hover);
+  color:var(--ink);
+  text-decoration:none;
+  font-weight:600;
+  font-size:13px;
+}
+.no-match .suggestions-list a:hover{
+  background:#e7ebef;
+}
 .example{
   margin:8px 0;
   padding:10px 12px;
@@ -426,14 +539,66 @@ main{
   color:var(--secondary);
 }
 
+/* Word of the Day layout */
+.wod-row{
+  width:100%;
+  max-width:1020px;
+  display:grid;
+  grid-template-columns:minmax(0, 0.8fr) minmax(0, 1.8fr) minmax(0, 0.8fr);
+  grid-template-areas:"trivia wod recent";
+  gap:16px;
+  align-items:start;
+  justify-items:stretch;
+  margin:32px auto 30px; /* match header-to-search spacing */
+}
+.wod-row > *{ min-width:0; }
+
+/* Trivia card */
+.trivia-card{
+  width:100%;
+  background:#fff;
+  max-width:100%;
+  grid-area:trivia;
+  border-radius:18px;
+  padding:16px 16px 12px;
+  box-shadow:0 14px 34px rgba(0,0,0,.12);
+  border:1px solid var(--rule);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.trivia-title{
+  font-weight:700;
+  color:var(--accent);
+  font-size:15px;
+}
+.trivia-text{
+  color:var(--secondary);
+  font-size:13px;
+  line-height:1.45;
+}
+.trivia-photo{
+  width:100%;
+  border-radius:12px;
+  border:1px solid var(--rule);
+  object-fit:cover;
+  max-height:160px;
+}
+
 /* Word of the Day card (Oxford-like) */
 .wod-card{
-  max-width:360px;
-  margin:40px auto 28px; /* match header-to-search spacing */
+  width:100%;
+  max-width:100%;
+  grid-area:wod;
   background:rgba(91,111,142,.16);
   border-radius:18px;
   padding:18px 18px 16px;
   text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  align-self:start;
   box-shadow:0 14px 34px rgba(0,0,0,.12);
   border:1px solid rgba(255,255,255,.65);
 }
@@ -445,11 +610,12 @@ main{
   font-size:14px;
   font-weight:500;
   position:relative;
+  margin:0;
 }
 
 .wod-title{
-  margin:20px 0 4px;
-  font-size:48px; /* larger Word of the Day */
+  margin:0;
+  font-size:42px; /* larger Word of the Day */
   font-weight:700;
   color:var(--accent);
   line-height:1.05;
@@ -458,14 +624,14 @@ main{
   display:block;
   font-style:italic;
   color:rgba(13,27,42,.72);
-  margin-bottom:14px;
+  margin:0;
   font-size:13px; /* smaller POS */
 }
 .wod-actions{
   display:flex;
   align-items:center;
   justify-content:center; /* center single audio icon */
-  margin:10px 0 14px;
+  margin:0;
 }
 .wod-actions button{
   border:none;
@@ -522,8 +688,13 @@ main{
   color:#fff;
   font-weight:600;
   letter-spacing:.3px;
-  font-size:13px;
-  min-width:220px;
+  font-size:12px;
+  max-width:100%;
+  text-align:center;
+  padding-left:12px;
+  padding-right:12px;
+  white-space:normal;
+  word-break:break-word;
 }
 .wod-level{
   display:inline-block;
@@ -536,7 +707,7 @@ main{
   font-size:12px;
 }
 .wod-foot{
-  margin-top:10px;
+  margin-top:12px;
   font-size:11px;
   color:rgba(13,27,42,.65);
 }
@@ -548,12 +719,60 @@ main{
 }
 .wod-link:hover{ text-decoration:none; }
 
-@media (max-width: 420px){
-  .wod-card{ max-width:100%; }
-  .wod-pill{ min-width:0; width:100%; }
+/* Recently added (beside WOD) */
+.recent-card{
+  width:100%;
+  max-width:100%;
+  grid-area:recent;
+  background:#fff;
+  border-radius:18px;
+  padding:14px 14px 10px;
+  box-shadow:0 14px 34px rgba(0,0,0,.12);
+  border:1px solid var(--rule);
+  min-width:0;
+}
+.recent-title{
+  font-weight:700;
+  color:var(--accent);
+  font-size:15px;
+  margin:4px 0 12px;
+}
+.recent-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:260px;
+  overflow:auto;
+  padding-right:4px;
+}
+.recent-item{
+  display:block;
+  gap:10px;
+  padding:6px 6px;
+  border-radius:12px;
+  background:var(--hover);
+  text-decoration:none;
+  color:var(--ink);
+  border:1px solid #eef1f4;
+}
+.recent-item:hover{
+  background:#fff;
+  border-color:var(--rule);
+}
+.recent-word{
+  font-weight:700;
+  color:var(--accent);
+  font-size:13px;
+  overflow-wrap:anywhere;
+}
+.recent-gloss{
+  color:var(--secondary);
+  font-size:12px;
+  margin-top:2px;
 }
 
 .wod-meaning{
+  margin:0;
   display:none; /* keep Oxford-like card clean; word opens entry on click */
 }
 
@@ -571,6 +790,222 @@ footer{
   font-size:12px;
   color:var(--secondary);
   border-top:1px solid var(--rule);
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  background:var(--paper);
+  z-index:900;
+}
+
+@media (max-height: 600px){
+  footer{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    background:var(--paper);
+    z-index:900;
+  }
+  main{
+    padding-bottom:80px;
+  }
+}
+
+/* Submit modal */
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(13,27,42,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px 5vw;
+  z-index:2000;
+}
+.modal-backdrop.open{display:flex;}
+.modal-card{
+  width:min(720px, 100%);
+  background:#fff;
+  border-radius:18px;
+  box-shadow:0 20px 50px rgba(0,0,0,.28);
+  border:1px solid var(--rule);
+  padding:18px;
+}
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.modal-title{
+  font-weight:700;
+  color:var(--accent);
+  font-size:18px;
+}
+.modal-close{
+  border:none;
+  background:var(--hover);
+  color:var(--ink);
+  border-radius:10px;
+  padding:8px 10px;
+  cursor:pointer;
+}
+.modal-close:hover{background:#e9edf1;}
+.submit-grid{
+  display:grid;
+  gap:12px;
+  grid-template-columns:1fr 1fr;
+}
+.submit-grid .full{grid-column:1 / -1;}
+.submit-grid label{
+  display:block;
+  font-size:12.5px;
+  color:var(--secondary);
+  font-weight:600;
+  margin-bottom:6px;
+}
+.submit-grid input,
+.submit-grid select,
+.submit-grid textarea{
+  width:100%;
+  border:1px solid var(--rule);
+  border-radius:12px;
+  padding:10px 12px;
+  font-family:inherit;
+  font-size:14px;
+  color:var(--ink);
+}
+.submit-grid textarea{min-height:110px;resize:vertical;}
+.submit-actions{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:12px;
+}
+.submit-actions .note{
+  font-size:12px;
+  color:var(--secondary);
+}
+.submit-actions button{
+  border:none;
+  border-radius:999px;
+  padding:10px 16px;
+  font-weight:600;
+  cursor:pointer;
+}
+.btn-secondary{
+  background:var(--hover);
+  color:var(--ink);
+}
+.btn-primary{
+  background:var(--accent);
+  color:#fff;
+}
+.btn-primary:hover{background:#0b274b;}
+
+@media (max-width: 640px){
+  .submit-grid{grid-template-columns:1fr;}
+}
+
+
+/* Contact modal */
+.contact-card .modal-title{ font-size:17px; }
+.contact-grid{
+  display:grid;
+  gap:12px;
+  grid-template-columns:1fr 1fr;
+}
+.contact-grid .full{grid-column:1 / -1;}
+.contact-grid label{
+  display:block;
+  font-size:12.5px;
+  color:var(--secondary);
+  font-weight:600;
+  margin-bottom:6px;
+}
+.contact-grid input,
+.contact-grid textarea{
+  width:100%;
+  border:1px solid var(--rule);
+  border-radius:12px;
+  padding:10px 12px;
+  font-family:inherit;
+  font-size:14px;
+  color:var(--ink);
+}
+.contact-grid textarea{min-height:160px;resize:vertical;}
+.contact-actions{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:12px;
+}
+.contact-actions .note{
+  font-size:12px;
+  color:var(--secondary);
+}
+
+/* Donate modal */
+.donate-card .modal-title{ font-size:17px; }
+.donate-options{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:6px 0 14px;
+}
+.donate-option{
+  border:1px solid var(--rule);
+  background:var(--hover);
+  color:var(--ink);
+  border-radius:999px;
+  padding:8px 14px;
+  font-weight:600;
+  cursor:pointer;
+}
+.donate-option.active{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+.donate-qr{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:16px;
+  padding:16px;
+  min-height:180px;
+}
+.donate-qr img{
+  max-width:260px;
+  width:100%;
+  height:auto;
+  border-radius:10px;
+}
+.donate-details{
+  text-align:center;
+  font-weight:700;
+  color:var(--accent);
+  font-size:18px;
+  line-height:1.4;
+}
+.donate-sub{
+  display:block;
+  font-weight:600;
+  color:var(--secondary);
+  font-size:13px;
+  margin-top:6px;
+}
+.donate-note{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--secondary);
+  text-align:center;
 }
 
 
@@ -590,67 +1025,208 @@ input:-webkit-autofill:active {
 
 <body>
 <header>
-  <div class="header-left">
-    <button class="burger-btn" id="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false">
-      <i class="fa-solid fa-bars"></i>
-    </button>
-    <h1><a href="#" class="site-title" id="homeLink">Bikol Dictionary</a></h1>
-  </div>
+  <div class="header-inner">
+    <div class="header-left">
+      <button class="burger-btn" id="burger" type="button" aria-label="Open menu" aria-haspopup="true" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    <h1><a href="#/" class="site-title" id="homeLink">Bikol Dictionary</a></h1>
+    </div>
 
-  <div class="header-right">
-  <button class="header-btn" type="button" aria-label="Help">
-    <i class="fa-regular fa-circle-question"></i>
-    Help
-  </button>
-</div>
+    <div class="header-right">
+      <button class="header-btn submit-btn" id="submitBtn" type="button" aria-label="Submit">
+        <i class="fa-solid fa-paper-plane"></i>
+        Submit
+      </button>
+      <button class="header-btn donate-btn" id="donateBtn" type="button" aria-label="Donate">
+        <i class="fa-solid fa-hand-holding-heart"></i>
+        Donate
+      </button>
+    </div>
+  </div>
 </header>
 
 <nav class="menu" id="menu" aria-label="Site menu">
   <a href="#about">About</a>
   <a href="#grammar">Grammar</a>
   <a href="#resources">Resources</a>
-  <a href="#contact">Contact</a>
-  <a href="#donate">Donate</a>
+  <a href="#contact" id="contactLink">Contact</a>
+  <a href="#donate" id="donateLink">Donate</a>
 </nav>
 
 <main>
   <div class="search-wrapper">
     <select id="lang">
       <option value="english" data-short="English" data-long="English – Bikol">English</option>
-      <option value="bikol" data-short="Bikol" data-long="Bikol – English">Bikol</option>
+      <option value="bikol" data-short="Bikol" data-long="Bikol – English" selected>Bikol</option>
     </select>
-    <input id="search" placeholder="Search English - Bikol Dictionary" autocomplete="off" />
+    <input id="search" placeholder="Search Bikol - English Dictionary" autocomplete="off" />
     <button id="searchBtn" type="button" aria-label="Search" data-tooltip="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
     <div class="suggestions" id="suggestions"></div>
   </div>
 
-  <div class="wod-card" id="wordOfDay" role="region" aria-label="Word of the day">
-    <div class="wod-top">
-      <div id="wod-date">—</div>
-      
+  <div class="wod-row" id="wodRow">
+    <aside class="trivia-card" id="triviaCard" aria-label="Trivia">
+      <div class="trivia-title" id="triviaTitle">Did you know?</div>
+      <div class="trivia-text" id="triviaText"></div>
+      <img class="trivia-photo" id="triviaPhoto" alt="" style="display:none;" />
+    </aside>
+
+    <div class="wod-card" id="wordOfDay" role="region" aria-label="Word of the day">
+      <div class="wod-top">
+        <div id="wod-date">—</div>
+      </div>
+
+      <div class="wod-title"><span id="wod-word">—</span></div>
+      <span class="wod-pos" id="wod-pos"></span>
+
+      <div class="wod-actions">
+        <button type="button" id="wodListenBtn" class="wod-listen" aria-label="Listen" data-tooltip="Listen">
+          <i class="fa-solid fa-volume-high wod-a2"></i>
+        </button>
+      </div>
+
+      <div class="wod-pill" id="wod-list">Bikol Word of the Day</div>
+      <div class="wod-level" id="wod-level" style="display:none;">A2</div>
+
+      <span class="wod-meaning" id="wod-meaning"></span>
     </div>
 
-    <div class="wod-title"><span id="wod-word">—</span></div>
-    <span class="wod-pos" id="wod-pos"></span>
-
-    <div class="wod-actions">
-      <button type="button" id="wodListenBtn" class="wod-listen" aria-label="Listen" data-tooltip="Listen">
-        <i class="fa-solid fa-volume-high wod-a2"></i>
-      </button>
-    </div>
-
-    
-    <div class="wod-pill" id="wod-list">Bikol Word of the Day</div>
-    <div class="wod-level" id="wod-level" style="display:none;">A2</div>
-
-    
-    <span class="wod-meaning" id="wod-meaning"></span>
+    <aside class="recent-card" id="recentCard" aria-label="Recently added">
+      <div class="recent-title">Recently added</div>
+      <div class="recent-list" id="recentList"></div>
+    </aside>
   </div>
 
   <div id="entries"></div>
 </main>
 
 <footer>© 2026 Jusan Misolas. All rights reserved.</footer>
+
+<div class="modal-backdrop" id="submitModal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submitTitle">
+    <div class="modal-head">
+      <div class="modal-title" id="submitTitle">Contribute a Bikol word</div>
+      <button class="modal-close" type="button" id="submitClose" aria-label="Close form">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form id="submitForm">
+      <div class="submit-grid">
+        <div>
+          <label for="subWord">Bikol word</label>
+          <input id="subWord" name="word" required />
+        </div>
+        <div>
+          <label for="subPos">Part of speech</label>
+          <select id="subPos" name="pos" required>
+            <option value="">Select</option>
+            <option>noun</option>
+            <option>verb</option>
+            <option>adjective</option>
+            <option>adverb</option>
+            <option>pronoun</option>
+            <option>preposition</option>
+            <option>conjunction</option>
+            <option>interjection</option>
+          </select>
+        </div>
+        <div class="full">
+          <label for="subMeaning">Meaning (English)</label>
+          <textarea id="subMeaning" name="meaning" required></textarea>
+        </div>
+        <div class="full">
+          <label for="subExample">Example sentence</label>
+          <textarea id="subExample" name="example" required placeholder="Bikol sentence || English translation"></textarea>
+        </div>
+        <div>
+          <label for="subDialect">Dialect/Language</label>
+          <input id="subDialect" name="dialect" required />
+        </div>
+        <div>
+          <label for="subDerivs">Derivatives/inflections</label>
+          <input id="subDerivs" name="derivs" required />
+        </div>
+        <div class="full">
+          <label for="subName">Your name (for credits)</label>
+          <input id="subName" name="name" required />
+        </div>
+      </div>
+
+      <div class="submit-actions">
+        <div class="note">Submitting opens your email client to send the entry for review.</div>
+        <div>
+          <button class="btn-secondary" type="button" id="submitCancel">Cancel</button>
+          <button class="btn-primary" type="submit">Send submission</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="contactModal" aria-hidden="true">
+  <div class="modal-card contact-card" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+    <div class="modal-head">
+      <div class="modal-title" id="contactTitle">Contact Site Admin</div>
+      <button class="modal-close" type="button" id="contactClose" aria-label="Close contact form">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form id="contactForm">
+      <div class="contact-grid">
+        <div>
+          <label for="contactName">Your name</label>
+          <input id="contactName" name="name" required />
+        </div>
+        <div>
+          <label for="contactEmail">Your email</label>
+          <input id="contactEmail" name="email" type="email" required />
+        </div>
+        <div class="full">
+          <label for="contactSubject">Subject</label>
+          <input id="contactSubject" name="subject" required />
+        </div>
+        <div class="full">
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" name="message" required></textarea>
+        </div>
+      </div>
+
+      <div class="contact-actions">
+        <div class="note">This opens your email client to send the message.</div>
+        <div>
+          <button class="btn-secondary" type="button" id="contactCancel">Cancel</button>
+          <button class="btn-primary" type="submit">Send message</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="donateModal" aria-hidden="true">
+  <div class="modal-card donate-card" role="dialog" aria-modal="true" aria-labelledby="donateTitle">
+    <div class="modal-head">
+      <div class="modal-title" id="donateTitle">Support the Bikol Dictionary</div>
+      <button class="modal-close" type="button" id="donateClose" aria-label="Close donate options">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="donate-options" role="tablist" aria-label="Donation methods">
+      <button class="donate-option active" type="button" data-method="paypal" role="tab" aria-selected="true">PayPal</button>
+      <button class="donate-option" type="button" data-method="gcash" role="tab" aria-selected="false">GCash</button>
+      <button class="donate-option" type="button" data-method="maya" role="tab" aria-selected="false">Maya</button>
+      <button class="donate-option" type="button" data-method="bpi" role="tab" aria-selected="false">BPI</button>
+    </div>
+
+    <div class="donate-qr" id="donateQr">
+      <div class="donate-details" id="donateDetails"></div>
+    </div>
+    <div class="donate-note" id="donateNote">Donation details shown per method.</div>
+  </div>
+</div>
 
 <!--
 Fallback sample (ONLY used if english_to_bikol.csv cannot be fetched in a sandboxed preview).
@@ -696,9 +1272,42 @@ const wodList = document.getElementById("wod-list");
 const wodLevel = document.getElementById("wod-level");
 const wodMeaning = document.getElementById("wod-meaning");
 const wodListenBtn = document.getElementById("wodListenBtn");
+const wodRow = document.getElementById("wodRow");
+const triviaCard = document.getElementById("triviaCard");
+const triviaTitle = document.getElementById("triviaTitle");
+const triviaText = document.getElementById("triviaText");
+const triviaPhoto = document.getElementById("triviaPhoto");
+const recentCard = document.getElementById("recentCard");
+const recentList = document.getElementById("recentList");
+const submitBtn = document.getElementById("submitBtn");
+const submitModal = document.getElementById("submitModal");
+const submitClose = document.getElementById("submitClose");
+const submitCancel = document.getElementById("submitCancel");
+const submitForm = document.getElementById("submitForm");
+const contactLink = document.getElementById("contactLink");
+const contactModal = document.getElementById("contactModal");
+const contactClose = document.getElementById("contactClose");
+const contactCancel = document.getElementById("contactCancel");
+const contactForm = document.getElementById("contactForm");
+const donateLink = document.getElementById("donateLink");
+const donateBtn = document.getElementById("donateBtn");
+const donateModal = document.getElementById("donateModal");
+const donateClose = document.getElementById("donateClose");
+const donateDetails = document.getElementById("donateDetails");
+const donateNote = document.getElementById("donateNote");
+const donateOptions = Array.from(document.querySelectorAll(".donate-option"));
 
 let currentWod = null;
 let wodAudio = null; // HTMLAudioElement when an audio URL is provided
+let triviaItems = [];
+let isUserTyping = false;
+const fallbackTrivia = [
+  {
+    title: "Did you know?",
+    text: "The Bikol Region is known for its active volcanoes, including Mayon Volcano, famous for its near-perfect cone.",
+    image: ""
+  }
+];
 
 // Hash routing: #/english/<term> or #/bikol/<term>
 let currentRouteKey = "";
@@ -799,6 +1408,85 @@ function closeSuggestions(){
   suggestions.innerHTML = "";
 }
 
+function openSubmitModal(){
+  if (!submitModal) return;
+  submitModal.classList.add("open");
+  submitModal.setAttribute("aria-hidden", "false");
+  const first = document.getElementById("subWord");
+  if (first) first.focus();
+}
+
+function closeSubmitModal(){
+  if (!submitModal) return;
+  submitModal.classList.remove("open");
+  submitModal.setAttribute("aria-hidden", "true");
+}
+
+function openContactModal(){
+  if (!contactModal) return;
+  contactModal.classList.add("open");
+  contactModal.setAttribute("aria-hidden", "false");
+  const first = document.getElementById("contactName");
+  if (first) first.focus();
+}
+
+function closeContactModal(){
+  if (!contactModal) return;
+  contactModal.classList.remove("open");
+  contactModal.setAttribute("aria-hidden", "true");
+}
+
+function openDonateModal(){
+  if (!donateModal) return;
+  donateModal.classList.add("open");
+  donateModal.setAttribute("aria-hidden", "false");
+  setDonateMethod("paypal");
+}
+
+function closeDonateModal(){
+  if (!donateModal) return;
+  donateModal.classList.remove("open");
+  donateModal.setAttribute("aria-hidden", "true");
+}
+
+const donateLabelMap = {
+  paypal: "PayPal",
+  gcash: "GCash",
+  maya: "Maya",
+  bpi: "BPI"
+};
+
+function setDonateMethod(method){
+  const key = (method || "").toLowerCase();
+  donateOptions.forEach(btn => {
+    const active = btn.dataset.method === key;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-selected", active ? "true" : "false");
+  });
+
+  if (!donateDetails) return;
+  if (key === "gcash") {
+    donateDetails.innerHTML =
+      "JUSAN MISOLAS<br>0929-300-1049" +
+      '<span class="donate-sub">GCash account</span>';
+  } else if (key === "maya") {
+    donateDetails.innerHTML =
+      "JUSAN MISOLAS<br>0929-300-1049" +
+      '<span class="donate-sub">Maya account</span>';
+  } else if (key === "paypal") {
+    donateDetails.innerHTML =
+      "JUSAN MISOLAS<br>wasuywasuywasuy@gmail.com" +
+      '<span class="donate-sub">PayPal</span>';
+  } else if (key === "bpi") {
+    donateDetails.innerHTML =
+      "JUSAN MISOLAS<br>886-940-3009" +
+      '<span class="donate-sub">Bank of the Philippine Islands</span>';
+  } else {
+    donateDetails.textContent = (donateLabelMap[key] || "Donation") + " details coming soon.";
+  }
+  if (donateNote) donateNote.textContent = "Donation details shown per method.";
+}
+
 function hideWordOfDay(){
   if (wordOfDay) wordOfDay.style.display = "none";
 }
@@ -807,13 +1495,40 @@ function showWordOfDay(){
   if (wordOfDay) wordOfDay.style.display = "";
 }
 
+function hideTrivia(){
+  if (triviaCard) triviaCard.style.display = "none";
+}
+
+function showTrivia(){
+  if (triviaCard) triviaCard.style.display = "";
+}
+
+function hideWodRow(){
+  if (wodRow) wodRow.style.display = "none";
+}
+
+function showWodRow(){
+  if (wodRow) wodRow.style.display = "";
+}
+
+function hideRecent(){
+  if (recentCard) recentCard.style.display = "none";
+}
+
+function showRecent(){
+  if (recentCard) recentCard.style.display = "";
+}
+
 function isTruthy(v){
   const s = String(v ?? "").trim().toLowerCase();
   return s === "1" || s === "true" || s === "yes" || s === "y" || s === "wod";
 }
 
 function isHomeView(){
-  return (search.value || "").trim() === "" && (entries.innerHTML || "").trim() === "";
+  if (isUserTyping) return false;
+  const html = (entries.innerHTML || "").trim();
+  if (!html) return true;
+  return !!entries.querySelector(".notice");
 }
 
 function pickWordOfDay(rows){
@@ -915,6 +1630,101 @@ function setWordOfDay(){
   });
 }
 
+function setRecentAdded(){
+  if (!recentList || !Array.isArray(dictionaryBI) || !dictionaryBI.length) {
+    hideRecent();
+    return;
+  }
+
+  const items = dictionaryBI
+    .filter(r => (r.bikol || "").toString().trim())
+    .slice()
+    .sort((a, b) => {
+      const da = parseDateAdded(a.date_added);
+      const db = parseDateAdded(b.date_added);
+      return db - da;
+    })
+    .slice(0, 5);
+
+  if (!items.length) {
+    hideRecent();
+    return;
+  }
+
+  recentList.innerHTML = items.map(row => {
+    const word = (row.bikol || "").toString().trim();
+    const href = "#/bikol/" + encodeURIComponent(word);
+
+    return (
+      '<a class="recent-item" href="' + href + '" title="Open Bikol entry">' +
+        '<div>' +
+          '<div class="recent-word">' + escapeHtml(word) + '</div>' +
+          '<div class="recent-gloss">' + escapeHtml(getRecentAgeLabel(row)) + '</div>' +
+        '</div>' +
+      '</a>'
+    );
+  }).join("");
+}
+
+function parseDateAdded(value){
+  const d = Date.parse(String(value || ""));
+  if (Number.isNaN(d)) return 0;
+  return d;
+}
+
+function getRecentAgeLabel(row){
+  const ts = parseDateAdded(row.date_added);
+  if (!ts) return "added recently";
+
+  const diffMs = Date.now() - ts;
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffHours < 1) return "added just now";
+  if (diffHours === 1) return "added an hour ago";
+  if (diffHours < 24) return "added " + diffHours + " hours ago";
+  if (diffDays === 1) return "added a day ago";
+  return "added " + diffDays + " days ago";
+}
+
+function setTrivia(){
+  if (!triviaCard || !triviaTitle || !triviaText) return;
+  if (!isHomeView()) {
+    hideTrivia();
+    return;
+  }
+  const baseItems = (Array.isArray(triviaItems) && triviaItems.length) ? triviaItems : fallbackTrivia;
+  const featured = baseItems.filter(r => isTruthy(r.featured));
+  const items = featured.length ? featured : baseItems;
+  if (!items.length) {
+    hideTrivia();
+    return;
+  }
+
+  const weekIndex = Math.floor(Date.now() / (86400000 * 7));
+  const item = items[weekIndex % items.length];
+  if (!item) {
+    hideTrivia();
+    return;
+  }
+
+  triviaTitle.textContent = item.title || "Did you know?";
+  const rawText = (item.text || "").toString();
+  triviaText.innerHTML = escapeHtml(rawText).replace(/\n\s*\n/g, "<br><br>");
+
+  const img = (item.image || "").toString().trim();
+  if (img) {
+    triviaPhoto.src = img;
+    triviaPhoto.style.display = "";
+    triviaPhoto.alt = item.title ? item.title : "Trivia photo";
+  } else {
+    triviaPhoto.removeAttribute("src");
+    triviaPhoto.style.display = "none";
+  }
+
+  showTrivia();
+}
+
 // Listen button behavior (plays provided audio URL only)
 if (wodListenBtn){
   wodListenBtn.addEventListener("click", () => {
@@ -930,12 +1740,19 @@ if (wodListenBtn){
 
 
 function syncWordOfDayVisibility(){
-  if (!wordOfDay) return;
+  if (!wordOfDay && !recentCard && !triviaCard) return;
   if (isHomeView()) {
+    showWodRow();
     showWordOfDay();
     setWordOfDay();
+    setTrivia();
+    showRecent();
+    setRecentAdded();
   } else {
     hideWordOfDay();
+    hideRecent();
+    hideTrivia();
+    hideWodRow();
   }
 }
 
@@ -1004,14 +1821,35 @@ function dialectHTML(d){
 }
 
 
-function getDerivs(d){
-  return (d.derivatives || d.inflections || d.derivatives_inflections || "").toString().trim();
+function splitDerivsInflections(d){
+  const raw = (d.derivatives_inflections || d.derivatives || d.inflections || "").toString().trim();
+  if (!raw) return { derivs: "", infl: "" };
+
+  const derivMatch = raw.match(/(?:^|[;|])\s*(?:derivatives?|derivs?)\s*:\s*([^;|]+)/i);
+  const inflMatch = raw.match(/(?:^|[;|])\s*(?:inflections?)\s*:\s*([^;|]+)/i);
+  if (derivMatch || inflMatch) {
+    return {
+      derivs: derivMatch ? derivMatch[1].trim() : "",
+      infl: inflMatch ? inflMatch[1].trim() : ""
+    };
+  }
+
+  if (raw.includes("||")) {
+    const parts = raw.split("||").map(p => p.trim()).filter(Boolean);
+    return { derivs: parts[0] || "", infl: parts[1] || "" };
+  }
+  if (raw.includes("|")) {
+    const parts = raw.split("|").map(p => p.trim()).filter(Boolean);
+    return { derivs: parts[0] || "", infl: parts[1] || "" };
+  }
+
+  return { derivs: "", infl: raw };
 }
 
-function derivsHTML(d){
-  const v = getDerivs(d);
+function derivsHTML(label, value, className){
+  const v = (value || "").toString().trim();
   if (!v) return "";
-  return '<div class="derivs"><span class="value">' + escapeHtml(v) + '</span></div>';
+  return '<div class="' + className + '"><span class="label">' + label + ':</span> <span class="value">' + escapeHtml(v) + '</span></div>';
 }
 
 
@@ -1023,6 +1861,30 @@ function fieldForMode(){
   return (lang.value === "english") ? "english" : "bikol";
 }
 
+function findSimilarTerms(query, limit){
+  const q = String(query || "").trim().toLowerCase();
+  if (!q) return [];
+  const dict = dictForMode();
+  const field = fieldForMode();
+  const items = dict
+    .map(row => (row[field] || "").toString().trim())
+    .filter(Boolean);
+
+  const starts = [];
+  const contains = [];
+
+  items.forEach(term => {
+    const t = term.toLowerCase();
+    if (t === q) return;
+    if (t.startsWith(q)) starts.push(term);
+    else if (t.includes(q)) contains.push(term);
+  });
+
+  const combined = starts.concat(contains);
+  const unique = Array.from(new Set(combined));
+  return unique.slice(0, limit || 6);
+}
+
 function renderEnglish(d){
   // update URL
   if (d && d.english) {
@@ -1032,6 +1894,9 @@ function renderEnglish(d){
       setHashRoute("english", d.english, true);
     }
   }
+  hideWordOfDay();
+  hideRecent();
+  hideWodRow();
   entries.classList.remove("centered");
   closeSuggestions();
 
@@ -1093,6 +1958,9 @@ function renderBikol(d){
     }
   }
 
+  hideWordOfDay();
+  hideRecent();
+  hideWodRow();
   entries.classList.remove("centered");
   closeSuggestions();
 
@@ -1140,10 +2008,12 @@ function renderBikol(d){
 
   // TEMP preview-only sample for "kakan" when fields are blank
   let dialectBlock = dialectHTML(d);
-  let derivsBlock = derivsHTML(d);
-  if ((d.bikol || "").toLowerCase() === "kakan" && !dialectBlock && !derivsBlock) {
+  const split = splitDerivsInflections(d);
+  let derivsBlock = derivsHTML("Derivatives", split.derivs, "derivs");
+  let inflBlock = derivsHTML("Inflections", split.infl, "inflections");
+  if ((d.bikol || "").toLowerCase() === "kakan" && !dialectBlock && !derivsBlock && !inflBlock) {
     dialectBlock = '<div class="dialect"><span class="value">Naga Bikol</span></div>';
-    derivsBlock = '<div class="derivs"><span class="value">kakan, nagkakan, magkakan</span></div>';
+    inflBlock = '<div class="inflections"><span class="label">Inflections:</span> <span class="value">kakan, nagkakan, magkakan</span></div>';
   }
 
   entries.innerHTML =
@@ -1155,6 +2025,7 @@ function renderBikol(d){
       pronHtml +
       dialectBlock +
       derivsBlock +
+      inflBlock +
       sensesHtml +
     '</div>';
 
@@ -1178,17 +2049,33 @@ function render(d){
 
 function noMatch(term){
   hideWordOfDay();
+  hideRecent();
+  hideWodRow();
   const modeText = (lang.value === "english") ? "English - Bikol" : "Bikol - English";
   const safeTerm = escapeHtml(term || "");
+  const similar = findSimilarTerms(term, 6);
 
   // center the message in the page
   entries.classList.add("centered");
+
+  let suggHtml = "";
+  if (similar.length) {
+    const base = (lang.value === "english") ? "#/english/" : "#/bikol/";
+    const list = similar.map(t => {
+      const href = base + encodeURIComponent(t);
+      return '<li><a href="' + href + '">' + escapeHtml(t) + '</a></li>';
+    }).join("");
+    suggHtml =
+      '<div class="suggestions-title">Did you mean:</div>' +
+      '<ul class="suggestions-list">' + list + '</ul>';
+  }
 
   entries.innerHTML =
     '<div class="entry no-match">' +
       '<div class="definition">' +
         'No exact match found for "' + safeTerm + '" in ' + modeText + ' Dictionary' +
       '</div>' +
+      suggHtml +
     '</div>';
 }
 
@@ -1215,6 +2102,7 @@ function updateSuggestions(){
   const q = search.value.toLowerCase().trim();
   entries.innerHTML = "";
   closeSuggestions();
+  isUserTyping = q.length > 0;
 
   // Word of the day only shows on Home (no search + no results)
   if (!q) {
@@ -1223,6 +2111,8 @@ function updateSuggestions(){
   }
 
   hideWordOfDay();
+  hideRecent();
+  hideWodRow();
 
   const dict = dictForMode();
   const field = fieldForMode();
@@ -1278,6 +2168,7 @@ function setDataFromFiles(enRows, biRows){
   }
 
   syncWordOfDayVisibility();
+  setRecentAdded();
 }
 
 function showNotice(html){
@@ -1313,6 +2204,7 @@ function loadCsvFromTextPair(enText, biText){
 function loadCsvFromFile(){
   const enUrl = "english_to_bikol.csv?" + Date.now();
   const biUrl = "bikol_to_english.csv?" + Date.now();
+  const triviaUrl = "trivia.csv?" + Date.now();
 
   Papa.parse(enUrl, {
     download:true,
@@ -1350,6 +2242,20 @@ function loadCsvFromFile(){
         '<strong>CSV not loaded.</strong> This preview cannot fetch CSV files.<br>' +
         'On GitHub Pages, keep <code>english_to_bikol.csv</code> (required) and <code>bikol_to_english.csv</code> (optional) beside this HTML.'
       );
+    }
+  });
+
+  Papa.parse(triviaUrl, {
+    download:true,
+    header:true,
+    skipEmptyLines:true,
+    complete:(res) => {
+      triviaItems = (res.data || []).filter(r => (r.text || r.title || r.image));
+      setTrivia();
+    },
+    error:() => {
+      triviaItems = [];
+      setTrivia();
     }
   });
 }
@@ -1431,12 +2337,133 @@ document.addEventListener("keydown", (e) => {
       menu.classList.remove("open");
       burger.setAttribute("aria-expanded", "false");
     }
+    closeSubmitModal();
+    closeContactModal();
+    closeDonateModal();
   }
 });
 
 window.addEventListener("hashchange", () => {
   applyRouteFromHash();
 });
+
+if (submitBtn){
+  submitBtn.addEventListener("click", () => {
+    openSubmitModal();
+  });
+}
+if (submitClose){
+  submitClose.addEventListener("click", closeSubmitModal);
+}
+if (submitCancel){
+  submitCancel.addEventListener("click", closeSubmitModal);
+}
+if (submitModal){
+  submitModal.addEventListener("click", (e) => {
+    if (e.target === submitModal) closeSubmitModal();
+  });
+}
+
+if (submitForm){
+  submitForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const data = new FormData(submitForm);
+    const word = (data.get("word") || "").toString().trim();
+    const pos = (data.get("pos") || "").toString().trim();
+    const meaning = (data.get("meaning") || "").toString().trim();
+    const example = (data.get("example") || "").toString().trim();
+    const dialect = (data.get("dialect") || "").toString().trim();
+    const derivs = (data.get("derivs") || "").toString().trim();
+    const name = (data.get("name") || "").toString().trim();
+
+    const subject = "Bikol Dictionary submission: " + (word || "New entry");
+    const lines = [
+      "Bikol word: " + word,
+      "Part of speech: " + pos,
+      "Meaning (English): " + meaning,
+      "Example: " + example,
+      "Dialect: " + dialect,
+      "Derivatives/inflections: " + derivs,
+      "Contributor name: " + name
+    ];
+    const body = lines.join("\n");
+    const mailto = "mailto:jusanmisolas@gmail.com" +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body);
+
+    window.location.href = mailto;
+    closeSubmitModal();
+  });
+}
+
+if (contactLink){
+  contactLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    openContactModal();
+  });
+}
+if (contactClose){
+  contactClose.addEventListener("click", closeContactModal);
+}
+if (contactCancel){
+  contactCancel.addEventListener("click", closeContactModal);
+}
+if (contactModal){
+  contactModal.addEventListener("click", (e) => {
+    if (e.target === contactModal) closeContactModal();
+  });
+}
+if (contactForm){
+  contactForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const data = new FormData(contactForm);
+    const name = (data.get("name") || "").toString().trim();
+    const email = (data.get("email") || "").toString().trim();
+    const subject = (data.get("subject") || "").toString().trim();
+    const message = (data.get("message") || "").toString().trim();
+
+    const body = [
+      "From: " + name,
+      "Email: " + email,
+      "",
+      message
+    ].join("\n");
+
+    const mailto = "mailto:jusanmisolas@gmail.com" +
+      "?subject=" + encodeURIComponent(subject || "Bikol Dictionary contact") +
+      "&body=" + encodeURIComponent(body);
+
+    window.location.href = mailto;
+    closeContactModal();
+  });
+}
+
+if (donateLink){
+  donateLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    openDonateModal();
+  });
+}
+if (donateBtn){
+  donateBtn.addEventListener("click", () => {
+    openDonateModal();
+  });
+}
+if (donateClose){
+  donateClose.addEventListener("click", closeDonateModal);
+}
+if (donateModal){
+  donateModal.addEventListener("click", (e) => {
+    if (e.target === donateModal) closeDonateModal();
+  });
+}
+if (donateOptions.length){
+  donateOptions.forEach(btn => {
+    btn.addEventListener("click", () => {
+      setDonateMethod(btn.dataset.method);
+    });
+  });
+}
 
 // Load CSV files
 loadCsvFromFile();
