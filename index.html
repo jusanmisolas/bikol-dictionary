@@ -245,7 +245,12 @@ main{
   .search-wrapper,
   .popular-searches,
   .wod-row{ max-width:100%; }
-  .wod-row{ justify-content:center; }
+  .wod-row{
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+  }
   .wod-pill{ min-width:0; width:auto; }
 }
 .search-wrapper select option{ text-align:center; color:#000; }
@@ -537,6 +542,13 @@ main{
   position:relative;
   overflow:hidden;
 }
+.trivia-card.is-collapsed .trivia-text{
+  max-height:160px;
+  overflow:hidden;
+}
+.trivia-card.is-expanded .trivia-text{
+  max-height:none;
+}
 .trivia-card::before{
   content:"";
   position:absolute;
@@ -559,6 +571,17 @@ main{
   font-size:13.5px;
   line-height:1.5;
 }
+.trivia-toggle{
+  align-self:flex-start;
+  border:none;
+  background:transparent;
+  color:var(--accent);
+  font-weight:600;
+  font-size:12.5px;
+  padding:0;
+  cursor:pointer;
+}
+.trivia-toggle:hover{ text-decoration:underline; }
 .trivia-photo{
   width:100%;
   border-radius:14px;
@@ -1018,6 +1041,7 @@ input:-webkit-autofill:active {
     <aside class="trivia-card" id="triviaCard" aria-label="Trivia">
       <div class="trivia-title" id="triviaTitle">DID YOU KNOW?</div>
       <div class="trivia-text" id="triviaText"></div>
+      <button class="trivia-toggle" id="triviaToggle" type="button">See more...</button>
       <img class="trivia-photo" id="triviaPhoto" alt="" style="display:none;" />
     </aside>
   </div>
@@ -1197,6 +1221,11 @@ const wodLevel = document.getElementById("wod-level");
 const wodMeaning = document.getElementById("wod-meaning");
 const wodListenBtn = document.getElementById("wodListenBtn");
 const wodRow = document.getElementById("wodRow");
+const triviaCard = document.getElementById("triviaCard");
+const triviaTitle = document.getElementById("triviaTitle");
+const triviaText = document.getElementById("triviaText");
+const triviaPhoto = document.getElementById("triviaPhoto");
+const triviaToggle = document.getElementById("triviaToggle");
 const submitBtn = document.getElementById("submitBtn");
 const submitModal = document.getElementById("submitModal");
 const submitClose = document.getElementById("submitClose");
@@ -1218,6 +1247,7 @@ const donateOptions = Array.from(document.querySelectorAll(".donate-option"));
 let currentWod = null;
 let wodAudio = null; // HTMLAudioElement when an audio URL is provided
 let triviaItems = [];
+let triviaExpanded = false;
 let isUserTyping = false;
 const fallbackTrivia = [
   {
@@ -1577,6 +1607,44 @@ function setTrivia(){
   }
 
   showTrivia();
+  applyTriviaClamp();
+}
+
+function applyTriviaClamp(){
+  if (!triviaCard || !triviaText || !triviaToggle) return;
+  triviaExpanded = false;
+  triviaCard.classList.add("is-collapsed");
+  triviaCard.classList.remove("is-expanded");
+  triviaToggle.textContent = "See more...";
+  triviaToggle.style.display = "none";
+  requestAnimationFrame(() => {
+    const overflow = triviaText.scrollHeight > (triviaText.clientHeight + 1);
+    if (overflow) {
+      triviaToggle.style.display = "inline-flex";
+    } else {
+      triviaCard.classList.remove("is-collapsed");
+    }
+  });
+}
+
+function expandTrivia(){
+  if (!triviaCard || !triviaToggle) return;
+  triviaExpanded = true;
+  triviaCard.classList.remove("is-collapsed");
+  triviaCard.classList.add("is-expanded");
+  triviaToggle.textContent = "See less...";
+  triviaToggle.style.display = "inline-flex";
+}
+
+function collapseTrivia(){
+  if (!triviaCard || !triviaText || !triviaToggle) return;
+  triviaExpanded = false;
+  triviaCard.classList.remove("is-expanded");
+  triviaCard.classList.add("is-collapsed");
+  triviaToggle.textContent = "See more...";
+  const overflow = triviaText.scrollHeight > (triviaText.clientHeight + 1);
+  triviaToggle.style.display = overflow ? "inline-flex" : "none";
+  if (!overflow) triviaCard.classList.remove("is-collapsed");
 }
 
 // Listen button behavior (plays provided audio URL only)
@@ -1589,6 +1657,18 @@ if (wodListenBtn){
       wodAudio.currentTime = 0;
       wodAudio.play();
     } catch {}
+  });
+}
+
+if (triviaToggle){
+  triviaToggle.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (triviaExpanded) {
+      collapseTrivia();
+    } else {
+      expandTrivia();
+    }
   });
 }
 
@@ -2177,6 +2257,10 @@ document.addEventListener("click", (e) => {
   ) {
     menu.classList.remove("open");
     burger.setAttribute("aria-expanded", "false");
+  }
+
+  if (triviaExpanded && !e.target.closest("#triviaCard")) {
+    collapseTrivia();
   }
 });
 
