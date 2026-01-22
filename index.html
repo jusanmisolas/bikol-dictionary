@@ -863,14 +863,18 @@ footer{
   gap:12px;
   margin-top:12px;
 }
+.submit-actions > div{
+  display:flex;
+  gap:8px;
+}
 .submit-actions .note{
   font-size:12px;
   color:var(--secondary);
 }
 .submit-actions button{
   border:none;
-  border-radius:999px;
-  padding:10px 16px;
+  border-radius:16px;
+  padding:12px 20px;
   font-weight:600;
   cursor:pointer;
 }
@@ -947,9 +951,20 @@ footer{
   gap:12px;
   margin-top:12px;
 }
+.contact-actions > div{
+  display:flex;
+  gap:8px;
+}
 .contact-actions .note{
   font-size:12px;
   color:var(--secondary);
+}
+.contact-actions button{
+  border:none;
+  border-radius:16px;
+  padding:12px 20px;
+  font-weight:600;
+  cursor:pointer;
 }
 
 /* Donate modal */
@@ -1121,6 +1136,8 @@ input:-webkit-autofill:active {
           <label for="subPos">Part of speech</label>
           <select id="subPos" name="pos" required>
             <option value="">Select</option>
+            <option>bound root</option>
+            <option>free root</option>
             <option>noun</option>
             <option>verb</option>
             <option>adjective</option>
@@ -1132,11 +1149,11 @@ input:-webkit-autofill:active {
           </select>
         </div>
         <div class="full">
-          <label for="subMeaning">Meaning (English)</label>
+          <label for="subMeaning">Meaning(s)</label>
           <textarea id="subMeaning" name="meaning" required></textarea>
         </div>
         <div class="full">
-          <label for="subExample">Example sentence</label>
+          <label for="subExample">Example sentences</label>
           <textarea id="subExample" name="example" required placeholder="Bikol sentence || English translation"></textarea>
         </div>
         <div>
@@ -1144,8 +1161,12 @@ input:-webkit-autofill:active {
           <input id="subDialect" name="dialect" required />
         </div>
         <div>
-          <label for="subDerivs">Derivatives/inflections</label>
-          <input id="subDerivs" name="derivs" required />
+          <label for="subDerivs">Derivatives</label>
+          <input id="subDerivs" name="derivatives" required />
+        </div>
+        <div>
+          <label for="subInflections">Inflections</label>
+          <input id="subInflections" name="inflections" required />
         </div>
         <div class="full">
           <label for="subName">Your name (for credits)</label>
@@ -1747,6 +1768,14 @@ function buildExampleHTML(ex){
   if (eng) html += '<br><em>' + eng + '</em>';
   html += '</div>';
   return html;
+}
+
+function csvEscape(value){
+  const raw = String(value ?? "");
+  if (raw.includes('"') || raw.includes(",") || raw.includes("\n")) {
+    return '"' + raw.replace(/"/g, '""') + '"';
+  }
+  return raw;
 }
 
 // Turn Bikol equivalents into deep links (to the Bikol → English entry)
@@ -2358,23 +2387,60 @@ if (submitForm){
     const meaning = (data.get("meaning") || "").toString().trim();
     const example = (data.get("example") || "").toString().trim();
     const dialect = (data.get("dialect") || "").toString().trim();
-    const derivs = (data.get("derivs") || "").toString().trim();
+    const derivatives = (data.get("derivatives") || "").toString().trim();
+    const inflections = (data.get("inflections") || "").toString().trim();
     const name = (data.get("name") || "").toString().trim();
+    const submittedAt = new Date().toISOString();
 
     const subject = "Bikol Dictionary submission: " + (word || "New entry");
     const lines = [
       "Bikol word: " + word,
       "Part of speech: " + pos,
-      "Meaning (English): " + meaning,
+      "Meaning(s): " + meaning,
       "Example: " + example,
       "Dialect: " + dialect,
-      "Derivatives/inflections: " + derivs,
-      "Contributor name: " + name
+      "Derivatives: " + derivatives,
+      "Inflections: " + inflections,
+      "Contributor name: " + name,
+      "Submitted at: " + submittedAt
     ];
     const body = lines.join("\n");
     const mailto = "mailto:jusanmisolas@gmail.com" +
       "?subject=" + encodeURIComponent(subject) +
       "&body=" + encodeURIComponent(body);
+
+    const csvHeader = [
+      "submitted_at",
+      "bikol_word",
+      "part_of_speech",
+      "meaning",
+      "example_sentences",
+      "dialect_language",
+      "derivatives",
+      "inflections",
+      "contributor_name"
+    ];
+    const csvRow = [
+      submittedAt,
+      word,
+      pos,
+      meaning,
+      example,
+      dialect,
+      derivatives,
+      inflections,
+      name
+    ].map(csvEscape).join(",");
+    const csvContent = csvHeader.join(",") + "\n" + csvRow + "\n";
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "submissions.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 
     window.location.href = mailto;
     closeSubmitModal();
