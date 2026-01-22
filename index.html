@@ -1733,7 +1733,6 @@ function renderEnglish(d){
     }
   }
   hideWordOfDay();
-  hideRecent();
   hideWodRow();
   entries.classList.remove("centered");
   closeSuggestions();
@@ -1797,7 +1796,6 @@ function renderBikol(d){
   }
 
   hideWordOfDay();
-  hideRecent();
   hideWodRow();
   entries.classList.remove("centered");
   closeSuggestions();
@@ -1881,13 +1879,13 @@ function renderBikol(d){
 
 function render(d){
   entries.classList.remove("centered");
+  hideWodRow();
   if (lang.value === "english") return renderEnglish(d);
   return renderBikol(d);
 }
 
 function noMatch(term){
   hideWordOfDay();
-  hideRecent();
   hideWodRow();
   const modeText = (lang.value === "english") ? "English - Bikol" : "Bikol - English";
   const safeTerm = escapeHtml(term || "");
@@ -1919,6 +1917,7 @@ function noMatch(term){
 
 function performSearch(){
   hideWordOfDay();
+  hideWodRow();
   const original = (search.value || "").trim();
   const q = original.toLowerCase();
   if (!q) return;
@@ -1949,7 +1948,6 @@ function updateSuggestions(){
   }
 
   hideWordOfDay();
-  hideRecent();
   hideWodRow();
 
   const dict = dictForMode();
@@ -2104,6 +2102,7 @@ homeLink.addEventListener("click", (e) => {
   e.preventDefault();
   clearHashRoute();
   search.value = "";
+  isUserTyping = false;
   entries.innerHTML = "";
   closeSuggestions();
   syncWordOfDayVisibility();
