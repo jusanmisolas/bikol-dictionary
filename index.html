@@ -1551,9 +1551,11 @@ function setTrivia(){
   const rawText = (item.text || "").toString();
   triviaText.innerHTML = escapeHtml(rawText).replace(/\n\s*\n/g, "<br><br>");
 
-  const img = (item.image || "").toString().trim();
-  if (img) {
-    triviaPhoto.src = img;
+  const imgRaw = (item.image || "").toString().trim();
+  const imgToken = imgRaw.toLowerCase();
+  const hasImage = imgRaw && !["-", "none", "null", "n/a", "na"].includes(imgToken);
+  if (hasImage) {
+    triviaPhoto.src = imgRaw;
     triviaPhoto.style.display = "";
     triviaPhoto.alt = item.title ? item.title : "Trivia photo";
   } else {
