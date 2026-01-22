@@ -224,21 +224,7 @@ main{
 
 @media (max-width: 1200px){
   main{ align-items:stretch; }
-  .wod-row{
-    grid-template-columns:1fr;
-    grid-template-areas:
-      "wod"
-      "recent"
-      "trivia";
-    gap:18px;
-    justify-items:stretch;
-  }
-  .wod-card,
-  .trivia-card,
-  .recent-card{
-    width:100%;
-    max-width:100%;
-  }
+  .wod-row{ justify-content:center; }
   #entries{
     max-width:100%;
     margin-left:0;
@@ -249,10 +235,6 @@ main{
   #entries.centered{
     max-width:100%;
   }
-  .recent-title{font-size:14px;}
-  .recent-word{font-size:14px;}
-  .recent-gloss{font-size:12px;}
-  .recent-pos{font-size:11px;}
 }
 
 @media (max-width: 600px){
@@ -263,20 +245,7 @@ main{
   .search-wrapper,
   .popular-searches,
   .wod-row{ max-width:100%; }
-  .wod-row{
-    grid-template-columns:1fr;
-    grid-template-areas:
-      "wod"
-      "recent"
-      "trivia";
-    gap:18px;
-  }
-  .wod-card,
-  .recent-card,
-  .trivia-card{
-    max-width:100%;
-    width:100%;
-  }
+  .wod-row{ justify-content:center; }
   .wod-pill{ min-width:0; width:100%; }
 }
 .search-wrapper select option{ text-align:center; color:#000; }
@@ -543,15 +512,13 @@ main{
 .wod-row{
   width:100%;
   max-width:1020px;
-  display:grid;
-  grid-template-columns:minmax(0, 0.8fr) minmax(0, 1.8fr) minmax(0, 0.8fr);
-  grid-template-areas:"trivia wod recent";
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
   gap:16px;
-  align-items:start;
-  justify-items:stretch;
   margin:32px auto 30px; /* match header-to-search spacing */
 }
-.wod-row > *{ min-width:0; }
 
 /* Trivia card */
 .trivia-card{
@@ -718,58 +685,6 @@ main{
   font-weight:700;
 }
 .wod-link:hover{ text-decoration:none; }
-
-/* Recently added (beside WOD) */
-.recent-card{
-  width:100%;
-  max-width:100%;
-  grid-area:recent;
-  background:#fff;
-  border-radius:18px;
-  padding:14px 14px 10px;
-  box-shadow:0 14px 34px rgba(0,0,0,.12);
-  border:1px solid var(--rule);
-  min-width:0;
-}
-.recent-title{
-  font-weight:700;
-  color:var(--accent);
-  font-size:15px;
-  margin:4px 0 12px;
-}
-.recent-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  max-height:260px;
-  overflow:auto;
-  padding-right:4px;
-}
-.recent-item{
-  display:block;
-  gap:10px;
-  padding:6px 6px;
-  border-radius:12px;
-  background:var(--hover);
-  text-decoration:none;
-  color:var(--ink);
-  border:1px solid #eef1f4;
-}
-.recent-item:hover{
-  background:#fff;
-  border-color:var(--rule);
-}
-.recent-word{
-  font-weight:700;
-  color:var(--accent);
-  font-size:13px;
-  overflow-wrap:anywhere;
-}
-.recent-gloss{
-  color:var(--secondary);
-  font-size:12px;
-  margin-top:2px;
-}
 
 .wod-meaning{
   margin:0;
@@ -1066,12 +981,6 @@ input:-webkit-autofill:active {
   </div>
 
   <div class="wod-row" id="wodRow">
-    <aside class="trivia-card" id="triviaCard" aria-label="Trivia">
-      <div class="trivia-title" id="triviaTitle">Did you know?</div>
-      <div class="trivia-text" id="triviaText"></div>
-      <img class="trivia-photo" id="triviaPhoto" alt="" style="display:none;" />
-    </aside>
-
     <div class="wod-card" id="wordOfDay" role="region" aria-label="Word of the day">
       <div class="wod-top">
         <div id="wod-date">—</div>
@@ -1092,9 +1001,10 @@ input:-webkit-autofill:active {
       <span class="wod-meaning" id="wod-meaning"></span>
     </div>
 
-    <aside class="recent-card" id="recentCard" aria-label="Recently added">
-      <div class="recent-title">Recently added</div>
-      <div class="recent-list" id="recentList"></div>
+    <aside class="trivia-card" id="triviaCard" aria-label="Trivia">
+      <div class="trivia-title" id="triviaTitle">Did you know?</div>
+      <div class="trivia-text" id="triviaText"></div>
+      <img class="trivia-photo" id="triviaPhoto" alt="" style="display:none;" />
     </aside>
   </div>
 
@@ -1273,12 +1183,6 @@ const wodLevel = document.getElementById("wod-level");
 const wodMeaning = document.getElementById("wod-meaning");
 const wodListenBtn = document.getElementById("wodListenBtn");
 const wodRow = document.getElementById("wodRow");
-const triviaCard = document.getElementById("triviaCard");
-const triviaTitle = document.getElementById("triviaTitle");
-const triviaText = document.getElementById("triviaText");
-const triviaPhoto = document.getElementById("triviaPhoto");
-const recentCard = document.getElementById("recentCard");
-const recentList = document.getElementById("recentList");
 const submitBtn = document.getElementById("submitBtn");
 const submitModal = document.getElementById("submitModal");
 const submitClose = document.getElementById("submitClose");
@@ -1511,14 +1415,6 @@ function showWodRow(){
   if (wodRow) wodRow.style.display = "";
 }
 
-function hideRecent(){
-  if (recentCard) recentCard.style.display = "none";
-}
-
-function showRecent(){
-  if (recentCard) recentCard.style.display = "";
-}
-
 function isTruthy(v){
   const s = String(v ?? "").trim().toLowerCase();
   return s === "1" || s === "true" || s === "yes" || s === "y" || s === "wod";
@@ -1630,63 +1526,6 @@ function setWordOfDay(){
   });
 }
 
-function setRecentAdded(){
-  if (!recentList || !Array.isArray(dictionaryBI) || !dictionaryBI.length) {
-    hideRecent();
-    return;
-  }
-
-  const items = dictionaryBI
-    .filter(r => (r.bikol || "").toString().trim())
-    .slice()
-    .sort((a, b) => {
-      const da = parseDateAdded(a.date_added);
-      const db = parseDateAdded(b.date_added);
-      return db - da;
-    })
-    .slice(0, 5);
-
-  if (!items.length) {
-    hideRecent();
-    return;
-  }
-
-  recentList.innerHTML = items.map(row => {
-    const word = (row.bikol || "").toString().trim();
-    const href = "#/bikol/" + encodeURIComponent(word);
-
-    return (
-      '<a class="recent-item" href="' + href + '" title="Open Bikol entry">' +
-        '<div>' +
-          '<div class="recent-word">' + escapeHtml(word) + '</div>' +
-          '<div class="recent-gloss">' + escapeHtml(getRecentAgeLabel(row)) + '</div>' +
-        '</div>' +
-      '</a>'
-    );
-  }).join("");
-}
-
-function parseDateAdded(value){
-  const d = Date.parse(String(value || ""));
-  if (Number.isNaN(d)) return 0;
-  return d;
-}
-
-function getRecentAgeLabel(row){
-  const ts = parseDateAdded(row.date_added);
-  if (!ts) return "added recently";
-
-  const diffMs = Date.now() - ts;
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffHours < 1) return "added just now";
-  if (diffHours === 1) return "added an hour ago";
-  if (diffHours < 24) return "added " + diffHours + " hours ago";
-  if (diffDays === 1) return "added a day ago";
-  return "added " + diffDays + " days ago";
-}
-
 function setTrivia(){
   if (!triviaCard || !triviaTitle || !triviaText) return;
   if (!isHomeView()) {
@@ -1740,17 +1579,14 @@ if (wodListenBtn){
 
 
 function syncWordOfDayVisibility(){
-  if (!wordOfDay && !recentCard && !triviaCard) return;
+  if (!wordOfDay && !triviaCard) return;
   if (isHomeView()) {
     showWodRow();
     showWordOfDay();
     setWordOfDay();
     setTrivia();
-    showRecent();
-    setRecentAdded();
   } else {
     hideWordOfDay();
-    hideRecent();
     hideTrivia();
     hideWodRow();
   }
