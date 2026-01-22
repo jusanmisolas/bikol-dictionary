@@ -240,6 +240,16 @@ main{
 @media (max-width: 600px){
   header{ padding:0 16px; }
   .header-inner{ max-width:100%; }
+  .header-left h1{ font-size:16px; }
+  .header-right{
+    gap:6px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .header-btn{
+    padding:6px 10px;
+    font-size:12px;
+  }
   .menu{ left:16px; }
   main{ padding-left:16px; padding-right:16px; }
   .search-wrapper,
@@ -249,9 +259,17 @@ main{
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:18px;
+    gap:20px;
+    --home-card-width:100%;
   }
   .wod-pill{ min-width:0; width:auto; }
+  .trivia-toggle{
+    font-size:12px;
+    padding:4px 0;
+  }
+  .wod-title{ font-size:36px; }
+  .entry h2{ font-size:24px; }
+  .definition{ font-size:14px; }
 }
 .search-wrapper select option{ text-align:center; color:#000; }
 
@@ -786,6 +804,8 @@ footer{
   box-shadow:0 20px 50px rgba(0,0,0,.28);
   border:1px solid var(--rule);
   padding:18px;
+  max-height:calc(100vh - 80px);
+  overflow:auto;
 }
 .modal-head{
   display:flex;
@@ -863,6 +883,24 @@ footer{
 
 @media (max-width: 640px){
   .submit-grid{grid-template-columns:1fr;}
+  .contact-grid{grid-template-columns:1fr;}
+  .submit-actions,
+  .contact-actions{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .submit-actions button,
+  .contact-actions button{
+    width:100%;
+  }
+  .donate-options{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .donate-option{
+    width:100%;
+    text-align:center;
+  }
 }
 
 
