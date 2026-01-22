@@ -204,6 +204,15 @@ main{
   background-position:right 14px center;
 }
 
+@media (max-width: 900px){
+  .search-wrapper input{
+    font-size:16px;             /* prevent iOS zoom on focus */
+  }
+  .search-wrapper input::placeholder{
+    font-size:15px;             /* adjusted placeholder */
+  }
+}
+
 @media (max-width: 520px){
   .search-wrapper select{
     padding:14px 18px;          /* tighter */
@@ -213,12 +222,6 @@ main{
   }
   .search-wrapper select option{
     font-size:15px;             /* options still readable */
-  }
-  .search-wrapper input{
-    font-size:16px;             /* prevent iOS zoom on focus */
-  }
-  .search-wrapper input::placeholder{
-    font-size:15px;             /* adjusted placeholder */
   }
 }
 
