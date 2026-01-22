@@ -1016,7 +1016,7 @@ input:-webkit-autofill:active {
     </div>
 
     <aside class="trivia-card" id="triviaCard" aria-label="Trivia">
-      <div class="trivia-title" id="triviaTitle">Did you know?</div>
+      <div class="trivia-title" id="triviaTitle">DID YOU KNOW?</div>
       <div class="trivia-text" id="triviaText"></div>
       <img class="trivia-photo" id="triviaPhoto" alt="" style="display:none;" />
     </aside>
@@ -1221,7 +1221,6 @@ let triviaItems = [];
 let isUserTyping = false;
 const fallbackTrivia = [
   {
-    title: "Did you know?",
     text: "The Bikol Region is known for its active volcanoes, including Mayon Volcano, famous for its near-perfect cone.",
     image: ""
   }
@@ -1561,7 +1560,7 @@ function setTrivia(){
     return;
   }
 
-  triviaTitle.textContent = item.title || "Did you know?";
+  triviaTitle.textContent = "DID YOU KNOW?";
   const rawText = (item.text || "").toString();
   triviaText.innerHTML = escapeHtml(rawText).replace(/\n\s*\n/g, "<br><br>");
 
@@ -1571,7 +1570,7 @@ function setTrivia(){
   if (hasImage) {
     triviaPhoto.src = imgRaw;
     triviaPhoto.style.display = "";
-    triviaPhoto.alt = item.title ? item.title : "Trivia photo";
+    triviaPhoto.alt = "Trivia photo";
   } else {
     triviaPhoto.removeAttribute("src");
     triviaPhoto.style.display = "none";
@@ -2100,7 +2099,7 @@ function loadCsvFromFile(){
     header:true,
     skipEmptyLines:true,
     complete:(res) => {
-      triviaItems = (res.data || []).filter(r => (r.text || r.title || r.image));
+      triviaItems = (res.data || []).filter(r => (r.text || r.image || r.featured));
       setTrivia();
     },
     error:() => {
