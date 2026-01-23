@@ -73,7 +73,7 @@ header h1{font-size:18px;margin:0;}
   gap:6px;
   padding:6px 12px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,.6);
+  border:1px solid rgba(255,255,255,.7);
   background:transparent;
   color:#fff;
   font-size:13px;
@@ -84,14 +84,14 @@ header h1{font-size:18px;margin:0;}
 .header-btn i{font-size:13px;}
 
 .submit-btn{
-  background:rgba(255,255,255,.12);
-  border-color:rgba(255,255,255,.8);
+  background:rgba(255,255,255,.18);
+  border-color:rgba(255,255,255,.85);
 }
 .submit-btn:hover{background:rgba(255,255,255,.22);}
 
 .donate-btn{
-  background:rgba(255,255,255,.12);
-  border-color:rgba(255,255,255,.8);
+  background:rgba(255,255,255,.18);
+  border-color:rgba(255,255,255,.85);
 }
 .donate-btn:hover{background:rgba(255,255,255,.22);}
 
@@ -362,7 +362,11 @@ main{
   padding:12px 14px;
   padding-left:18px; /* align with search input text */
   cursor:pointer;
-  font-size:13.5px;
+  font-size:14.5px;
+  border-top:1px solid rgba(230,232,235,.7);
+}
+.suggestions .sugg-item:first-child{
+  border-top:none;
 }
 .suggestions .sugg-item:hover{background:var(--hover);}
 
@@ -620,13 +624,13 @@ main{
   grid-area:wod;
   background:rgba(91,111,142,.16);
   border-radius:18px;
-  padding:18px 38px 16px;
+  padding:16px 38px 14px;
   margin:0 auto;
   text-align:center;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:10px;
+  gap:8px;
   box-shadow:0 14px 34px rgba(0,0,0,.12);
   border:1px solid rgba(255,255,255,.65);
 }
@@ -643,7 +647,7 @@ main{
 
 .wod-title{
   margin:0;
-  font-size:42px; /* larger Word of the Day */
+  font-size:40px; /* larger Word of the Day */
   font-weight:700;
   color:var(--accent);
   line-height:1.05;
@@ -712,8 +716,8 @@ main{
   justify-content:center;
   padding:10px 14px;
   border-radius:999px;
-  background:var(--accent);
-  color:#fff;
+  background:rgba(13,27,42,.12);
+  color:var(--accent);
   font-weight:600;
   letter-spacing:.3px;
   font-size:12px;
@@ -784,6 +788,15 @@ footer{
   }
   main{
     padding-bottom:80px;
+  }
+}
+
+@media (max-width: 600px){
+  footer{
+    position:static;
+  }
+  main{
+    padding-bottom:32px;
   }
 }
 
