@@ -20,24 +20,54 @@
   --gold-dark:#E3C45A;
   --hover:#F1F3F5;
   --rule:#E6E8EB;
+  --radius-lg:18px;
+  --radius-md:14px;
+  --radius-sm:10px;
+  --btn-shadow:0 10px 20px rgba(0,0,0,.12);
 }
 *{box-sizing:border-box;}
 body{
   margin:0;
   font-family:"IBM Plex Sans",sans-serif;
-  background:var(--paper);
+  background:
+    radial-gradient(1200px 600px at 50% -200px, rgba(13,27,42,.08), transparent 60%),
+    linear-gradient(180deg, #f7f9fb 0%, #f3f6f9 100%);
   color:var(--ink);
   line-height:1.6;
   min-height:100vh;
   display:flex;
   flex-direction:column;
 }
+.skip-link{
+  position:absolute;
+  left:-999px;
+  top:10px;
+  padding:8px 12px;
+  background:var(--accent);
+  color:#fff;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:600;
+  z-index:2000;
+}
+.skip-link:focus{
+  left:10px;
+}
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+a:focus-visible{
+  outline:2px solid rgba(0,31,61,.35);
+  outline-offset:2px;
+  border-radius:8px;
+}
 
 header{
   background:var(--accent);
   color:#fff;
-  min-height:64px; /* match search box height */
-  padding:0 1.5vw; /* remove vertical padding */
+  min-height:58px; /* match search box height */
+  padding:0 1vw; /* align closer to search width */
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -47,7 +77,7 @@ header{
 }
 .header-inner{
   width:100%;
-  max-width:1240px;
+  max-width:1020px;
   margin:0 auto;
   display:flex;
   justify-content:space-between;
@@ -73,25 +103,28 @@ header h1{font-size:18px;margin:0;}
   gap:6px;
   padding:6px 12px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,.7);
-  background:transparent;
+  border:1px solid rgba(255,255,255,.55);
+  background:rgba(255,255,255,.08);
   color:#fff;
   font-size:13px;
   font-weight:500;
   cursor:pointer;
+  min-height:36px;
+  transition:transform .12s ease, background .12s ease;
 }
-.header-btn:hover{background:rgba(255,255,255,.12);} 
+.header-btn:hover{background:rgba(255,255,255,.14);} 
+.header-btn:active{background:rgba(255,255,255,.22);}
 .header-btn i{font-size:13px;}
 
 .submit-btn{
-  background:rgba(255,255,255,.18);
-  border-color:rgba(255,255,255,.85);
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.65);
 }
 .submit-btn:hover{background:rgba(255,255,255,.22);}
 
 .donate-btn{
-  background:rgba(255,255,255,.18);
-  border-color:rgba(255,255,255,.85);
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.65);
 }
 .donate-btn:hover{background:rgba(255,255,255,.22);}
 
@@ -113,10 +146,11 @@ header h1{font-size:18px;margin:0;}
   left:1.5vw;
   background:#fff;
   color:var(--ink);
-  border-radius:14px;
+  border-radius:var(--radius-md);
   box-shadow:0 16px 40px rgba(0,0,0,.25);
   border:1px solid var(--rule);
   min-width:220px;
+  max-width:calc(100vw - 24px);
   overflow:hidden;
   display:none;
   z-index:1200;
@@ -159,6 +193,13 @@ main{
   align-self:center;
   padding:0;
 }
+#entries:not(.centered):not(:empty){
+  padding:12px 16px;
+  border-radius:var(--radius-md);
+  background:#fff;
+  box-shadow:0 8px 26px rgba(0,0,0,.08);
+  border:1px solid var(--rule);
+}
 
 /* center container for full-page messages */
 #entries.centered{
@@ -173,13 +214,19 @@ main{
 .search-wrapper{
   display:flex;
   background:#fff;
-  border-radius:14px;
+  border-radius:var(--radius-md);
   box-shadow:0 10px 30px rgba(0,0,0,.15);
   position:relative;
   overflow:visible;
   width:100%;
   max-width:1020px; /* reduced length on desktop */
-  margin:8px auto 24px; /* extra space below search box */
+  margin:6px auto 18px; /* extra space below search box */
+  transition:transform .2s ease, box-shadow .2s ease;
+  align-items:stretch;
+}
+.search-wrapper:focus-within{
+  box-shadow:0 0 0 3px rgba(13,27,42,.12), 0 10px 30px rgba(0,0,0,.12);
+  transform:translateY(-1px);
 }
 @media (min-width: 1024px){
   .search-wrapper{max-width:1020px;}
@@ -193,7 +240,7 @@ main{
   border:none;
   padding:14px 36px;
   min-width:90px;
-  border-radius:14px 0 0 14px;
+  border-radius:var(--radius-md) 0 0 var(--radius-md);
   font-size:15.5px;
   cursor:pointer;
   appearance:none;
@@ -252,6 +299,11 @@ main{
   .header-btn{
     padding:6px 10px;
     font-size:12px;
+    min-height:40px;
+  }
+  .burger-btn{ min-width:40px; min-height:40px; }
+  .menu{
+    width:min(90vw, 320px);
   }
   .menu{ left:16px; }
   main{ padding-left:16px; padding-right:16px; }
@@ -273,22 +325,41 @@ main{
   .wod-title{ font-size:36px; }
   .entry h2{ font-size:24px; }
   .definition{ font-size:14px; }
+  #entries:not(.centered):not(:empty){
+    padding:10px 12px;
+  }
+  .example{
+    padding:8px 10px;
+  }
+  .wod-card,
+  .trivia-card{
+    box-shadow:0 8px 18px rgba(0,0,0,.1);
+  }
 }
 .search-wrapper select option{ text-align:center; color:#000; }
 
+.search-field{
+  position:relative;
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  height:100%;
+  align-self:stretch;
+}
 .search-wrapper input{
   flex:1 1 auto;
   min-width:0;
   border:none;
-  padding:20px 46px 20px 18px;
-  font-size:16px;
+  padding:20px 48px 20px 18px;
+  font-size:17px;
   font-weight:500;
   color:var(--ink);
 }
-.search-wrapper input::placeholder{ color:#9CA3AF; font-weight:500; font-size:15px; }
+.search-wrapper input::placeholder{ color:#9CA3AF; font-weight:500; font-size:16px; }
 .search-wrapper input:focus{outline:none;box-shadow:none;}
 
-.search-wrapper button{
+.search-wrapper > button{
   border-left:1px solid var(--rule); /* vertical divider before icon */
 
   position:relative;
@@ -298,12 +369,31 @@ main{
   cursor:pointer;
   color:var(--secondary);
   border-radius:10px;
+  min-height:44px;
+  transition:background .12s ease, color .12s ease;
 }
-.search-wrapper button:hover{
+.search-wrapper > button:hover{
   background:var(--hover);
   color:var(--ink);
 }
-.search-wrapper button::after{
+.clear-btn{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:transparent;
+  color:#9CA3AF;
+  padding:4px 6px;
+  border-radius:999px;
+  cursor:pointer;
+  display:none;
+  z-index:2;
+  min-height:32px;
+  transition:background .12s ease, color .12s ease;
+}
+.clear-btn:hover{ color:var(--ink); background:var(--hover); }
+.search-wrapper > button::after{
   content:attr(data-tooltip);
   position:absolute;
   bottom:-36px;
@@ -319,11 +409,11 @@ main{
   transform:translateY(-4px);
   transition:opacity .15s ease, transform .15s ease;
 }
-.search-wrapper button:hover::after{
+.search-wrapper > button:hover::after{
   opacity:1;
   transform:translateY(0);
 }
-.search-wrapper button:hover{color:var(--ink);}
+.search-wrapper > button:hover{color:var(--ink);}
 
 /* Suggestions dropdown */
 .suggestions{
@@ -332,7 +422,7 @@ main{
   left:0;
   width:100%;
   background:#fff;
-  border-radius:0 0 14px 14px;
+  border-radius:0 0 var(--radius-md) var(--radius-md);
   box-shadow:0 16px 40px rgba(0,0,0,.18);
   border:1px solid var(--rule);
   border-top:none;
@@ -369,11 +459,50 @@ main{
   border-top:none;
 }
 .suggestions .sugg-item:hover{background:var(--hover);}
+.suggestions .sugg-item:active{background:#e1e6eb;}
 
 .entry{
   position:relative;
   margin:0;
   padding:16px 0; /* slightly tighter vertical spacing */
+}
+.entry:hover{
+  background:rgba(0,0,0,.02);
+}
+.entry{
+  animation:entryFade .2s ease;
+}
+.section-divider{
+  width:100%;
+  max-width:1020px;
+  height:1px;
+  background:var(--rule);
+  margin:4px auto 16px;
+  display:none;
+}
+.section-divider.is-visible{
+  display:block;
+}
+@keyframes entryFade{
+  from{opacity:0;transform:translateY(6px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes riseIn{
+  from{opacity:0;transform:translateY(12px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.wod-row{
+  animation:riseIn .35s ease;
+}
+.sense-block{
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid rgba(230,232,235,.7);
+}
+.sense-block:first-child{
+  margin-top:0;
+  padding-top:0;
+  border-top:none;
 }
 .entry::after{
   content:"";
@@ -415,7 +544,9 @@ main{
   border-radius:999px;
 }
 .pron button:hover{background:var(--hover);}
-.pron button:disabled{opacity:.35;cursor:not-allowed;}
+.pron button.audio-unavailable{
+  color:#be123c;
+}
 .dialect,
 .derivs,
 .inflections{
@@ -473,7 +604,8 @@ main{
   line-height:1.15;
 }
 .pos{font-style:italic;color:var(--secondary);font-size:14px;}
-.definition{font-size:15px;line-height:1.55;}
+.definition{font-size:15px;line-height:1.6;}
+.definition + .example{ margin-top:10px; }
 .equivalent{color:var(--accent-soft);font-weight:500;}
 .equivalent .equiv-link{color:inherit;text-decoration:none;font-weight:600;}
 .gloss-link{color:inherit;text-decoration:none;font-weight:600;}
@@ -531,11 +663,17 @@ main{
 .notice{
   background:#fff;
   border:1px solid var(--rule);
-  border-radius:14px;
+  border-radius:var(--radius-md);
   padding:14px 16px;
   box-shadow:0 10px 30px rgba(0,0,0,.08);
   font-size:14px;
   color:var(--secondary);
+}
+.notice.loading{
+  display:none;
+  max-width:1020px;
+  margin:8px auto 0;
+  text-align:center;
 }
 
 /* Word of the Day layout */
@@ -546,27 +684,83 @@ main{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  --home-card-width:380px;
-  gap:16px;
+  --home-card-width:420px;
+  gap:10px;
   margin:32px auto 30px; /* match header-to-search spacing */
 }
 
 /* Trivia card */
 .trivia-card{
-  width:min(100%, var(--home-card-width));
+  width:min(100%, calc(var(--home-card-width) - 20px));
   align-self:center;
   background:linear-gradient(160deg, #ffffff 0%, #f2f5f8 100%);
   max-width:100%;
   grid-area:trivia;
-  border-radius:18px;
-  padding:18px 18px 16px;
-  box-shadow:0 18px 40px rgba(13,27,42,.12);
+  border-radius:var(--radius-lg);
+  padding:14px 16px 12px;
+  box-shadow:0 14px 30px rgba(13,27,42,.12);
   border:1px solid rgba(13,27,42,.08);
   display:flex;
   flex-direction:column;
   gap:12px;
   position:relative;
   overflow:hidden;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.trivia-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 36px rgba(13,27,42,.14);
+}
+.recent-card{
+  width:min(100%, var(--home-card-width));
+  align-self:center;
+  background:#fff;
+  border-radius:var(--radius-lg);
+  padding:14px;
+  box-shadow:0 10px 24px rgba(0,0,0,.08);
+  border:1px solid rgba(13,27,42,.08);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.recent-title{
+  font-weight:700;
+  color:var(--accent);
+  font-size:14px;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+}
+.recent-list{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.recent-item{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 10px;
+  border-radius:12px;
+  background:#f4f6f8;
+  cursor:pointer;
+}
+.recent-meta{
+  font-size:12px;
+  color:var(--secondary);
+  white-space:nowrap;
+  margin-top:2px;
+}
+.recent-item:hover{ background:#ecf0f4; }
+.recent-word{
+  font-weight:700;
+  color:var(--accent);
+  font-size:14px;
+}
+.recent-gloss{
+  color:var(--secondary);
+  font-size:12.5px;
+  margin-top:2px;
 }
 .trivia-card.is-collapsed .trivia-text{
   max-height:160px;
@@ -610,7 +804,7 @@ main{
 .trivia-toggle:hover{ text-decoration:underline; }
 .trivia-photo{
   width:100%;
-  border-radius:14px;
+  border-radius:var(--radius-md);
   border:1px solid rgba(13,27,42,.1);
   object-fit:cover;
   max-height:180px;
@@ -618,12 +812,12 @@ main{
 
 /* Word of the Day card (Oxford-like) */
 .wod-card{
-  width:min(100%, var(--home-card-width));
+  width:min(100%, calc(var(--home-card-width) + 40px));
   align-self:center;
   max-width:100%;
   grid-area:wod;
   background:rgba(91,111,142,.16);
-  border-radius:18px;
+  border-radius:var(--radius-lg);
   padding:16px 38px 14px;
   margin:0 auto;
   text-align:center;
@@ -631,8 +825,13 @@ main{
   flex-direction:column;
   align-items:center;
   gap:8px;
-  box-shadow:0 14px 34px rgba(0,0,0,.12);
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
   border:1px solid rgba(255,255,255,.65);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.wod-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 32px rgba(0,0,0,.14);
 }
 .wod-top{
   display:flex;
@@ -699,11 +898,15 @@ main{
 
 /* Disabled state */
 .wod-actions button:disabled{
-  opacity:.35;
-  cursor:not-allowed;
+  opacity:1;
+  cursor:pointer;
+  color:#be123c;
 }
 .wod-actions button:disabled:hover{ background:transparent; }
 .wod-actions button:disabled::after{ opacity:0; }
+.wod-actions button.audio-unavailable{
+  color:#be123c;
+}
 .wod-actions .wod-a2{ color:#BE123C; font-size:22px; }
 .wod-sub{
   color:rgba(13,27,42,.72);
@@ -731,7 +934,7 @@ main{
   display:inline-block;
   margin-top:10px;
   padding:4px 8px;
-  border-radius:8px;
+  border-radius:var(--radius-sm);
   background:rgba(17,24,39,.18);
   color:rgba(13,27,42,.9);
   font-weight:700;
@@ -764,10 +967,10 @@ main{
 
 footer{
   margin-top:auto;
-  padding:24px 5vw calc(24px + env(safe-area-inset-bottom));
+  padding:18px 5vw calc(18px + env(safe-area-inset-bottom));
   text-align:center;
-  font-size:12px;
-  color:var(--secondary);
+  font-size:11px;
+  color:rgba(75,85,99,.75);
   border-top:1px solid var(--rule);
   position:fixed;
   left:0;
@@ -815,12 +1018,16 @@ footer{
 .modal-card{
   width:min(720px, 100%);
   background:#fff;
-  border-radius:18px;
+  border-radius:var(--radius-lg);
   box-shadow:0 20px 50px rgba(0,0,0,.28);
   border:1px solid var(--rule);
   padding:18px;
   max-height:calc(100vh - 80px);
   overflow:auto;
+}
+.modal-card .modal-head{
+  padding-bottom:6px;
+  border-bottom:1px solid rgba(230,232,235,.7);
 }
 .modal-head{
   display:flex;
@@ -838,9 +1045,10 @@ footer{
   border:none;
   background:var(--hover);
   color:var(--ink);
-  border-radius:10px;
+  border-radius:var(--radius-sm);
   padding:8px 10px;
   cursor:pointer;
+  transition:transform .12s ease, background .12s ease;
 }
 .modal-close:hover{background:#e9edf1;}
 .submit-grid{
@@ -855,17 +1063,27 @@ footer{
   color:var(--secondary);
   font-weight:600;
   margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
 }
 .submit-grid input,
 .submit-grid select,
 .submit-grid textarea{
   width:100%;
   border:1px solid var(--rule);
-  border-radius:12px;
+  border-radius:var(--radius-md);
   padding:10px 12px;
   font-family:inherit;
   font-size:16px;
   color:var(--ink);
+  background:#fbfcfd;
+  transition:border-color .12s ease, box-shadow .12s ease;
+}
+.submit-grid input:focus,
+.submit-grid select:focus,
+.submit-grid textarea:focus{
+  border-color:rgba(13,27,42,.3);
+  box-shadow:0 0 0 3px rgba(13,27,42,.08);
 }
 .submit-grid textarea{min-height:110px;resize:vertical;}
 .submit-actions{
@@ -889,16 +1107,29 @@ footer{
   padding:12px 20px;
   font-weight:600;
   cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
 }
 .btn-secondary{
-  background:var(--hover);
+  background:#eef1f4;
   color:var(--ink);
+  border:1px solid #e0e6ec;
 }
 .btn-primary{
   background:var(--accent);
   color:#fff;
+  box-shadow:var(--btn-shadow);
 }
 .btn-primary:hover{background:#0b274b;}
+.btn-primary:hover,
+.btn-secondary:hover,
+.modal-close:hover{
+  transform:translateY(-1px);
+}
+.btn-primary:active,
+.btn-secondary:active,
+.modal-close:active{
+  transform:translateY(0);
+}
 
 @media (max-width: 640px){
   .submit-grid{grid-template-columns:1fr;}
@@ -944,16 +1175,25 @@ footer{
   color:var(--secondary);
   font-weight:600;
   margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
 }
 .contact-grid input,
 .contact-grid textarea{
   width:100%;
   border:1px solid var(--rule);
-  border-radius:12px;
+  border-radius:var(--radius-md);
   padding:10px 12px;
   font-family:inherit;
   font-size:16px;
   color:var(--ink);
+  background:#fbfcfd;
+  transition:border-color .12s ease, box-shadow .12s ease;
+}
+.contact-grid input:focus,
+.contact-grid textarea:focus{
+  border-color:rgba(13,27,42,.3);
+  box-shadow:0 0 0 3px rgba(13,27,42,.08);
 }
 .contact-grid textarea{min-height:160px;resize:vertical;}
 .contact-actions{
@@ -977,6 +1217,7 @@ footer{
   padding:12px 20px;
   font-weight:600;
   cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
 }
 
 /* Donate modal */
@@ -995,11 +1236,15 @@ footer{
   padding:8px 14px;
   font-weight:600;
   cursor:pointer;
+  transition:transform .12s ease, background .12s ease, color .12s ease;
 }
 .donate-option.active{
   background:var(--accent);
   color:#fff;
   border-color:var(--accent);
+}
+.donate-option:hover{
+  transform:translateY(-1px);
 }
 .donate-qr{
   display:flex;
@@ -1007,7 +1252,7 @@ footer{
   justify-content:center;
   background:#fff;
   border:1px solid var(--rule);
-  border-radius:16px;
+  border-radius:var(--radius-lg);
   padding:16px;
   min-height:180px;
 }
@@ -1015,7 +1260,19 @@ footer{
   max-width:260px;
   width:100%;
   height:auto;
-  border-radius:10px;
+  border-radius:var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .entry,
+  .wod-row{
+    animation:none;
+  }
+  .wod-card,
+  .trivia-card,
+  .search-wrapper{
+    transition:none;
+  }
 }
 .donate-details{
   text-align:center;
@@ -1023,6 +1280,52 @@ footer{
   color:var(--accent);
   font-size:18px;
   line-height:1.4;
+  user-select:text;
+}
+.donate-line{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin:2px 0;
+  user-select:text;
+}
+.copy-btn{
+  border:none;
+  background:rgba(13,27,42,.08);
+  color:var(--accent);
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:11px;
+  font-weight:600;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  line-height:1;
+  position:relative;
+}
+.copy-btn:hover{ background:rgba(13,27,42,.14); }
+.copy-btn:active{ transform:translateY(1px); }
+.copy-btn::after{
+  content:attr(data-tooltip);
+  position:absolute;
+  bottom:calc(100% + 6px);
+  left:50%;
+  transform:translateX(-50%);
+  background:#111827;
+  color:#fff;
+  font-size:11px;
+  padding:4px 6px;
+  border-radius:6px;
+  opacity:0;
+  pointer-events:none;
+  white-space:nowrap;
+  transition:opacity .12s ease;
+}
+.copy-btn:hover::after{
+  opacity:1;
 }
 .donate-sub{
   display:block;
@@ -1054,6 +1357,7 @@ input:-webkit-autofill:active {
 </head>
 
 <body>
+<a class="skip-link" href="#search">Skip to search</a>
 <header>
   <div class="header-inner">
     <div class="header-left">
@@ -1090,13 +1394,18 @@ input:-webkit-autofill:active {
       <option value="english" data-short="English" data-long="English – Bikol">English</option>
       <option value="bikol" data-short="Bikol" data-long="Bikol – English" selected>Bikol</option>
     </select>
+    <div class="search-field">
     <input id="search" placeholder="Search Bikol - English Dictionary" autocomplete="off" />
+      <button class="clear-btn" id="clearBtn" type="button" aria-label="Clear search">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
     <button id="searchBtn" type="button" aria-label="Search" data-tooltip="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
     <div class="suggestions" id="suggestions"></div>
   </div>
 
   <div class="wod-row" id="wodRow">
-    <div class="wod-card" id="wordOfDay" role="region" aria-label="Word of the day">
+    <div class="wod-card" id="wordOfDay" role="region" aria-label="Word of the Day">
       <div class="wod-top">
         <div id="wod-date">—</div>
       </div>
@@ -1120,10 +1429,17 @@ input:-webkit-autofill:active {
       <div class="trivia-title" id="triviaTitle">DID YOU KNOW?</div>
       <div class="trivia-text" id="triviaText"></div>
       <button class="trivia-toggle" id="triviaToggle" type="button">See more...</button>
-      <img class="trivia-photo" id="triviaPhoto" alt="" style="display:none;" />
+      <img class="trivia-photo" id="triviaPhoto" alt="" loading="lazy" decoding="async" style="display:none;" />
+    </aside>
+
+    <aside class="recent-card" id="recentCard" aria-label="Recently added">
+      <div class="recent-title">Recently Added</div>
+      <div class="recent-list" id="recentList"></div>
     </aside>
   </div>
 
+  <div class="section-divider" id="sectionDivider" aria-hidden="true"></div>
+  <div class="notice loading" id="loadingNotice">Loading dictionary…</div>
   <div id="entries"></div>
 </main>
 
@@ -1132,7 +1448,7 @@ input:-webkit-autofill:active {
 <div class="modal-backdrop" id="submitModal" aria-hidden="true">
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="submitTitle">
     <div class="modal-head">
-      <div class="modal-title" id="submitTitle">Contribute a Bikol word</div>
+      <div class="modal-title" id="submitTitle">Contribute a Bikol Word</div>
       <button class="modal-close" type="button" id="submitClose" aria-label="Close form">
         <i class="fa-solid fa-xmark"></i>
       </button>
@@ -1141,11 +1457,11 @@ input:-webkit-autofill:active {
     <form id="submitForm">
       <div class="submit-grid">
         <div>
-          <label for="subWord">Bikol word</label>
+          <label for="subWord">Bikol Word</label>
           <input id="subWord" name="word" required />
         </div>
         <div>
-          <label for="subPos">Part of speech</label>
+          <label for="subPos">Part of Speech</label>
           <select id="subPos" name="pos" required>
             <option value="">Select</option>
             <option>bound root</option>
@@ -1158,14 +1474,19 @@ input:-webkit-autofill:active {
             <option>preposition</option>
             <option>conjunction</option>
             <option>interjection</option>
+            <option>others</option>
           </select>
+        </div>
+        <div id="subPosOtherWrap" style="display:none;">
+          <label for="subPosOther">Other (specify)</label>
+          <input id="subPosOther" name="pos_other" />
         </div>
         <div class="full">
           <label for="subMeaning">Meaning(s)</label>
           <textarea id="subMeaning" name="meaning" required></textarea>
         </div>
         <div class="full">
-          <label for="subExample">Example sentences</label>
+          <label for="subExample">Example Sentences</label>
           <textarea id="subExample" name="example" required placeholder="Bikol sentence || English translation"></textarea>
         </div>
         <div>
@@ -1181,7 +1502,7 @@ input:-webkit-autofill:active {
           <input id="subInflections" name="inflections" required />
         </div>
         <div class="full">
-          <label for="subName">Your name (for credits)</label>
+          <label for="subName">Your Name (for Credits)</label>
           <input id="subName" name="name" required />
         </div>
       </div>
@@ -1209,11 +1530,11 @@ input:-webkit-autofill:active {
     <form id="contactForm">
       <div class="contact-grid">
         <div>
-          <label for="contactName">Your name</label>
+          <label for="contactName">Your Name</label>
           <input id="contactName" name="name" required />
         </div>
         <div>
-          <label for="contactEmail">Your email</label>
+          <label for="contactEmail">Your Email</label>
           <input id="contactEmail" name="email" type="email" required />
         </div>
         <div class="full">
@@ -1295,6 +1616,9 @@ const suggestions = document.getElementById("suggestions");
 const entries = document.getElementById("entries");
 const lang = document.getElementById("lang");
 const searchBtn = document.getElementById("searchBtn");
+const clearBtn = document.getElementById("clearBtn");
+const sectionDivider = document.getElementById("sectionDivider");
+const loadingNotice = document.getElementById("loadingNotice");
 
 const wordOfDay = document.getElementById("wordOfDay");
 const wodDate = document.getElementById("wod-date");
@@ -1310,11 +1634,16 @@ const triviaTitle = document.getElementById("triviaTitle");
 const triviaText = document.getElementById("triviaText");
 const triviaPhoto = document.getElementById("triviaPhoto");
 const triviaToggle = document.getElementById("triviaToggle");
+const recentCard = document.getElementById("recentCard");
+const recentList = document.getElementById("recentList");
 const submitBtn = document.getElementById("submitBtn");
 const submitModal = document.getElementById("submitModal");
 const submitClose = document.getElementById("submitClose");
 const submitCancel = document.getElementById("submitCancel");
 const submitForm = document.getElementById("submitForm");
+const subPos = document.getElementById("subPos");
+const subPosOtherWrap = document.getElementById("subPosOtherWrap");
+const subPosOther = document.getElementById("subPosOther");
 const contactLink = document.getElementById("contactLink");
 const contactModal = document.getElementById("contactModal");
 const contactClose = document.getElementById("contactClose");
@@ -1400,6 +1729,8 @@ function applyRouteFromHash(){
     entries.innerHTML = "";
     closeSuggestions();
     syncWordOfDayVisibility();
+    updateClearButton();
+    syncDividerVisibility();
     currentRouteKey = "";
     return;
   }
@@ -1414,6 +1745,8 @@ function applyRouteFromHash(){
   closeSuggestions();
   search.value = "";
   hideWordOfDay();
+  updateClearButton();
+  syncDividerVisibility();
 
   const match = findExactByMode(r.mode, r.term);
   if (match) {
@@ -1439,10 +1772,74 @@ function closeSuggestions(){
   suggestions.innerHTML = "";
 }
 
+function positionMenu(){
+  if (!menu || !burger) return;
+  const rect = burger.getBoundingClientRect();
+  const menuWidth = menu.offsetWidth || 220;
+  const left = Math.max(12, Math.min(rect.left, window.innerWidth - menuWidth - 12));
+  menu.style.left = left + "px";
+  menu.style.top = Math.round(rect.bottom + 8) + "px";
+}
+
+function updateClearButton(){
+  if (!clearBtn) return;
+  const hasValue = (search.value || "").trim().length > 0;
+  clearBtn.style.display = hasValue ? "inline-flex" : "none";
+}
+
+function syncDividerVisibility(){
+  if (!sectionDivider) return;
+  const hasEntries = (entries.innerHTML || "").trim() !== "";
+  sectionDivider.classList.toggle("is-visible", hasEntries);
+}
+
+
+function showLoading(){
+  if (!loadingNotice) return;
+  loadingNotice.style.display = "block";
+}
+
+function hideLoading(){
+  if (!loadingNotice) return;
+  loadingNotice.style.display = "none";
+}
+
+let activeTrap = null;
+
+function activateTrap(modal){
+  if (!modal) return;
+  releaseTrap();
+  const handler = (e) => {
+    if (e.key !== "Tab") return;
+    const focusable = modal.querySelectorAll(
+      'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+  activeTrap = { modal, handler };
+  document.addEventListener("keydown", handler);
+}
+
+function releaseTrap(){
+  if (!activeTrap) return;
+  document.removeEventListener("keydown", activeTrap.handler);
+  activeTrap = null;
+}
+
 function openSubmitModal(){
   if (!submitModal) return;
   submitModal.classList.add("open");
   submitModal.setAttribute("aria-hidden", "false");
+  activateTrap(submitModal);
   const first = document.getElementById("subWord");
   if (first) first.focus();
 }
@@ -1451,12 +1848,14 @@ function closeSubmitModal(){
   if (!submitModal) return;
   submitModal.classList.remove("open");
   submitModal.setAttribute("aria-hidden", "true");
+  releaseTrap(submitModal);
 }
 
 function openContactModal(){
   if (!contactModal) return;
   contactModal.classList.add("open");
   contactModal.setAttribute("aria-hidden", "false");
+  activateTrap(contactModal);
   const first = document.getElementById("contactName");
   if (first) first.focus();
 }
@@ -1465,12 +1864,14 @@ function closeContactModal(){
   if (!contactModal) return;
   contactModal.classList.remove("open");
   contactModal.setAttribute("aria-hidden", "true");
+  releaseTrap(contactModal);
 }
 
 function openDonateModal(){
   if (!donateModal) return;
   donateModal.classList.add("open");
   donateModal.setAttribute("aria-hidden", "false");
+  activateTrap(donateModal);
   setDonateMethod("paypal");
 }
 
@@ -1478,6 +1879,7 @@ function closeDonateModal(){
   if (!donateModal) return;
   donateModal.classList.remove("open");
   donateModal.setAttribute("aria-hidden", "true");
+  releaseTrap(donateModal);
 }
 
 const donateLabelMap = {
@@ -1486,6 +1888,37 @@ const donateLabelMap = {
   maya: "Maya",
   bpi: "BPI"
 };
+
+function wireCopyButtons(){
+  if (!donateDetails) return;
+  donateDetails.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const text = btn.getAttribute("data-copy") || "";
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+        setTimeout(() => {
+          btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+        }, 1200);
+      } catch {
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        temp.setAttribute("readonly", "true");
+        temp.style.position = "absolute";
+        temp.style.left = "-9999px";
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+        btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+        setTimeout(() => {
+          btn.innerHTML = '<i class="fa-regular fa-copy"></i>';
+        }, 1200);
+      }
+    });
+  });
+}
 
 function setDonateMethod(method){
   const key = (method || "").toLowerCase();
@@ -1498,24 +1931,29 @@ function setDonateMethod(method){
   if (!donateDetails) return;
   if (key === "gcash") {
     donateDetails.innerHTML =
-      "JUSAN MISOLAS<br>0929-300-1049" +
+      '<span class="donate-line">JUSAN MISOLAS <button class="copy-btn" type="button" data-copy="JUSAN MISOLAS" data-tooltip="Copy" aria-label="Copy name"><i class="fa-regular fa-copy"></i></button></span>' +
+      '<span class="donate-line">09293001049 <button class="copy-btn" type="button" data-copy="09293001049" data-tooltip="Copy" aria-label="Copy number"><i class="fa-regular fa-copy"></i></button></span>' +
       '<span class="donate-sub">GCash account</span>';
   } else if (key === "maya") {
     donateDetails.innerHTML =
-      "JUSAN MISOLAS<br>0929-300-1049" +
+      '<span class="donate-line">JUSAN MISOLAS <button class="copy-btn" type="button" data-copy="JUSAN MISOLAS" data-tooltip="Copy" aria-label="Copy name"><i class="fa-regular fa-copy"></i></button></span>' +
+      '<span class="donate-line">09293001049 <button class="copy-btn" type="button" data-copy="09293001049" data-tooltip="Copy" aria-label="Copy number"><i class="fa-regular fa-copy"></i></button></span>' +
       '<span class="donate-sub">Maya account</span>';
   } else if (key === "paypal") {
     donateDetails.innerHTML =
-      "JUSAN MISOLAS<br>wasuywasuywasuy@gmail.com" +
+      '<span class="donate-line">JUSAN MISOLAS <button class="copy-btn" type="button" data-copy="JUSAN MISOLAS" data-tooltip="Copy" aria-label="Copy name"><i class="fa-regular fa-copy"></i></button></span>' +
+      '<span class="donate-line">wasuywasuywasuy@gmail.com <button class="copy-btn" type="button" data-copy="wasuywasuywasuy@gmail.com" data-tooltip="Copy" aria-label="Copy email"><i class="fa-regular fa-copy"></i></button></span>' +
       '<span class="donate-sub">PayPal</span>';
   } else if (key === "bpi") {
     donateDetails.innerHTML =
-      "JUSAN MISOLAS<br>886-940-3009" +
+      '<span class="donate-line">JUSAN MISOLAS <button class="copy-btn" type="button" data-copy="JUSAN MISOLAS" data-tooltip="Copy" aria-label="Copy name"><i class="fa-regular fa-copy"></i></button></span>' +
+      '<span class="donate-line">8869403009 <button class="copy-btn" type="button" data-copy="8869403009" data-tooltip="Copy" aria-label="Copy number"><i class="fa-regular fa-copy"></i></button></span>' +
       '<span class="donate-sub">Bank of the Philippine Islands</span>';
   } else {
     donateDetails.textContent = (donateLabelMap[key] || "Donation") + " details coming soon.";
   }
   if (donateNote) donateNote.textContent = "Donation details shown per method.";
+  wireCopyButtons();
 }
 
 function hideWordOfDay(){
@@ -1532,6 +1970,14 @@ function hideTrivia(){
 
 function showTrivia(){
   if (triviaCard) triviaCard.style.display = "";
+}
+
+function hideRecent(){
+  if (recentCard) recentCard.style.display = "none";
+}
+
+function showRecent(){
+  if (recentCard) recentCard.style.display = "";
 }
 
 function hideWodRow(){
@@ -1633,11 +2079,11 @@ function setWordOfDay(){
   if (wodListenBtn) {
     if (audioUrl) {
       wodAudio = new Audio(audioUrl);
-      wodListenBtn.disabled = false;
+      wodListenBtn.classList.remove("audio-unavailable");
       wodListenBtn.setAttribute("aria-label", "Listen");
     } else {
       wodAudio = null;
-      wodListenBtn.disabled = true;
+      wodListenBtn.classList.add("audio-unavailable");
       wodListenBtn.setAttribute("aria-label", "Audio unavailable");
     }
   }
@@ -1694,6 +2140,87 @@ function setTrivia(){
   applyTriviaClamp();
 }
 
+function parseDateAdded(row){
+  const raw = (row.date_added || row.dateAdded || "").toString().trim();
+  if (!raw) return 0;
+  const t = Date.parse(raw);
+  return Number.isNaN(t) ? 0 : t;
+}
+
+function timeAgoLabel(ts){
+  if (!ts) return "Just now";
+  const diff = Math.max(0, Date.now() - ts);
+  const minute = 60000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const week = 7 * day;
+  const month = 30 * day;
+  const year = 365 * day;
+
+  if (diff < minute) return "Just now";
+  if (diff < hour) {
+    const m = Math.max(1, Math.floor(diff / minute));
+    return m === 1 ? "a minute ago" : m + " minutes ago";
+  }
+  if (diff < day) {
+    const h = Math.floor(diff / hour);
+    return h === 1 ? "an hour ago" : h + " hours ago";
+  }
+  if (diff < week) {
+    const d = Math.floor(diff / day);
+    return d === 1 ? "a day ago" : d + " days ago";
+  }
+  if (diff < month) {
+    const w = Math.floor(diff / week);
+    return w === 1 ? "a week ago" : w + " weeks ago";
+  }
+  if (diff < year) {
+    const mo = Math.floor(diff / month);
+    return mo === 1 ? "a month ago" : mo + " months ago";
+  }
+  const y = Math.floor(diff / year);
+  return y === 1 ? "a year ago" : y + " years ago";
+}
+
+function renderRecentAdded(){
+  if (!recentCard || !recentList) return;
+  if (!isHomeView()) {
+    hideRecent();
+    return;
+  }
+  const rows = Array.isArray(dictionaryBI) ? dictionaryBI.slice() : [];
+  if (!rows.length) {
+    hideRecent();
+    return;
+  }
+  rows.sort((a, b) => parseDateAdded(b) - parseDateAdded(a));
+  const items = rows.slice(0, 4);
+  const html = items.map(row => {
+    const word = escapeHtml(row.bikol || "");
+    const gloss = escapeHtml(row.sense1_gloss || row.sense1_meaning || "");
+    const when = timeAgoLabel(parseDateAdded(row));
+    return (
+      '<div class="recent-item" data-term="' + escapeHtml(row.bikol || "") + '">' +
+        '<div>' +
+          '<div class="recent-word">' + word + '</div>' +
+          (gloss ? '<div class="recent-gloss">' + gloss + '</div>' : '') +
+        '</div>' +
+        '<div class="recent-meta">' + escapeHtml(when) + '</div>' +
+      '</div>'
+    );
+  }).join("");
+  recentList.innerHTML = html;
+  recentList.querySelectorAll(".recent-item").forEach(item => {
+    item.addEventListener("click", () => {
+      const term = item.getAttribute("data-term") || "";
+      if (!term) return;
+      setHashRoute("bikol", term, false);
+      applyRouteFromHash();
+    });
+  });
+  showRecent();
+}
+
 function applyTriviaClamp(){
   if (!triviaCard || !triviaText || !triviaToggle) return;
   triviaExpanded = false;
@@ -1734,7 +2261,6 @@ function collapseTrivia(){
 // Listen button behavior (plays provided audio URL only)
 if (wodListenBtn){
   wodListenBtn.addEventListener("click", () => {
-    if (wodListenBtn.disabled) return;
     if (!wodAudio) return;
 
     try {
@@ -1764,9 +2290,11 @@ function syncWordOfDayVisibility(){
     showWordOfDay();
     setWordOfDay();
     setTrivia();
+    renderRecentAdded();
   } else {
     hideWordOfDay();
     hideTrivia();
+    hideRecent();
     hideWodRow();
   }
 }
@@ -1934,12 +2462,14 @@ function renderEnglish(d){
   let sensesHtml = "";
   if (senses.length === 1) {
     const s = senses[0];
+    sensesHtml += '<div class="sense-block">';
     sensesHtml += '<div class="definition">' + escapeHtml(s.m) + '</div>';
     if (s.b) sensesHtml += '<div class="definition equivalent">' + linkifyBikolEquivalents(s.b) + '</div>';
     sensesHtml += buildExampleHTML(s.ex);
+    sensesHtml += '</div>';
   } else if (senses.length > 1) {
     senses.forEach((s, idx) => {
-      sensesHtml += '<div style="margin-top:18px;">';
+      sensesHtml += '<div class="sense-block">';
       sensesHtml += '<div class="definition"><strong>' + (idx + 1) + '.</strong> ' + escapeHtml(s.m) + '</div>';
       if (s.b) sensesHtml += '<div class="definition equivalent">' + linkifyBikolEquivalents(s.b) + '</div>';
       sensesHtml += buildExampleHTML(s.ex);
@@ -1957,6 +2487,7 @@ function renderEnglish(d){
       '</div>' +
       sensesHtml +
     '</div>';
+  syncDividerVisibility();
 
   // attach audio handlers (Bikol headword pronunciation)
   entries.querySelectorAll('.pron-play').forEach(btn => {
@@ -1997,12 +2528,14 @@ function renderBikol(d){
   let sensesHtml = "";
   if (senses.length === 1) {
     const s = senses[0];
+    sensesHtml += '<div class="sense-block">';
     if (s.g) sensesHtml += '<div class="definition">' + linkifyEnglishGloss(s.g) + '</div>';
     if (s.m) sensesHtml += '<div class="definition">' + escapeHtml(s.m) + '</div>';
     sensesHtml += buildExampleHTML(s.ex);
+    sensesHtml += '</div>';
   } else if (senses.length > 1) {
     senses.forEach((s, idx) => {
-      sensesHtml += '<div style="margin-top:18px;">';
+      sensesHtml += '<div class="sense-block">';
       sensesHtml += '<div class="definition"><strong>' + (idx + 1) + '.</strong> ' + linkifyEnglishGloss(s.g) + '</div>';
       if (s.m) sensesHtml += '<div class="definition">' + escapeHtml(s.m) + '</div>';
       sensesHtml += buildExampleHTML(s.ex);
@@ -2020,7 +2553,7 @@ function renderBikol(d){
   if (audioUrl) {
     pronHtml += '<button type="button" class="pron-play" aria-label="Listen" data-audio="' + escapeHtml(audioUrl) + '"><i class="fa-solid fa-volume-high"></i></button>';
   } else {
-    pronHtml += '<button type="button" class="pron-play" aria-label="Audio unavailable" disabled><i class="fa-solid fa-volume-high"></i></button>';
+    pronHtml += '<button type="button" class="pron-play audio-unavailable" aria-label="Audio unavailable"><i class="fa-solid fa-volume-high"></i></button>';
   }
   if (ipa) {
     pronHtml += '<span class="ipa">/' + escapeHtml(ipa) + '/</span>';
@@ -2049,6 +2582,7 @@ function renderBikol(d){
       inflBlock +
       sensesHtml +
     '</div>';
+  syncDividerVisibility();
 
   // attach audio handlers
   entries.querySelectorAll('.pron-play').forEach(btn => {
@@ -2065,6 +2599,7 @@ function renderBikol(d){
 function render(d){
   entries.classList.remove("centered");
   hideWodRow();
+  syncDividerVisibility();
   if (lang.value === "english") return renderEnglish(d);
   return renderBikol(d);
 }
@@ -2098,6 +2633,7 @@ function noMatch(term){
       '</div>' +
       suggHtml +
     '</div>';
+  syncDividerVisibility();
 }
 
 function performSearch(){
@@ -2125,10 +2661,13 @@ function updateSuggestions(){
   entries.innerHTML = "";
   closeSuggestions();
   isUserTyping = q.length > 0;
+  updateClearButton();
+  syncDividerVisibility();
 
   // Word of the day only shows on Home (no search + no results)
   if (!q) {
     syncWordOfDayVisibility();
+    syncDividerVisibility();
     return;
   }
 
@@ -2157,6 +2696,7 @@ function updateSuggestions(){
       hideWordOfDay();
       /* clear whatever the user typed, then render */
       search.value = "";
+      updateClearButton();
       render(row);
     });
     list.appendChild(item);
@@ -2189,10 +2729,16 @@ function setDataFromFiles(enRows, biRows){
   }
 
   syncWordOfDayVisibility();
+  syncDividerVisibility();
+  hideLoading();
+  renderRecentAdded();
 }
 
 function showNotice(html){
   entries.innerHTML = '<div class="notice">' + html + '</div>';
+  syncDividerVisibility();
+  hideLoading();
+  renderRecentAdded();
 }
 
 function loadCsvFromText(csvText){
@@ -2222,6 +2768,7 @@ function loadCsvFromTextPair(enText, biText){
 }
 
 function loadCsvFromFile(){
+  showLoading();
   const enUrl = "english_to_bikol.csv?" + Date.now();
   const biUrl = "bikol_to_english.csv?" + Date.now();
   const triviaUrl = "trivia.csv?" + Date.now();
@@ -2290,6 +2837,8 @@ homeLink.addEventListener("click", (e) => {
   entries.innerHTML = "";
   closeSuggestions();
   syncWordOfDayVisibility();
+  updateClearButton();
+  syncDividerVisibility();
   currentRouteKey = "";
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
@@ -2300,6 +2849,18 @@ search.addEventListener("keydown", (e) => {
   if (e.key === "Enter") performSearch();
 });
 searchBtn.addEventListener("click", performSearch);
+if (clearBtn){
+  clearBtn.addEventListener("click", () => {
+    search.value = "";
+    isUserTyping = false;
+    entries.innerHTML = "";
+    closeSuggestions();
+    updateClearButton();
+    syncWordOfDayVisibility();
+    syncDividerVisibility();
+    search.focus();
+  });
+}
 
 // Show long labels only while dropdown is open
 function setLangOptionsLong(){
@@ -2329,12 +2890,21 @@ lang.addEventListener("change", () => {
   entries.innerHTML = "";
   search.value = "";
   syncWordOfDayVisibility();
+  updateClearButton();
+  syncDividerVisibility();
   search.focus();
 });
 
 burger.addEventListener("click", () => {
   const isOpen = menu.classList.toggle("open");
   burger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  if (isOpen) positionMenu();
+});
+
+window.addEventListener("resize", () => {
+  if (menu && menu.classList.contains("open")) {
+    positionMenu();
+  }
 });
 
 document.addEventListener("click", (e) => {
@@ -2377,6 +2947,16 @@ if (submitBtn){
     openSubmitModal();
   });
 }
+if (subPos){
+  subPos.addEventListener("change", () => {
+    const isOther = (subPos.value || "").toLowerCase() === "others";
+    if (subPosOtherWrap && subPosOther) {
+      subPosOtherWrap.style.display = isOther ? "" : "none";
+      subPosOther.required = isOther;
+      if (!isOther) subPosOther.value = "";
+    }
+  });
+}
 if (submitClose){
   submitClose.addEventListener("click", closeSubmitModal);
 }
@@ -2395,6 +2975,7 @@ if (submitForm){
     const data = new FormData(submitForm);
     const word = (data.get("word") || "").toString().trim();
     const pos = (data.get("pos") || "").toString().trim();
+    const posOther = (data.get("pos_other") || "").toString().trim();
     const meaning = (data.get("meaning") || "").toString().trim();
     const example = (data.get("example") || "").toString().trim();
     const dialect = (data.get("dialect") || "").toString().trim();
@@ -2403,17 +2984,17 @@ if (submitForm){
     const name = (data.get("name") || "").toString().trim();
     const submittedAt = new Date().toISOString();
 
-    const subject = "Bikol Dictionary submission: " + (word || "New entry");
+    const subject = "Bikol Dictionary Submission: " + (word || "New entry");
     const lines = [
-      "Bikol word: " + word,
-      "Part of speech: " + pos,
+      "Bikol Word: " + word,
+      "Part of Speech: " + (posOther ? (pos + " (" + posOther + ")") : pos),
       "Meaning(s): " + meaning,
       "Example: " + example,
       "Dialect: " + dialect,
       "Derivatives: " + derivatives,
       "Inflections: " + inflections,
-      "Contributor name: " + name,
-      "Submitted at: " + submittedAt
+      "Contributor Name: " + name,
+      "Submitted At: " + submittedAt
     ];
     const body = lines.join("\n");
     const mailto = "mailto:jusanmisolas@gmail.com" +
@@ -2533,6 +3114,8 @@ loadCsvFromFile();
 // Initial routing + Word of the Day
 applyRouteFromHash();
 syncWordOfDayVisibility();
+updateClearButton();
+syncDividerVisibility();
 
 // Smoke tests (optional)
 function assert(condition, message){
